@@ -6,7 +6,8 @@ function Loader(){
             backgroundColor: '#7f97ac',
             position: 'absolute',
             top: 0,
-            left: 0
+            left: 0,
+            zIndex: 1000,
         }}>
 
         </div>
