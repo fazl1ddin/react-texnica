@@ -21,8 +21,6 @@ function IndexMain(){
 
     const {data, loading} = useGetData('/products', 'GET', [])
 
-    const {image, lod} = useGetData('/images/image-18.png', 'GET', '')
-
     const state = data
 
     const content = [
@@ -52,8 +50,7 @@ function IndexMain(){
         let news = []
         let last = 0
         for (let i = last; i <= Math.floor(state.length / 4) * 4; i += 4) {
-            if (last == 0 && i == 0){}
-            else{
+            if (last !== 0 || i !== 0){
                 news[i / 4 - 1] = {
                     every: state.slice(last, i).map((item, index) => ({
                         ...item,

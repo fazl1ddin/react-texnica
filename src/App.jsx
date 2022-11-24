@@ -55,6 +55,9 @@ function App(){
     ]
 
     return (<>
+    <div className="forModal">
+        
+    </div>
     <div className="headerNav">
         <div className="window">
             <div className="headerNavContent">

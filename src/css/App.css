@@ -92,6 +92,7 @@
     border: none;
     color: #fff;
     margin-left: 20px;
+    cursor: pointer;
 }
 .navbar {
     background-color: #0e1821;
@@ -285,6 +286,17 @@
 }
 .navs {
     display: none;
+}
+.forModal {
+    background-color: #243C53;
+    width: 100%;
+    height: 100vh;
+    opacity: .6;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    overflow: hidden;
 }
 @media screen and (max-width: 770px) {
     .window {
