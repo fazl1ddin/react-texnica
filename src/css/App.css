@@ -288,15 +288,103 @@
     display: none;
 }
 .forModal {
-    background-color: #243C53;
+    background-color: #243c538c;
     width: 100%;
     height: 100vh;
-    opacity: .6;
     position: fixed;
     top: 0;
     left: 0;
     z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.forModal .centerWrap {
+    width: 370px;
+    height: 456px;
+    background-color: #fff;
+    border-radius: 8px;
     overflow: hidden;
+}
+.forModal .centerWrap .modalTitle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 68px;
+    background-color: #EDF2F6;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+.forModal .centerWrap .modalTitle .x {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+.forModal .centerWrap .modalTitle .x img {
+    height: 100%;
+}
+.forModal .centerWrap .modalBody {
+    padding: 0px 30px 30px 30px;
+}
+.forModal .centerWrap .modalBody label {
+    margin-top: 20px;
+    font-family: 'Exo 2';
+    display: block;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: 0em;
+    text-align: left;
+}
+.forModal .centerWrap .modalBody input:not([type="checkbox"]) {
+    display: block;
+    width: 100%;
+    height: 48px;
+    border-radius: 5px;
+    margin-top: 5px;
+    border: #EAEAF0 1px solid;
+}
+.forModal .centerWrap .modalBody a {
+    margin-top: 10px;
+    text-decoration: none;
+    display: block;
+}
+.forModal .centerWrap .modalBody a:last-child {
+    text-align: center;
+}
+.forModal .centerWrap .modalBody button {
+    width: 100%;
+    height: 48px;
+    border-radius: 4px;
+    background: #2A5275;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    margin-top: 20px;
+}
+.forModal .centerWrap .modalBody label:last-child {
+    margin-top: 0;
+}
+.forModal .centerWrap .modalBody form div {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    margin-top: 20px;
+}
+.forModal .centerWrap .modalBody form div label {
+    font-family: 'Exo 2';
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: 0em;
+    text-align: left;
+}
+.forModal .centerWrap .modalBody form div input {
+    margin-right: 5px;
+    width: 24px;
+    height: 24px;
 }
 @media screen and (max-width: 770px) {
     .window {

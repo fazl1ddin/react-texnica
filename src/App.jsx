@@ -56,7 +56,29 @@ function App(){
 
     return (<>
     <div className="forModal">
-        
+        <div className="centerWrap">
+            <div className="modalTitle">
+                <h2>Вход</h2>
+                <div className="x">
+                    <img src={img.x}/>
+                </div>
+            </div>
+            <div className="modalBody">
+                <form action="http://localhost:3000/login" method="post">
+                    <label htmlFor="mail">Эл. почта или телефон</label>
+                    <input type="email" name="email" id="mail" />
+                    <label htmlFor="password">Пароль</label>
+                    <input type="password" name="password" id="password" />
+                    <a href="">Забыли пароль?</a>
+                    <div>
+                        <input type="checkbox" name="save" id="save" />
+                        <label htmlFor="save">Запомнить меня</label>
+                    </div>
+                    <button type="submit">Войти</button>
+                    <a href="">Зарегистрироваться</a>
+                </form>
+            </div>
+        </div>
     </div>
     <div className="headerNav">
         <div className="window">
