@@ -299,9 +299,14 @@
     align-items: center;
     justify-content: center;
 }
+.forModal .centerWrap.singUp {
+    height: 606px;
+}
+.forModal .centerWrap.singIn {
+    height: 456px;
+}
 .forModal .centerWrap {
     width: 370px;
-    height: 456px;
     background-color: #fff;
     border-radius: 8px;
     overflow: hidden;
@@ -344,12 +349,23 @@
     margin-top: 5px;
     border: #EAEAF0 1px solid;
 }
-.forModal .centerWrap .modalBody a {
+.forModal .centerWrap.singUp .modalBody p {
+    margin-top: 10px;
+}
+.forModal .centerWrap.singUp .modalBody a {
+    text-decoration: none;
+}
+.forModal .centerWrap.singUp .modalBody form > a:last-child {
+    display: block;
+    margin-top: 10px;
+    text-align: center;
+}
+.forModal .centerWrap.singIn .modalBody a {
     margin-top: 10px;
     text-decoration: none;
     display: block;
 }
-.forModal .centerWrap .modalBody a:last-child {
+.forModal .centerWrap.singIn .modalBody form > a:last-child {
     text-align: center;
 }
 .forModal .centerWrap .modalBody button {
@@ -370,7 +386,7 @@
 .forModal .centerWrap .modalBody form div {
     display: flex;
     align-items: center;
-    justify-content: start;
+    justify-content: flex-start;
     margin-top: 20px;
 }
 .forModal .centerWrap .modalBody form div label {

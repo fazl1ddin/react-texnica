@@ -19,6 +19,8 @@ import News from "./views/News";
 import Promo from "./views/Promo";
 import Promos from "./views/Promos";
 import Catalog from "./views/Catalog";
+import useGetData from "./hooks/getData";
+import { ULWF } from "./store/auth";
 
 const DropDownElem = styled.ul`
     &.open {
@@ -54,32 +56,133 @@ function App(){
         },
     ]
 
+    const [modal, setModal] = useState(' ')
+
+    const [login, setLogin] = useState([
+        {
+            title: 'Эл. почта или телефон',
+            name: 'mail',
+            value: '',
+            pattern: /[0-9\\.,:]/,
+            valid: false
+        },
+        {
+            title: 'Пароль',
+            name: 'password',
+            value: '',
+            pattern: /[0-9\\.,:]/,
+            valid: false
+        }
+    ])
+
+    const [singUp, setSingUp] = useState([
+        {
+            title: 'Имя',
+            name: 'name',
+            value: '',
+            pattern: /[0-9\\.,:]/,
+            valid: false
+        },
+        {
+            title: 'Эл. почта',
+            name: 'mail',
+            value: '',
+            pattern: /[0-9\\.,:]/,
+            valid: false
+        },
+        {
+            title: 'Номер телефона',
+            name: 'phone',
+            value: '',
+            pattern: /[0-9\\.,:]/,
+            valid: false
+        },
+        {
+            title: 'Пароль',
+            name: 'password',
+            value: '',
+            pattern: /[0-9\\.,:]/,
+            valid: false
+        }
+    ])
+
     return (<>
-    <div className="forModal">
-        <div className="centerWrap">
+    {modal != ' ' ? modal == 'login' ? <div className="forModal">
+        <div className="centerWrap singIn">
             <div className="modalTitle">
                 <h2>Вход</h2>
-                <div className="x">
+                <div className="x" onClick={() => setModal(' ')}>
                     <img src={img.x}/>
                 </div>
             </div>
             <div className="modalBody">
-                <form action="http://localhost:3000/login" method="post">
-                    <label htmlFor="mail">Эл. почта или телефон</label>
-                    <input type="email" name="email" id="mail" />
-                    <label htmlFor="password">Пароль</label>
-                    <input type="password" name="password" id="password" />
+                <form>
+                    {
+                        login.map((item, index) => <React.Fragment key={item.name}>
+                            <label htmlFor={item.name}>{item.title}</label>
+                            <input type="text" value={item.value} name="email" id={item.name} onChange={e => {
+                                setLogin(login.map((item, i) => {
+                                    if(index == i) return {
+                                        ...item,
+                                        value: e.target.value,
+                                        valid: item.pattern.test(item.value),
+                                    }
+                                    return item
+                                }))
+                            }}/>
+                        </React.Fragment>)
+                    }
                     <a href="">Забыли пароль?</a>
                     <div>
                         <input type="checkbox" name="save" id="save" />
                         <label htmlFor="save">Запомнить меня</label>
                     </div>
-                    <button type="submit">Войти</button>
-                    <a href="">Зарегистрироваться</a>
+                    <button type="button" onClick={() => {
+                        const obj = {}
+                        login.forEach((item, index) => {
+                            obj[item.name] = item.value
+                        })
+                        ULWF(obj)
+                    }}>Войти</button>
+                    <a onClick={() => setModal('singUp')}>Зарегистрироваться</a>
                 </form>
             </div>
         </div>
-    </div>
+    </div> : <div className="forModal">
+        <div className="centerWrap singUp">
+            <div className="modalTitle">
+                <h2>Регистрация</h2>
+                <div className="x">
+                    <img src={img.x} onClick={() => setModal(' ')}/>
+                </div>
+            </div>
+            <div className="modalBody">
+                <form>
+                    {
+                        singUp.map((item, index) => <React.Fragment key={item.name}>
+                            <label htmlFor={item.name}>{item.title}</label>
+                            <input type="text" value={item.value} id={item.name} onChange={e => {
+                                setSingUp(singUp.map((item, i) => {
+                                    if(index == i) return {
+                                        ...item,
+                                        value: e.target.value,
+                                        valid: item.pattern.test(item.value),
+                                    }
+                                    return item
+                                }))
+                            }}/>
+                        </React.Fragment>)
+                    }
+                    <p>Регистрируясь, вы соглашаетесь с&nbsp;<a href="">пользовательским соглашением</a></p>
+                    <button type="button" onClick={() => {
+                        console.log(singUp);
+                        // ULWF()
+                    }}>Зарегистрироваться</button>
+                    <a onClick={() => setModal('login')}>Войти</a>
+                </form>
+            </div>
+        </div>
+    </div> : null}
     <div className="headerNav">
         <div className="window">
             <div className="headerNavContent">
@@ -104,7 +207,7 @@ function App(){
                             </Link>
                         ))
                     }
-                    <button className="headerButton">Войти</button>
+                    <button className="headerButton" onClick={() => setModal('login')}>Войти</button>
                 </div>
             </div>
         </div>
