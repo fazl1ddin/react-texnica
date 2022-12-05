@@ -20,7 +20,7 @@ import Promo from "./views/Promo";
 import Promos from "./views/Promos";
 import Catalog from "./views/Catalog";
 import useGetData from "./hooks/getData";
-import { ULWF } from "./store/auth";
+import { SUWF, ULWF } from "./store/auth";
 
 const DropDownElem = styled.ul`
     &.open {
@@ -61,7 +61,7 @@ function App(){
     const [login, setLogin] = useState([
         {
             title: 'Эл. почта или телефон',
-            name: 'mail',
+            name: 'iden',
             value: '',
             pattern: /[0-9\\.,:]/,
             valid: false
@@ -175,8 +175,11 @@ function App(){
                     }
                     <p>Регистрируясь, вы соглашаетесь с&nbsp;<a href="">пользовательским соглашением</a></p>
                     <button type="button" onClick={() => {
-                        console.log(singUp);
-                        // ULWF()
+                        const obj = {}
+                        singUp.forEach((item, index) => {
+                            obj[item.name] = item.value
+                        })
+                        SUWF(obj)
                     }}>Зарегистрироваться</button>
                     <a onClick={() => setModal('login')}>Войти</a>
                 </form>

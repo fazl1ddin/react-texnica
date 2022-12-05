@@ -8,7 +8,7 @@ function useGetData(path, method, typeRes, body = null){
 
     useEffect(() => {
         fetcher().then(result => {
-            setData(JSON.parse(result))
+            setData(result)
             setLoading(false)
         }).catch(e => {
             console.log(e);
@@ -18,18 +18,13 @@ function useGetData(path, method, typeRes, body = null){
 
     function fetcher(){
         return new Promise((res, rej) => {
-            const req = new XMLHttpRequest
-            req.open(method, config.baseUrl + path)
-
-            req.onload = () => {
-                res(req.response)
-            }
-            
-            req.onerror = () => {
-                rej(req.status)
-            }
-
-            req.send(body)
+            fetch(config.baseUrl + path, { method: 'GET' })
+            .then(result => result.json())
+            .then(result => {
+                res(result)
+            }).catch(e => {
+                rej(e)
+            })
         })
     }
 
