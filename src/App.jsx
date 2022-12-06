@@ -142,7 +142,7 @@ function App(){
                         login.forEach((item, index) => {
                             obj[item.name] = item.value
                         })
-                        ULWF(obj)
+                        ULWF({logType: 'pass' , obj})
                     }}>Войти</button>
                     <a onClick={() => setModal('singUp')}>Зарегистрироваться</a>
                 </form>
