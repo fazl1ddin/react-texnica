@@ -138,11 +138,15 @@ function App(){
                         <label htmlFor="save">Запомнить меня</label>
                     </div>
                     <button type="button" onClick={() => {
-                        const obj = {}
-                        login.forEach((item, index) => {
-                            obj[item.name] = item.value
-                        })
-                        ULWF({logType: 'pass' , obj})
+                        if(localStorage.getItem('token')){
+                            ULWF({logType: 'token', token: localStorage.getItem('token')})
+                        } else {
+                            const obj = {}
+                            login.forEach((item, index) => {
+                                obj[item.name] = item.value
+                            })
+                            ULWF({logType: 'pass' , obj})
+                        }
                     }}>Войти</button>
                     <a onClick={() => setModal('singUp')}>Зарегистрироваться</a>
                 </form>
