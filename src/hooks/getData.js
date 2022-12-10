@@ -7,26 +7,16 @@ function useGetData(path, method, typeRes, body = null){
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        fetcher().then(result => {
-            setData(result)
-            setLoading(false)
-        }).catch(e => {
-            console.log(e);
-            setLoading(false)
-        })
-    }, [])
-
-    function fetcher(){
-        return new Promise((res, rej) => {
-            fetch(config.baseUrl + path, { method: 'GET' })
+        (async () => {
+            await fetch(config.baseUrl + path, { method: method.toUpperCase() })
             .then(result => result.json())
             .then(result => {
-                res(result)
-            }).catch(e => {
-                rej(e)
+                setData(result)
+                setLoading(false)
             })
-        })
-    }
+            .catch(e => console.log(e))
+        })()
+    }, [])
 
     return {
         data: data,

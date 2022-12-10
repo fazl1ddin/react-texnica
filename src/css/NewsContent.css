@@ -1,4 +1,4 @@
-.box {
+.new .box, .news .box {
     display: flex;
     align-items: stretch;
     justify-content: flex-start;

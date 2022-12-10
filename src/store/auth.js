@@ -1,32 +1,20 @@
-import { createSlice } from "@reduxjs/toolkit"
-import config from "../api/config"
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import { useEffect, useState } from "react";
+import config from "../api/config";
 
-const state = createSlice({
-    name: 'user',
-    initialState: null,
-    reducers: {
-        setUser(state, payload){
-            state = payload
-            console.log(state);
-        }
-    }
-})
-
-export default state
-
-export function ULWF(obj){
-    (async function(){
-        await fetch(config.baseUrl + '/login', {method: 'POST', body: JSON.stringify(obj)}).then(result => result.json()).then(result => {
-            if(result.token){
-                localStorage.setItem('token', result.token)
-                state.actions.setUser(result.user)
-            }
+const Auth = createAsyncThunk(
+    'user/Auth',
+    async (obj) => {
+        let user;
+        await fetch(config.baseUrl + '/login', {method: 'POST', body: JSON.stringify(obj)})
+        .then(result => result.json())
+        .then(result => {
+            user = result
         })
-    })()
-}
+        .catch(e => console.log(e))
+        console.log(user);
+        return user
+    }
+)
 
-export function SUWF(obj){
-    (async function(){
-        await fetch(config.baseUrl + '/sing-up', {method: 'POST', body: JSON.stringify(obj)}).then(result => result.json()).then(result => console.log(result))
-    })()
-}
+export default Auth

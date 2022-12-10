@@ -6,7 +6,7 @@ import IndexMain from './views/IndexMain';
 import { useState } from "react";
 import DropDown from './contexts/dropDown'
 import styled from "styled-components";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Product from "./views/Product";
 import Viewed from './views/Viewed';
 import Favorites from './views/Favorites';
@@ -20,7 +20,10 @@ import Promo from "./views/Promo";
 import Promos from "./views/Promos";
 import Catalog from "./views/Catalog";
 import useGetData from "./hooks/getData";
-import { SUWF, ULWF } from "./store/auth";
+import { setUser } from "./store/user";
+import { useEffect } from "react";
+import LoginButton from "./components/Loaders/LoginButton";
+import Auth from "./store/auth";
 
 const DropDownElem = styled.ul`
     &.open {
@@ -29,7 +32,11 @@ const DropDownElem = styled.ul`
 `
 
 function App(){
+    const dispatch = useDispatch()
+
     const state = useSelector(state => state.products)
+
+    const user = useSelector(state => state.user)
 
     const [dropDown, setDropDown] = useState(false)
 
@@ -106,6 +113,18 @@ function App(){
         }
     ])
 
+    const [loading, setLoading] = useState(false)
+
+    useEffect(() => {
+        if(localStorage.getItem('token')){
+            dispatch(Auth({logType: 'token', token: localStorage.getItem('token')}))
+        }
+    }, [])
+    
+    useEffect(() => {
+        console.log(user);
+    })
+
     return (<>
     {modal != ' ' ? modal == 'login' ? <div className="forModal">
         <div className="centerWrap singIn">
@@ -137,16 +156,13 @@ function App(){
                         <input type="checkbox" name="save" id="save" />
                         <label htmlFor="save">Запомнить меня</label>
                     </div>
-                    <button type="button" onClick={() => {
-                        if(localStorage.getItem('token')){
-                            ULWF({logType: 'token', token: localStorage.getItem('token')})
-                        } else {
-                            const obj = {}
-                            login.forEach((item, index) => {
-                                obj[item.name] = item.value
-                            })
-                            ULWF({logType: 'pass' , obj})
-                        }
+                    <button type="button" onClick={async () => {
+                        await fetch('http://localhost:3000/login', { method: 'POST', body: JSON.stringify({logType: 'pass', obj: {
+                            iden: '+34223434',
+                            password: 'dsasda'
+                        }}) })
+                        .then(result => result.json())
+                        .then(result => localStorage.setItem('token', result.token))
                     }}>Войти</button>
                     <a onClick={() => setModal('singUp')}>Зарегистрироваться</a>
                 </form>
@@ -178,13 +194,7 @@ function App(){
                         </React.Fragment>)
                     }
                     <p>Регистрируясь, вы соглашаетесь с&nbsp;<a href="">пользовательским соглашением</a></p>
-                    <button type="button" onClick={() => {
-                        const obj = {}
-                        singUp.forEach((item, index) => {
-                            obj[item.name] = item.value
-                        })
-                        SUWF(obj)
-                    }}>Зарегистрироваться</button>
+                    <button type="button" onClick={() => {}}>Зарегистрироваться</button>
                     <a onClick={() => setModal('login')}>Войти</a>
                 </form>
             </div>
@@ -214,7 +224,8 @@ function App(){
                             </Link>
                         ))
                     }
-                    <button className="headerButton" onClick={() => setModal('login')}>Войти</button>
+                    {loading ? <LoginButton></LoginButton> : 
+                    <button className="headerButton" onClick={() => setModal('login')}>Войти</button>}
                 </div>
             </div>
         </div>

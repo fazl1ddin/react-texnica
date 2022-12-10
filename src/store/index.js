@@ -1,12 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import products from './products';
 import contents, { ok } from './contents';
+import user from './user';
 import { AiFillStar } from 'react-icons/ai'
 
 export const store = configureStore({
     reducer: {
         products: products.reducer,
         contents: contents.reducer,
+        user: user.reducer
     }
 })
 
