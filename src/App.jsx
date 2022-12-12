@@ -113,17 +113,11 @@ function App(){
         }
     ])
 
-    const [loading, setLoading] = useState(false)
-
     useEffect(() => {
         if(localStorage.getItem('token')){
             dispatch(Auth({logType: 'token', token: localStorage.getItem('token')}))
         }
     }, [])
-    
-    useEffect(() => {
-        console.log(user);
-    })
 
     return (<>
     {modal != ' ' ? modal == 'login' ? <div className="forModal">
@@ -224,7 +218,7 @@ function App(){
                             </Link>
                         ))
                     }
-                    {loading ? <LoginButton></LoginButton> : 
+                    {user.loading ? <LoginButton></LoginButton> : 
                     <button className="headerButton" onClick={() => setModal('login')}>Войти</button>}
                 </div>
             </div>

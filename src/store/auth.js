@@ -12,7 +12,6 @@ const Auth = createAsyncThunk(
             user = result
         })
         .catch(e => console.log(e))
-        console.log(user);
         return user
     }
 )
