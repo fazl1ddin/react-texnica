@@ -1,5 +1,4 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { useEffect, useState } from "react";
 import config from "../api/config";
 
 const Auth = createAsyncThunk(
@@ -11,8 +10,11 @@ const Auth = createAsyncThunk(
         .then(result => {
             user = result
         })
-        .catch(e => console.log(e))
-        return user
+        if(user.message){
+            throw user
+        } else {
+            return user
+        }
     }
 )
 

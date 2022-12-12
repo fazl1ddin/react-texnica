@@ -133,7 +133,7 @@ function App(){
                     {
                         login.map((item, index) => <React.Fragment key={item.name}>
                             <label htmlFor={item.name}>{item.title}</label>
-                            <input type="text" value={item.value} name="email" id={item.name} onChange={e => {
+                            <input type="text" value={item.value} name="text" id={item.name} onChange={e => {
                                 setLogin(login.map((item, i) => {
                                     if(index == i) return {
                                         ...item,
@@ -150,13 +150,12 @@ function App(){
                         <input type="checkbox" name="save" id="save" />
                         <label htmlFor="save">Запомнить меня</label>
                     </div>
-                    <button type="button" onClick={async () => {
-                        await fetch('http://localhost:3000/login', { method: 'POST', body: JSON.stringify({logType: 'pass', obj: {
-                            iden: '+34223434',
-                            password: 'dsasda'
-                        }}) })
-                        .then(result => result.json())
-                        .then(result => localStorage.setItem('token', result.token))
+                    <button type="button" onClick={() => {
+                        let obj = {};
+                        login.forEach((item, index) => {
+                            obj[item.name] = item.value
+                        })
+                        dispatch(Auth({logType: 'pass', obj: obj}))
                     }}>Войти</button>
                     <a onClick={() => setModal('singUp')}>Зарегистрироваться</a>
                 </form>

@@ -1,4 +1,4 @@
-import { createSlice, current } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit"
 import Auth from "./auth";
 
 const state = createSlice({
@@ -19,8 +19,15 @@ const state = createSlice({
             state.loading = true
         })
         .addCase(Auth.fulfilled, (state, action) => {
-            state.user = action.payload
+            if(action.payload.token){
+                localStorage.setItem('token', action.payload.token)
+            }
+            state.user = action.payload.user
             state.loading = false
+        })
+        .addCase(Auth.rejected, (state, action) => {
+            state.loading = false
+            console.log(action.error);
         })
     }
 })
