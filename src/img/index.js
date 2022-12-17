@@ -49,6 +49,7 @@ import imgContent2 from './percent.png'
 import imgContent3 from './pфngegg-1.png'
 import imgContent4 from './pngwing-1.png'
 import x from './x.png'
+import profile from './profile.png'
 
 export {
     series6,
@@ -102,4 +103,5 @@ export {
     imgContent3,
     imgContent4,
     x,
+    profile
 }

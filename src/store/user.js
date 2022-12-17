@@ -4,12 +4,13 @@ import Auth from "./auth";
 const state = createSlice({
     name: 'user',
     initialState: {
-        loading: true,
+        loading: false,
         user: undefined
     },
     reducers: {
-        setUser(state, payload){
-            state = payload
+        clearUser(state){
+            state.user = undefined
+            state.loading = false
             console.log(state);
         }
     },
@@ -33,4 +34,4 @@ const state = createSlice({
 })
 
 export default state
-export const {setUser} = state.actions
+export const {clearUser} = state.actions

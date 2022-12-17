@@ -41,6 +41,35 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    position: relative;
+}
+.headerNavSearch .profileDrop {
+    position: absolute;
+    right: 0px;
+    top: 100%;
+    background-color: #fff;
+    z-index: 115;
+    width: 280px;
+    border-radius: 0px 0px 8px 8px;
+    height: 0px;
+    overflow: hidden;
+    transition: all .3s;
+}
+.headerNavSearch .profileDrop ul li {
+    list-style: none;
+}
+.headerNavSearch .profileDrop ul li a {
+    height: 54px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-decoration: none;
+    color: #070C11;
+}
+.headerNavSearch .profileDrop ul li:last-child a {
+    cursor: pointer;
+    color: #ff0000;
 }
 .dota {
     position: relative;

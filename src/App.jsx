@@ -20,10 +20,11 @@ import Promo from "./views/Promo";
 import Promos from "./views/Promos";
 import Catalog from "./views/Catalog";
 import useGetData from "./hooks/getData";
-import { setUser } from "./store/user";
+import { clearUser, setUser } from "./store/user";
 import { useEffect } from "react";
 import LoginButton from "./components/Loaders/LoginButton";
 import Auth from "./store/auth";
+import { useRef } from "react";
 
 const DropDownElem = styled.ul`
     &.open {
@@ -31,37 +32,74 @@ const DropDownElem = styled.ul`
     }
 `
 
+const droProfile = [
+    {
+        path: '/profile',
+        stateTab: 'allData',
+        title: 'Общие сведения'
+    },
+    {
+        path: '/profile',
+        stateTab: 'personData',
+        title: 'Личные данные'
+    },
+    {
+        path: '/profile',
+        stateTab: 'historyShop',
+        title: 'История покупок'
+    },
+    {
+        path: '/favorites',
+        title: 'Избранное'
+    },
+    {
+        path: '/profile',
+        stateTab: 'changePass',
+        title: 'Сменить пароль'
+    },
+]
+
+const routers = [
+    {
+        to: '/viewed',
+        class: 'viewed',
+        src: img.eye
+    },
+    {
+        to: '/favorites',
+        class: 'favorites',
+        src: img.like
+    },
+    {
+        to: '/compare',
+        class: 'compare',
+        src: img.compare
+    },
+    {
+        to: '/cart',
+        class: 'cart',
+        src: img.cart
+    },
+]
+
 function App(){
     const dispatch = useDispatch()
+
+    const forNavDrop = useRef()
+
+    const [navHeight, setNavHeight] = useState(0)
+
+    const forProfileDrop = useRef()
+
+    const [profileHeight, setProfileHeight] = useState(0)
 
     const state = useSelector(state => state.products)
 
     const user = useSelector(state => state.user)
 
-    const [dropDown, setDropDown] = useState(false)
+    const [droProfileB, setDroProfile] = useState(false)
 
-    const routers = [
-        {
-            to: '/viewed',
-            class: 'viewed',
-            src: img.eye
-        },
-        {
-            to: '/favorites',
-            class: 'favorites',
-            src: img.like
-        },
-        {
-            to: '/compare',
-            class: 'compare',
-            src: img.compare
-        },
-        {
-            to: '/cart',
-            class: 'cart',
-            src: img.cart
-        },
-    ]
+    const [dropDown, setDropDown] = useState(false)
 
     const [modal, setModal] = useState(' ')
 
@@ -114,6 +152,18 @@ function App(){
     ])
 
     useEffect(() => {
+        if(forNavDrop.current){
+            setNavHeight(Number(forNavDrop.current.offsetHeight))
+        }
+    }, [forNavDrop.current])
+
+    useEffect(() => {
+        if(forProfileDrop.current){
+            setProfileHeight(Number(forProfileDrop.current.offsetHeight))
+        }
+    }, [forProfileDrop.current])
+
+    useEffect(() => {
         if(localStorage.getItem('token')){
             dispatch(Auth({logType: 'token', token: localStorage.getItem('token')}))
         }
@@ -156,6 +206,7 @@ function App(){
                             obj[item.name] = item.value
                         })
                         dispatch(Auth({logType: 'pass', obj: obj}))
+                        setModal(' ')
                     }}>Войти</button>
                     <a onClick={() => setModal('singUp')}>Зарегистрироваться</a>
                 </form>
@@ -205,6 +256,33 @@ function App(){
                     <p className="c-838">Пн-вс: с 10:00 до 21:00</p>
                 </div>
                 <div className="headerNavSearch">
+                    {
+                        user.user !== undefined ? (
+                            <DropDownElem elementHeight={6 * profileHeight} className={`profileDrop ${droProfileB ? 'open' : ''}`}>
+                                <ul>
+                                    {
+                                        droProfile.map(item => (
+                                            <li key={item.title}>
+                                                <Link to={item.path} state={item.stateTab}>
+                                                    {
+                                                        item.title
+                                                    }
+                                                </Link>
+                                            </li>
+                                        ))
+                                    }
+                                    <li ref={forProfileDrop}>
+                                        <a onClick={() => {
+                                            localStorage.removeItem('token')
+                                            dispatch(clearUser())
+                                        }}>
+                                            Выйти
+                                        </a>
+                                    </li>
+                                </ul>
+                            </DropDownElem>
+                        ) : null
+                    }
                     <button className="sbutton">
                         <img src={img.searchIcon}/>
                         Поиск
@@ -217,8 +295,14 @@ function App(){
                             </Link>
                         ))
                     }
-                    {user.loading ? <LoginButton></LoginButton> : 
-                    <button className="headerButton" onClick={() => setModal('login')}>Войти</button>}
+                    {user.loading ? <LoginButton></LoginButton> : user.user ? <div onClick={() => {
+                        setDroProfile(!droProfileB)
+                    }}>
+                        <div>
+                            <img src={img.profile} alt="" />
+                        </div>
+                    </div> 
+                    : <button className="headerButton" onClick={() => setModal('login')}>Войти</button>}
                 </div>
             </div>
         </div>
@@ -250,12 +334,12 @@ function App(){
                         <p>Ещё</p>
                     </div>
                 </div>
-                    <DropDownElem elementHeight={11 * 48} className={`dropdownElem ${dropDown ? 'open' : ''}`}>
+                    <DropDownElem elementHeight={11 * navHeight} className={`dropdownElem ${dropDown ? 'open' : ''}`}>
                         <div className="title">
                             <h1>Каталог</h1>
                             <button>&#215;</button>
                         </div>
-                        <li>
+                        <li ref={forNavDrop}>
                             <a href="">
                                 <img src={img.iconMenu1} alt=""/>
                                 Гироскутеры
