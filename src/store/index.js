@@ -3,6 +3,8 @@ import products from './products';
 import contents, { ok } from './contents';
 import user from './user';
 import { AiFillStar } from 'react-icons/ai'
+import { useEffect, useState } from "react";
+import config from "../api/config";
 
 export const store = configureStore({
     reducer: {
@@ -20,8 +22,27 @@ export function contentById(module, id){
     return store.getState()['contents'][module].find(item => item.id == id)
 }
 
-export function findById(id){
-    return store.getState()['products'].allProducts.find(item => item.id == id)
+export function useFindById(ids){
+
+    const [data, setData] = useState('')
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        (async () => {
+            await fetch(config.baseUrl + '/product', { method: 'POST', body: JSON.stringify(ids.map(item => ({_id: item.id}))) })
+            .then(result => result.json())
+            .then(result => {
+                setData(result)
+                setLoading(false)
+            })
+            .catch(e => console.log(e))
+        })()
+    }, [])
+
+    return {
+        data,
+        loading
+    }
 }
 
 export function stars(rate){

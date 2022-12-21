@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 import Auth from "./auth";
 
-const state = createSlice({
+const user = createSlice({
     name: 'user',
     initialState: {
         loading: false,
@@ -33,5 +33,5 @@ const state = createSlice({
     }
 })
 
-export default state
-export const {clearUser} = state.actions
+export default user
+export const {clearUser} = user.actions

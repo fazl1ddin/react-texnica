@@ -2,7 +2,7 @@ import React, { useLayoutEffect } from 'react';
 import '../css/Cart.css';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { findById } from '../store/index';
+import { useFindById } from '../store/index';
 import { remove, changeCount } from '../store/products';
 import * as img from '../img/index';
 import { useState } from 'react';
@@ -287,17 +287,13 @@ function Cart() {
 
     const dispatch = useDispatch()
 
-    const products = useCallback(() => {
-        let allProducts = []
-        for (let i = 0; i < state.cart.length; i++) {
-            allProducts[i] = { ...findById(state.cart[i].id), ...state.cart[i] }
-        }
-        return allProducts
-    }, [state.cart])
+    const [products, setProducts] = useState([])
+
+    const {data, loading} = useFindById(state.cart)
 
     const total = useCallback(() => {
-        return products().reduce((prev, next) => prev + next.realPrice * next.count, 0)
-    }, [products()])
+        return products.reduce((prev, next) => prev + next.realPrice * next.count, 0)
+    }, [products])
 
     const productsCount = () => {
         let arr = {}
@@ -402,11 +398,11 @@ function Cart() {
                                 <div className="obb">
                                     <div className="tovari">
                                         {
-                                            products().map((product, i) => (
+                                            products.map((product, i) => (
                                                 <div className="tovar" key={product.id}>
                                                     <div className="imgt">
-                                                        <img className="img" src={product.product.src[0]} />
-                                                        <img className="aqua" src={product.protection.src} />
+                                                        <img className="img" src={product.product[0]} />
+                                                        <img className="aqua" src={product.protection} />
                                                     </div>
                                                     <div className="ff">
                                                         <h4>{product.productName}</h4>

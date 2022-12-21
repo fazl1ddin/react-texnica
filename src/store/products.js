@@ -1,5 +1,7 @@
 import * as img from './../img/index'
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, current } from "@reduxjs/toolkit";
+import user from './user';
+const type = user.getInitialState().user
 
 const state = createSlice({
     name: 'products',
@@ -1500,7 +1502,17 @@ const state = createSlice({
                 rates: 4,
             },
         ],
-        cart: [],
+        cart: (type && localStorage.getItem('products')) ? 
+            user.getInitialState().cart
+        : 
+            type ? 
+                user.getInitialState().cart
+            : 
+                localStorage.getItem('products') ? 
+                    JSON.parse(localStorage.getItem('products')).cart
+                :
+                    []
+        ,
         favorites: [],
         compare: [],
         viewed: [],
@@ -1508,19 +1520,47 @@ const state = createSlice({
     reducers: {
         add(state, payloads){
             const {module, id, count} = payloads.payload
-            state[module].push({ id, count})
+            if(type){
+                state[module].push({ id, count})
+            } else {
+                const data = JSON.parse(localStorage.getItem('products'))
+                data[module].push({ id, count})
+                localStorage.setItem('products', JSON.stringify(data))
+                state[module].push({ id, count})
+            }
         },
         remove(state, payloads){
             const {module, id} = payloads.payload
-            state[module] = state[module].filter(product => product.id != id)
+            if(type){
+                state[module] = state[module].filter(product => product.id != id)
+            } else {
+                const data = JSON.parse(localStorage.getItem('products'))
+                data[module] = data[module].filter(product => product.id != id)
+                localStorage.setItem('products', JSON.stringify(data))
+                state[module] = data[module]
+            }
         },
         changeCount(state, payloads){
             const {id, value} = payloads.payload
-            const index = state.cart.findIndex(product => product.id == id)
-            state.cart[index].count = value
+            if(type){
+                const index = state.cart.findIndex(product => product.id == id)
+                state.cart[index].count = value
+            } else {
+                const data = JSON.parse(localStorage.getItem('products'))
+                const index = data.cart.findIndex(product => product.id == id)
+                data.cart[index].count = value
+            }
+        },
+        setModule(state, payloads){
+            const {data} = payloads.payload
+            Object.keys(current(state)).forEach((item) => {
+                if(item !== 'allProducts'){
+                    state[item] = [...state[item], ...data[item]]
+                }
+            })
         }
     }
 })
 
 export default state
-export const {add, remove, changeCount, minmax} = state.actions
+export const {add, remove, changeCount, setModule} = state.actions

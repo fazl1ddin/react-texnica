@@ -1,7 +1,7 @@
 import React from 'react';
 import './../css/Product.css';
 import { Link, useLocation } from 'react-router-dom';
-import { findById, some, store } from '../store';
+import { useFindById, some, store } from '../store';
 import { useState } from 'react';
 import { stars } from '../store';
 import { useDispatch } from 'react-redux';
@@ -36,7 +36,7 @@ function Product(){
 
     const currentId = Number(pathname[pathname.length - 1])
     
-    const products = findById(currentId)
+    const products = useFindById(currentId)
 
     const pagination = () => {
         let ok = []

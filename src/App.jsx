@@ -19,12 +19,12 @@ import News from "./views/News";
 import Promo from "./views/Promo";
 import Promos from "./views/Promos";
 import Catalog from "./views/Catalog";
-import useGetData from "./hooks/getData";
-import { clearUser, setUser } from "./store/user";
+import { clearUser } from "./store/user";
 import { useEffect } from "react";
 import LoginButton from "./components/Loaders/LoginButton";
 import Auth from "./store/auth";
 import { useRef } from "react";
+import { setModule } from "./store/products";
 
 const DropDownElem = styled.ul`
     &.open {
@@ -97,6 +97,8 @@ function App(){
 
     const user = useSelector(state => state.user)
 
+    console.log(state.cart);
+
     const [droProfileB, setDroProfile] = useState(false)
 
     const [dropDown, setDropDown] = useState(false)
@@ -168,6 +170,18 @@ function App(){
             dispatch(Auth({logType: 'token', token: localStorage.getItem('token')}))
         }
     }, [])
+
+    // useEffect(() => {
+    //     if(user.user){
+    //         dispatch(setModule({data: user.user}))
+    //     } else {
+    //         if(localStorage.getItem('products')){
+    //             dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
+    //         } else {
+    //             localStorage.setItem('products', JSON.stringify(state))
+    //         }
+    //     }
+    // }, [])
 
     return (<>
     {modal != ' ' ? modal == 'login' ? <div className="forModal">

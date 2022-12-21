@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import './../css/Favorites.css'
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { findById, some, stars } from '../store';
+import { useFindById, some, stars } from '../store';
 import { add, remove } from '../store/products';
 import * as img from './../img/index';
 
@@ -17,7 +17,7 @@ function Favorites(){
         if(state.favorites.length != 0){
             let allProducts = []
             for(let i = 0; i < state.favorites.length; i++){
-                allProducts[i] = findById(state.favorites[i].id)
+                allProducts[i] = useFindById(state.favorites[i].id)
             }
             if(settings.filter != 'Все' && settings.filter != '') allProducts = allProducts.filter(item => item.specification['Тип:'] == settings.filter )
             if(settings.filterPrice != '') allProducts.sort((a, b) => settings.filterPrice == 'expensive' ? b.realPrice - a.realPrice : a.realPrice - b.realPrice)
