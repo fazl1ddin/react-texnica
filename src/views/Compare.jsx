@@ -20,7 +20,7 @@ function Compare(){
         if(state.compare.length != 0){
             let allProducts = []
             for(let i = 0; i < state.compare.length; i++){
-                allProducts[i] = useFindById(state.compare[i].id)
+                // allProducts[i] = useFindById(state.compare[i].id)
             }
             if(settings.filter != 'Все' && settings.filter != '') allProducts = allProducts.filter(item => item.specification['Тип:'] == settings.filter )
             function removeDuplicates(arr){

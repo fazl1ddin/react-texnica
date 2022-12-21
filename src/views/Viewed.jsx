@@ -19,7 +19,7 @@ function Viewed(){
     const products = useCallback(() => {
         let allProducts = []
         for(let i = 0; i < state.viewed.length; i++){
-            allProducts[i] = useFindById(state.viewed[i].id)
+            // allProducts[i] = useFindById(state.viewed[i].id)
         }
         if(settings.filter != 'Все' && settings.filter != '') allProducts = allProducts.filter(item => item.specification['Тип:'] == settings.filter )
         if(settings.filterPrice != '') allProducts.sort((a, b) => settings.filterPrice == 'expensive' ? b.realPrice - a.realPrice : a.realPrice - b.realPrice)

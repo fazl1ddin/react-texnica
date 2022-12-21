@@ -17,7 +17,7 @@ function Favorites(){
         if(state.favorites.length != 0){
             let allProducts = []
             for(let i = 0; i < state.favorites.length; i++){
-                allProducts[i] = useFindById(state.favorites[i].id)
+                // allProducts[i] = useFindById(state.favorites[i].id)
             }
             if(settings.filter != 'Все' && settings.filter != '') allProducts = allProducts.filter(item => item.specification['Тип:'] == settings.filter )
             if(settings.filterPrice != '') allProducts.sort((a, b) => settings.filterPrice == 'expensive' ? b.realPrice - a.realPrice : a.realPrice - b.realPrice)
