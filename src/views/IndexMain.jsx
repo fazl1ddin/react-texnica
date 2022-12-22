@@ -10,6 +10,7 @@ import { some, stars } from './../store/index';
 import useGetData from '../hooks/getData'
 import Loader from '../components/Loaders/Loader';
 import Products4Loader from '../components/Loaders/Products4Loader';
+import config from '../api/config';
 
 function IndexMain(){
 
@@ -91,7 +92,7 @@ function IndexMain(){
                                         </div>
                                     </Link>
                                     {
-                                        every.protection ? <img src='http://localhost:3000/images/aqua.png' className='aqua' />
+                                        every.protection ? <img src={config.baseUrl + '/images/aqua.png'} className='aqua' />
                                         : null
                                     }
                                     <div className="notific">

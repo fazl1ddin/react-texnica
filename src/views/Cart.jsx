@@ -7,6 +7,7 @@ import { remove, changeCount } from '../store/products';
 import * as img from '../img/index';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import config from '../api/config';
 
 const wayget = {
     checkeDel: false,
@@ -392,6 +393,8 @@ function Cart() {
         setCanSend(boolean)
     }, [checker, man])
 
+    console.log(products());
+
     return (
         <div className="oformleniye">
             <div className="window">
@@ -405,10 +408,13 @@ function Cart() {
                                     <div className="tovari">
                                         {
                                             products().map((product, i) => (
-                                                <div className="tovar" key={product.id}>
+                                                <div className="tovar" key={product.id ? product.id : i}>
                                                     <div className="imgt">
                                                         <img className="img" src={product.product[0]} />
-                                                        <img className="aqua" src={product.protection} />
+                                                        {
+                                                            product.protection ? <img src={config.baseUrl + '/images/aqua.png'} className='aqua' />
+                                                            : null
+                                                        }
                                                     </div>
                                                     <div className="ff">
                                                         <h4>{product.productName}</h4>
@@ -605,7 +611,7 @@ function Cart() {
                         <div className="itogoContent">
                             <h1>Итого</h1>
                             <div className="summu">
-                                <h5>{ state.cart.length > 0 ? state.cart.length + ' товара на сумму' : 'Корзина пусто' }<span>{ state.cart.length > 0 ? total() : null }</span></h5>
+                                <h5>{ state.cart.length > 0 ? state.cart.length + ' товара на сумму' : 'Корзина пусто' }<span>{ state.cart.length > 0 ? (total() + ' ₽') : null }</span></h5>
                                 {
                                     state.cart.length > 0 ? <h5>Стоимость доставки <span>бесплатно</span></h5> : null
                                 }

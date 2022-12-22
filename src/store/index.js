@@ -40,13 +40,13 @@ export function useFindById(ids){
     }, [])
 
     return {
-        data: data.map((item) => ({
+        data: data.length ? data.map((item) => ({
             ...item,
             get realPrice(){
                 return item.price - (item.price * item.sale / 100)
             },
             count: 1
-        })),
+        })) : [],
         loading
     }
 }
