@@ -11,7 +11,6 @@ const user = createSlice({
         clearUser(state){
             state.user = undefined
             state.loading = false
-            console.log(state);
         }
     },
     extraReducers: (builder) => {

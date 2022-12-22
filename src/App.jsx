@@ -97,8 +97,6 @@ function App(){
 
     const user = useSelector(state => state.user)
 
-    console.log(state.cart);
-
     const [droProfileB, setDroProfile] = useState(false)
 
     const [dropDown, setDropDown] = useState(false)
@@ -171,17 +169,17 @@ function App(){
         }
     }, [])
 
-    // useEffect(() => {
-    //     if(user.user){
-    //         dispatch(setModule({data: user.user}))
-    //     } else {
-    //         if(localStorage.getItem('products')){
-    //             dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
-    //         } else {
-    //             localStorage.setItem('products', JSON.stringify(state))
-    //         }
-    //     }
-    // }, [])
+    useEffect(() => {
+        if(user.user){
+            dispatch(setModule({data: user.user}))
+        } else {
+            if(localStorage.getItem('products')){
+                dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
+            } else {
+                localStorage.setItem('products', JSON.stringify(state))
+            }
+        }
+    }, [])
 
     return (<>
     {modal != ' ' ? modal == 'login' ? <div className="forModal">

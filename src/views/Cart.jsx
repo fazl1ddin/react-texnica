@@ -287,12 +287,18 @@ function Cart() {
 
     const dispatch = useDispatch()
 
-    const [products, setProducts] = useState([])
-
     const {data, loading} = useFindById(state.cart)
 
+    const products = useCallback(() => {
+        if(!loading){
+            return data
+        } else {
+            return []
+        }
+    }, [data])
+
     const total = useCallback(() => {
-        return products.reduce((prev, next) => prev + next.realPrice * next.count, 0)
+        return products().reduce((prev, next) => prev + next.realPrice * next.count, 0)
     }, [products])
 
     const productsCount = () => {
@@ -398,7 +404,7 @@ function Cart() {
                                 <div className="obb">
                                     <div className="tovari">
                                         {
-                                            products.map((product, i) => (
+                                            products().map((product, i) => (
                                                 <div className="tovar" key={product.id}>
                                                     <div className="imgt">
                                                         <img className="img" src={product.product[0]} />

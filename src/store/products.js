@@ -1555,7 +1555,7 @@ const state = createSlice({
             const {data} = payloads.payload
             Object.keys(current(state)).forEach((item) => {
                 if(item !== 'allProducts'){
-                    state[item] = [...state[item], ...data[item]]
+                    state[item] = data[item]
                 }
             })
         }
