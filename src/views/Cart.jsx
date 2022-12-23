@@ -8,6 +8,7 @@ import * as img from '../img/index';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import config from '../api/config';
+import LoaderCart from '../components/Loaders/LoaderCart';
 
 const wayget = {
     checkeDel: false,
@@ -285,22 +286,21 @@ const wayget = {
 
 function Cart() {
     const state = useSelector(state => state.products)
+    const user = useSelector(state => state.user)
 
     const dispatch = useDispatch()
 
     const {data, loading} = useFindById(state.cart)
 
     const products = useCallback(() => {
-        if(!loading){
-            return data
-        } else {
-            return []
-        }
-    }, [data])
+        return data
+    }, [state.cart, user.user])
 
     const total = useCallback(() => {
-        return products().reduce((prev, next) => prev + next.realPrice * next.count, 0)
-    }, [products])
+        return products().reduce((prev, next) => {
+            return prev + next.realPrice * next.count
+        }, 0)
+    }, [products()])
 
     const productsCount = () => {
         let arr = {}
@@ -393,8 +393,6 @@ function Cart() {
         setCanSend(boolean)
     }, [checker, man])
 
-    console.log(products());
-
     return (
         <div className="oformleniye">
             <div className="window">
@@ -404,47 +402,53 @@ function Cart() {
                         <div className="obert">
                             <div className={`vashZakaz ${checker.tovari == 'start' ? 'empty' : checker.tovari == 'end' ? 'end' : ''}`}>
                                 <h3 className="pb-0">Ваш заказ</h3>
-                                <div className="obb">
-                                    <div className="tovari">
-                                        {
-                                            products().map((product, i) => (
-                                                <div className="tovar" key={product.id ? product.id : i}>
-                                                    <div className="imgt">
-                                                        <img className="img" src={product.product[0]} />
-                                                        {
-                                                            product.protection ? <img src={config.baseUrl + '/images/aqua.png'} className='aqua' />
-                                                            : null
-                                                        }
-                                                    </div>
-                                                    <div className="ff">
-                                                        <h4>{product.productName}</h4>
-                                                        <form>
-                                                            <button type="button" onClick={() => {
-                                                                setValue({ ...value, [i]: product.count })
-                                                                dispatch(changeCount({ id: product.id, value: Math.max(1, product.count - 1) }))
-                                                            }}>-</button>
-                                                            <input type="text" value={value[i]} onChange={e => setValue({ ...value, [i]: e.target.value })} onBlur={() => onBlur(product.id, i)} />
-                                                            <button type="button" onClick={() => {
-                                                                setValue({ ...value, [i]: product.count })
-                                                                dispatch(changeCount({ id: product.id, value: Math.min(10, product.count + 1) }))
-                                                            }}>+</button>
-                                                        </form>
-                                                        <div className="price">
-                                                            {
-                                                                product.price != product.realPrice ? (<del>{product.price} ₽</del>) : undefined
-                                                            }
-                                                            <h2>{product.realPrice} ₽</h2>
+                                {
+                                    loading ? (
+                                        <LoaderCart/>
+                                    ) : (
+                                        <div className="obb">
+                                            <div className="tovari">
+                                                {
+                                                    products().map((product, i) => (
+                                                        <div className="tovar" key={product._id ? product._id : i}>
+                                                            <div className="imgt">
+                                                                <img className="img" src={product.product[0]} />
+                                                                {
+                                                                    product.protection ? <img src={config.baseUrl + '/images/aqua.png'} className='aqua' />
+                                                                    : null
+                                                                }
+                                                            </div>
+                                                            <div className="ff">
+                                                                <h4>{product.productName}</h4>
+                                                                <form>
+                                                                    <button type="button" onClick={() => {
+                                                                        setValue({ ...value, [i]: product.count })
+                                                                        dispatch(changeCount({ id: product._id, value: Math.max(1, product.count - 1) }))
+                                                                    }}>-</button>
+                                                                    <input type="text" value={value[i]} onChange={e => setValue({ ...value, [i]: e.target.value })} onBlur={() => onBlur(product._id, i)} />
+                                                                    <button type="button" onClick={() => {
+                                                                        setValue({ ...value, [i]: product.count })
+                                                                        dispatch(changeCount({ id: product._id, value: Math.min(10, product.count + 1) }))
+                                                                    }}>+</button>
+                                                                </form>
+                                                                <div className="price">
+                                                                    {
+                                                                        product.price != product.realPrice ? (<del>{product.price} ₽</del>) : undefined
+                                                                    }
+                                                                    <h2>{product.realPrice} ₽</h2>
+                                                                </div>
+                                                                <button className="delete">
+                                                                    <img src={img.deleteB} onClick={() => dispatch(remove({ module: 'cart', id: product._id }))} />
+                                                                </button>
+                                                            </div>
                                                         </div>
-                                                        <button className="delete">
-                                                            <img src={img.deleteB} onClick={() => dispatch(remove({ module: 'cart', id: product.id }))} />
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            ))
-                                        }
-                                    </div>
-                                    <button className="change" onClick={() => setChecker({ ...checker, tovari: 'middle' })}>Изменить</button>
-                                </div>
+                                                    ))
+                                                }
+                                            </div>
+                                            <button className="change" onClick={() => setChecker({ ...checker, tovari: 'middle' })}>Изменить</button>
+                                        </div>
+                                    )
+                                }
                             </div>
                             <button className={`dalee ${checker.tovari == 'middle' ? '' : 'none'}`} onClick={() => {
                                 setChecker({ ...checker, tovari: 'end', delivery: 'middle' })

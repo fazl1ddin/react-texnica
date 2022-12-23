@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useLayoutEffect } from "react";
 import './css/App.css';
 import * as img from './img/index';
 import { Link, Route, Routes } from "react-router-dom";
@@ -169,8 +169,8 @@ function App(){
         }
     }, [])
 
-    useEffect(() => {
-        if(user.user){
+    useLayoutEffect(() => {
+        if(user.user && !user.loading){
             dispatch(setModule({data: user.user}))
         } else {
             if(localStorage.getItem('products')){
@@ -179,7 +179,7 @@ function App(){
                 localStorage.setItem('products', JSON.stringify(state))
             }
         }
-    }, [])
+    }, [user])
 
     return (<>
     {modal != ' ' ? modal == 'login' ? <div className="forModal">
@@ -287,6 +287,7 @@ function App(){
                                         <a onClick={() => {
                                             localStorage.removeItem('token')
                                             dispatch(clearUser())
+                                            setDroProfile(false)
                                         }}>
                                             Выйти
                                         </a>

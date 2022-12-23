@@ -1502,17 +1502,7 @@ const state = createSlice({
                 rates: 4,
             },
         ],
-        cart: (type && localStorage.getItem('products')) ? 
-            user.getInitialState().cart
-        : 
-            type ? 
-                user.getInitialState().cart
-            : 
-                localStorage.getItem('products') ? 
-                    JSON.parse(localStorage.getItem('products')).cart
-                :
-                    []
-        ,
+        cart: [],
         favorites: [],
         compare: [],
         viewed: [],
@@ -1549,6 +1539,8 @@ const state = createSlice({
                 const data = JSON.parse(localStorage.getItem('products'))
                 const index = data.cart.findIndex(product => product.id == id)
                 data.cart[index].count = value
+                localStorage.setItem('products', JSON.stringify(data))
+                state.cart[index].count = value
             }
         },
         setModule(state, payloads){
