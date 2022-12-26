@@ -286,21 +286,16 @@ const wayget = {
 
 function Cart() {
     const state = useSelector(state => state.products)
-    const user = useSelector(state => state.user)
 
     const dispatch = useDispatch()
 
-    const {data, loading} = useFindById(state.cart)
-
-    const products = useCallback(() => {
-        return data
-    }, [state.cart, user.user])
+    const {data, loading} = useFindById('cart')
 
     const total = useCallback(() => {
-        return products().reduce((prev, next) => {
+        return data.reduce((prev, next) => {
             return prev + next.realPrice * next.count
         }, 0)
-    }, [products()])
+    }, [data])
 
     const productsCount = () => {
         let arr = {}
@@ -409,7 +404,7 @@ function Cart() {
                                         <div className="obb">
                                             <div className="tovari">
                                                 {
-                                                    products().map((product, i) => (
+                                                    data.map((product, i) => (
                                                         <div className="tovar" key={product._id ? product._id : i}>
                                                             <div className="imgt">
                                                                 <img className="img" src={product.product[0]} />

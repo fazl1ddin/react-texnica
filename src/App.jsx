@@ -169,10 +169,21 @@ function App(){
         }
     }, [])
 
-    useLayoutEffect(() => {
-        if(user.user && !user.loading){
-            dispatch(setModule({data: user.user}))
-        } else {
+    // useEffect(() => {
+    //     if(user.user && !user.loading){
+    //         dispatch(setModule({data: user.user}))
+    //     } else {
+    //         if(localStorage.getItem('products')){
+    //             dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
+    //         } else {
+    //             localStorage.setItem('products', JSON.stringify(state))
+    //         }
+    //     }
+    // }, [user])
+
+    useEffect(() => {
+        if(user.user && user.loading === false) dispatch(setModule({data: user.user}))
+        else if(localStorage.getItem('token') === null){
             if(localStorage.getItem('products')){
                 dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
             } else {

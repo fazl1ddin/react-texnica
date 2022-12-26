@@ -3,7 +3,7 @@ import products from './products';
 import contents, { ok } from './contents';
 import user from './user';
 import { AiFillStar } from 'react-icons/ai'
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import config from "../api/config";
 import { useSelector } from "react-redux";
 
@@ -23,40 +23,39 @@ export function contentById(module, id){
     return store.getState()['contents'][module].find(item => item.id == id)
 }
 
-export function useFindById(ids){
+export function useFindById(module){
 
-    const cart = useSelector(state => state.products.cart)
+    const state = useSelector(state => state.products[module])
     const user = useSelector(state => state.user)
 
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(true)
 
-    useEffect(() => {
-        console.log('asdas');
-        if(ids.length){
-            console.log('oko');
+    useLayoutEffect(() => {
             (async () => {
-                await fetch(config.baseUrl + '/product', { method: 'POST', body: JSON.stringify(ids.map(item => ({_id: item.id}))) })
-                .then(result => result.json())
-                .then(result => {
-                    setData(result)
+                if(state.length > 0){
+                        await fetch(config.baseUrl + '/product', { method: 'POST', body: JSON.stringify(state.map(item => ({_id: item.id}))) })
+                        .then(result => result.json())
+                        .then(result => {
+                            setData(result.length ? result.map((item, index) => ({
+                                ...item,
+                                get realPrice(){
+                                    return item.price - (item.price * item.sale / 100)
+                                },
+                                count: state[index]?.count ? state[index].count : 1
+                            })) : [])
+                            setLoading(false)
+                        })
+                        .catch(e => console.log(e))
+                } else {
                     setLoading(false)
-                })
-                .catch(e => console.log(e))
+                    setData([])
+                }
             })()
-        } else {
-            setLoading(false)
-        }
-    }, [])
+    }, [state, user])
 
     return {
-        data: data.length ? data.map((item, index) => ({
-            ...item,
-            get realPrice(){
-                return item.price - (item.price * item.sale / 100)
-            },
-            count: cart[index]?.count ? cart[index].count : 1
-        })) : [],
+        data,
         loading
     }
 }
