@@ -11,6 +11,11 @@ const user = createSlice({
         clearUser(state){
             state.user = undefined
             state.loading = false
+        },
+        setUser(state, payloads){
+            const {user} = payloads.payload
+            state.user = user
+            state.loading = false
         }
     },
     extraReducers: (builder) => {
@@ -33,4 +38,4 @@ const user = createSlice({
 })
 
 export default user
-export const {clearUser} = user.actions
+export const {clearUser, setUser} = user.actions

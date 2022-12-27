@@ -169,28 +169,21 @@ function App(){
         }
     }, [])
 
-    // useEffect(() => {
-    //     if(user.user && !user.loading){
-    //         dispatch(setModule({data: user.user}))
-    //     } else {
-    //         if(localStorage.getItem('products')){
-    //             dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
-    //         } else {
-    //             localStorage.setItem('products', JSON.stringify(state))
-    //         }
-    //     }
-    // }, [user])
-
     useEffect(() => {
         if(localStorage.getItem('token') === null){
+            console.log('token null');
             if(localStorage.getItem('products')){
                 dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
             } else {
                 localStorage.setItem('products', JSON.stringify(state))
             }
         }
-        else if(user.user && user.loading === false) dispatch(setModule({data: user.user}))
+        else if(user.user && user.loading === false) {
+            console.log('user has');
+            dispatch(setModule({data: user.user}))
+        }
         else {
+            console.log('no token no user');
             if(localStorage.getItem('products')){
                 dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
             } else {

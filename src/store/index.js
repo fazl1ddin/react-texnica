@@ -32,26 +32,29 @@ export function useFindById(module){
     const [loading, setLoading] = useState(true)
 
     useLayoutEffect(() => {
-            (async () => {
-                if(state.length > 0){
-                        await fetch(config.baseUrl + '/product', { method: 'POST', body: JSON.stringify(state.map(item => ({_id: item.id}))) })
-                        .then(result => result.json())
-                        .then(result => {
-                            setData(result.length ? result.map((item, index) => ({
-                                ...item,
-                                get realPrice(){
-                                    return item.price - (item.price * item.sale / 100)
-                                },
-                                count: state[index]?.count ? state[index].count : 1
-                            })) : [])
-                            setLoading(false)
-                        })
-                        .catch(e => console.log(e))
-                } else {
-                    setLoading(false)
-                    setData([])
-                }
-            })()
+            if(state.length){
+                (async () => {
+                    await fetch(config.baseUrl + '/product', { method: 'POST', body: JSON.stringify(state.map(item => ({_id: item.id}))) })
+                    .then(result => result.json())
+                    .then(result => {
+                        if(result.length) {
+                            setData(
+                                result.map((item, index) => ({
+                                    ...item,
+                                    get realPrice(){
+                                        return item.price - (item.price * item.sale / 100)
+                                    },
+                                    count: state[index]?.count ? state[index].count : 1
+                            })))
+                        }
+                        setLoading(false)
+                    })
+                    .catch(e => console.log(e))
+                })()
+            } else {
+                setLoading(false)
+                setData([])
+            }
     }, [state, user])
 
     return {
