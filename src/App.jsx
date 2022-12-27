@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from "react";
+import React from "react";
 import './css/App.css';
 import * as img from './img/index';
 import { Link, Route, Routes } from "react-router-dom";
@@ -19,12 +19,13 @@ import News from "./views/News";
 import Promo from "./views/Promo";
 import Promos from "./views/Promos";
 import Catalog from "./views/Catalog";
-import { clearUser } from "./store/user";
+import { clearUser, setUser } from "./store/user";
 import { useEffect } from "react";
 import LoginButton from "./components/Loaders/LoginButton";
 import Auth from "./store/auth";
 import { useRef } from "react";
 import { setModule } from "./store/products";
+import config from "./api/config";
 
 const DropDownElem = styled.ul`
     &.open {
@@ -164,33 +165,56 @@ function App(){
     }, [forProfileDrop.current])
 
     useEffect(() => {
-        if(localStorage.getItem('token')){
-            dispatch(Auth({logType: 'token', token: localStorage.getItem('token')}))
-        }
+        (async () => {
+            if(localStorage.getItem('token')){
+                await fetch(config.baseUrl + '/login', {method: 'POST', body: JSON.stringify({logType: 'token', token: localStorage.getItem('token')})})
+                .then(result => result.json())
+                .then(result => {
+                    if(result.user){
+                        dispatch(setUser(result))
+                        dispatch(setModule({data: result.user}))
+                    }
+                })
+                .catch(e => {
+                    localStorage.removeItem('token')
+                    if(localStorage.getItem('products')){
+                        dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
+                    } else {
+                        localStorage.setItem('products', JSON.stringify(state))
+                    }
+                })
+            } else {
+                if(localStorage.getItem('products')){
+                    dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
+                } else {
+                    localStorage.setItem('products', JSON.stringify(state))
+                }
+            }
+        })()
     }, [])
 
-    useEffect(() => {
-        if(localStorage.getItem('token') === null){
-            console.log('token null');
-            if(localStorage.getItem('products')){
-                dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
-            } else {
-                localStorage.setItem('products', JSON.stringify(state))
-            }
-        }
-        else if(user.user && user.loading === false) {
-            console.log('user has');
-            dispatch(setModule({data: user.user}))
-        }
-        else {
-            console.log('no token no user');
-            if(localStorage.getItem('products')){
-                dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
-            } else {
-                localStorage.setItem('products', JSON.stringify(state))
-            }
-        }
-    }, [user])
+    // useEffect(() => {
+    //     if(localStorage.getItem('token') === null){
+    //         console.log('token null');
+    //         if(localStorage.getItem('products')){
+    //             dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
+    //         } else {
+    //             localStorage.setItem('products', JSON.stringify(state))
+    //         }
+    //     }
+    //     else if(user.user && user.loading === false) {
+    //         console.log('user has');
+    //         dispatch(setModule({data: user.user}))
+    //     }
+    //     else {
+    //         console.log('no token no user');
+    //         if(localStorage.getItem('products')){
+    //             dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
+    //         } else {
+    //             localStorage.setItem('products', JSON.stringify(state))
+    //         }
+    //     }
+    // }, [user])
 
     return (<>
     {modal != ' ' ? modal == 'login' ? <div className="forModal">
@@ -223,12 +247,27 @@ function App(){
                         <input type="checkbox" name="save" id="save" />
                         <label htmlFor="save">Запомнить меня</label>
                     </div>
-                    <button type="button" onClick={() => {
+                    <button type="button" onClick={async () => {
                         let obj = {};
                         login.forEach((item, index) => {
                             obj[item.name] = item.value
                         })
-                        dispatch(Auth({logType: 'pass', obj: obj}))
+                        await fetch(config.baseUrl + '/login', {method: 'POST', body: JSON.stringify({logType: 'pass', obj})})
+                        .then(result => result.json())
+                        .then(result => {
+                            if(result.user){
+                                dispatch(setUser(result))
+                                dispatch(setModule({data: result.user}))
+                                localStorage.setItem('token', result.token)
+                            }
+                        })
+                        .catch(e => {
+                            if(localStorage.getItem('products')){
+                                dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
+                            } else {
+                                localStorage.setItem('products', JSON.stringify(state))
+                            }
+                        })
                         setModal(' ')
                     }}>Войти</button>
                     <a onClick={() => setModal('singUp')}>Зарегистрироваться</a>
@@ -299,6 +338,11 @@ function App(){
                                             localStorage.removeItem('token')
                                             dispatch(clearUser())
                                             setDroProfile(false)
+                                            if(localStorage.getItem('products')){
+                                                dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
+                                            } else {
+                                                localStorage.setItem('products', JSON.stringify(state))
+                                            }
                                         }}>
                                             Выйти
                                         </a>
