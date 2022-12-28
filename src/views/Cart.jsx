@@ -2,7 +2,7 @@ import React, { useLayoutEffect } from 'react';
 import '../css/Cart.css';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useFindById } from '../store/index';
+import { store, useFindById } from '../store/index';
 import { remove, changeCount } from '../store/products';
 import * as img from '../img/index';
 import { useState } from 'react';

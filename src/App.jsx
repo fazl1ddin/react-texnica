@@ -19,7 +19,7 @@ import News from "./views/News";
 import Promo from "./views/Promo";
 import Promos from "./views/Promos";
 import Catalog from "./views/Catalog";
-import { clearUser, setUser } from "./store/user";
+import { clearUser, setLoading, setUser } from "./store/user";
 import { useEffect } from "react";
 import LoginButton from "./components/Loaders/LoginButton";
 import Auth from "./store/auth";
@@ -176,6 +176,7 @@ function App(){
                     }
                 })
                 .catch(e => {
+                    dispatch(setLoading())
                     localStorage.removeItem('token')
                     if(localStorage.getItem('products')){
                         dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
@@ -184,6 +185,7 @@ function App(){
                     }
                 })
             } else {
+                dispatch(setLoading())
                 if(localStorage.getItem('products')){
                     dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
                 } else {
@@ -252,6 +254,7 @@ function App(){
                         login.forEach((item, index) => {
                             obj[item.name] = item.value
                         })
+                        // dispatch(Auth({logType: 'pass', obj}))
                         await fetch(config.baseUrl + '/login', {method: 'POST', body: JSON.stringify({logType: 'pass', obj})})
                         .then(result => result.json())
                         .then(result => {
@@ -366,7 +369,7 @@ function App(){
                     {user.loading ? <LoginButton></LoginButton> : user.user ? <div onClick={() => {
                         setDroProfile(!droProfileB)
                     }}>
-                        <div>
+                        <div style={{width: 100,  display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                             <img src={img.profile} alt="" />
                         </div>
                     </div> 

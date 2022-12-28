@@ -3,7 +3,7 @@ import products from './products';
 import contents, { ok } from './contents';
 import user from './user';
 import { AiFillStar } from 'react-icons/ai'
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import config from "../api/config";
 import { useSelector } from "react-redux";
 
@@ -12,15 +12,15 @@ export const store = configureStore({
         products: products.reducer,
         contents: contents.reducer,
         user: user.reducer
-    }
+    },
 })
 
 export function some(module, id){
-    return store.getState()['products'][module].some(item => item.id == id)
+    return false 
 }
 
 export function contentById(module, id){
-    return store.getState()['contents'][module].find(item => item.id == id)
+    return undefined 
 }
 
 export function useFindById(module){
@@ -31,7 +31,7 @@ export function useFindById(module){
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(true)
 
-    useLayoutEffect(() => {
+    useEffect(() => {
             if(state.length){
                 (async () => {
                     await fetch(config.baseUrl + '/product', { method: 'POST', body: JSON.stringify(state.map(item => ({_id: item.id}))) })
