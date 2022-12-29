@@ -26,6 +26,7 @@ import Auth from "./store/auth";
 import { useRef } from "react";
 import { setModule } from "./store/products";
 import config from "./api/config";
+import { storeProducts, storeUser } from "./store";
 
 const DropDownElem = styled.ul`
     &.open {
@@ -84,7 +85,9 @@ const routers = [
 ]
 
 function App(){
-    const dispatch = useDispatch()
+    const dispatchProducts = storeProducts.dispatch
+
+    const dispatchUser = storeUser.dispatch
 
     const forNavDrop = useRef()
 
@@ -94,9 +97,9 @@ function App(){
 
     const [profileHeight, setProfileHeight] = useState(0)
 
-    const state = useSelector(state => state.products)
+    const state = storeProducts.getState().products
 
-    const user = useSelector(state => state.user)
+    const user = storeUser.getState().user
 
     const [droProfileB, setDroProfile] = useState(false)
 
@@ -171,52 +174,29 @@ function App(){
                 .then(result => result.json())
                 .then(result => {
                     if(result.user){
-                        dispatch(setUser(result))
-                        dispatch(setModule({data: result.user}))
+                        dispatchUser(setUser(result))
+                        dispatchProducts(setModule({data: result.user}))
                     }
                 })
                 .catch(e => {
-                    dispatch(setLoading())
+                    dispatchUser(setLoading())
                     localStorage.removeItem('token')
                     if(localStorage.getItem('products')){
-                        dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
+                        dispatchProducts(setModule({data: JSON.parse(localStorage.getItem('products'))}))
                     } else {
                         localStorage.setItem('products', JSON.stringify(state))
                     }
                 })
             } else {
-                dispatch(setLoading())
+                dispatchUser(setLoading())
                 if(localStorage.getItem('products')){
-                    dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
+                    dispatchProducts(setModule({data: JSON.parse(localStorage.getItem('products'))}))
                 } else {
                     localStorage.setItem('products', JSON.stringify(state))
                 }
             }
         })()
     }, [])
-
-    // useEffect(() => {
-    //     if(localStorage.getItem('token') === null){
-    //         console.log('token null');
-    //         if(localStorage.getItem('products')){
-    //             dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
-    //         } else {
-    //             localStorage.setItem('products', JSON.stringify(state))
-    //         }
-    //     }
-    //     else if(user.user && user.loading === false) {
-    //         console.log('user has');
-    //         dispatch(setModule({data: user.user}))
-    //     }
-    //     else {
-    //         console.log('no token no user');
-    //         if(localStorage.getItem('products')){
-    //             dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
-    //         } else {
-    //             localStorage.setItem('products', JSON.stringify(state))
-    //         }
-    //     }
-    // }, [user])
 
     return (<>
     {modal != ' ' ? modal == 'login' ? <div className="forModal">
@@ -254,19 +234,19 @@ function App(){
                         login.forEach((item, index) => {
                             obj[item.name] = item.value
                         })
-                        // dispatch(Auth({logType: 'pass', obj}))
+                        // dispatchUser(Auth({logType: 'pass', obj}))
                         await fetch(config.baseUrl + '/login', {method: 'POST', body: JSON.stringify({logType: 'pass', obj})})
                         .then(result => result.json())
                         .then(result => {
                             if(result.user){
-                                dispatch(setUser(result))
-                                dispatch(setModule({data: result.user}))
+                                dispatchUser(setUser(result))
+                                dispatchProducts(setModule({data: result.user}))
                                 localStorage.setItem('token', result.token)
                             }
                         })
                         .catch(e => {
                             if(localStorage.getItem('products')){
-                                dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
+                                dispatchProducts(setModule({data: JSON.parse(localStorage.getItem('products'))}))
                             } else {
                                 localStorage.setItem('products', JSON.stringify(state))
                             }
@@ -339,10 +319,10 @@ function App(){
                                     <li ref={forProfileDrop}>
                                         <a onClick={() => {
                                             localStorage.removeItem('token')
-                                            dispatch(clearUser())
+                                            dispatchUser(clearUser())
                                             setDroProfile(false)
                                             if(localStorage.getItem('products')){
-                                                dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
+                                                dispatchProducts(setModule({data: JSON.parse(localStorage.getItem('products'))}))
                                             } else {
                                                 localStorage.setItem('products', JSON.stringify(state))
                                             }

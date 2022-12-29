@@ -1,7 +1,7 @@
 import * as img from './../img/index'
 import { createSlice, current } from "@reduxjs/toolkit";
-import { store } from '.';
 import config from '../api/config';
+import { storeUser } from '.';
 
 const state = createSlice({
     name: 'products',
@@ -1509,14 +1509,14 @@ const state = createSlice({
     },
     reducers: {
         add(state, payloads){
-            const type = store.getState().user
+            const type = storeUser.getState().user.user
             const {module, id, count} = payloads.payload
             if(type){
                 (async () => {
-                    const userId = store.getState().user._id
+                    const userId = storeUser.getState().user._id
                     console.log(userId);
                     let res;
-                    await fetch(config.baseUrl + 'update-user', { 
+                    await fetch(config.baseUrl + '/update-user', { 
                         method: 'PUT',
                         body: JSON.stringify(
                             {
@@ -1536,14 +1536,15 @@ const state = createSlice({
                     }
                 })()
             } else {
-                const data = JSON.parse(localStorage.getItem('products'))
-                data[module].push({ id, count})
-                localStorage.setItem('products', JSON.stringify(data))
-                state[module].push({ id, count})
+                // const data = JSON.parse(localStorage.getItem('products'))
+                // data[module].push({ id, count})
+                // localStorage.setItem('products', JSON.stringify(data))
+                console.log(current(state[module]));
+                state[module] = [...state[module], {id, count}]
             }
         },
         remove(state, payloads){
-            const type = store.getState().user
+            const type = storeUser.getState().user
             const {module, id} = payloads.payload
             if(type){
                 state[module] = state[module].filter(product => product.id != id)
@@ -1555,7 +1556,7 @@ const state = createSlice({
             }
         },
         changeCount(state, payloads){
-            const type = store.getState().user
+            const type = storeUser.getState().user
             const {id, value} = payloads.payload
             if(type){
                 const index = state.cart.findIndex(product => product.id == id)

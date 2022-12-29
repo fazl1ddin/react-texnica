@@ -6,15 +6,14 @@ import { useContext, useState } from 'react';
 import DropDown from '../contexts/dropDown';
 import { useSelector, useDispatch } from 'react-redux';
 import { add, remove } from './../store/products';
-import { some, stars } from './../store/index';
+import { some, stars, storeProducts } from './../store/index';
 import useGetData from '../hooks/getData'
 import Loader from '../components/Loaders/Loader';
 import Products4Loader from '../components/Loaders/Products4Loader';
 import config from '../api/config';
 
 function IndexMain(){
-
-    const dispatch = useDispatch()
+    const dispatch = storeProducts.dispatch
 
     const dropDown = useContext(DropDown)
 

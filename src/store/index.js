@@ -7,12 +7,22 @@ import { useEffect, useState } from "react";
 import config from "../api/config";
 import { useSelector } from "react-redux";
 
-export const store = configureStore({
+export const storeProducts = configureStore({
     reducer: {
-        products: products.reducer,
-        contents: contents.reducer,
-        user: user.reducer
+        products: products.reducer
     },
+})
+
+export const storeContent = configureStore({
+    reducer: {
+        contents: contents.reducer
+    }
+})
+
+export const storeUser = configureStore({
+    reducer: {
+        user: user.reducer
+    }
 })
 
 export function some(module, id){
