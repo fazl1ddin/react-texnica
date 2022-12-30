@@ -1,7 +1,7 @@
 import React from 'react';
 import './../css/Product.css';
 import { Link, useLocation } from 'react-router-dom';
-import { useFindById, some, storeProducts } from '../store';
+import { useFindById, some, store } from '../store';
 import { useState } from 'react';
 import { stars } from '../store';
 import { useDispatch } from 'react-redux';
@@ -11,7 +11,7 @@ import * as img from './../img/index';
 function rec(){
     const arr = []
     for(let i = 0; i < 4; i++){
-        const allProducts = storeProducts.getState()['products']['allProducts']
+        const allProducts = store.getState()['products']['allProducts']
         arr[i] = allProducts[Math.floor(Math.random() * ((allProducts.length - 1) - 0 + 1)) + 0]
     }
     return arr
@@ -20,7 +20,7 @@ function rec(){
 const recomendtion = rec()
 
 function Product(){
-    const dispatch = storeProducts.dispatch
+    const dispatch = useDispatch()
 
     const [current, setCurrent] = useState(0)
 

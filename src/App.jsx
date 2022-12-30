@@ -26,7 +26,7 @@ import Auth from "./store/auth";
 import { useRef } from "react";
 import { setModule } from "./store/products";
 import config from "./api/config";
-import { storeProducts, storeUser } from "./store";
+import { storeUser } from "./store";
 
 const DropDownElem = styled.ul`
     &.open {
@@ -85,9 +85,7 @@ const routers = [
 ]
 
 function App(){
-    const dispatchProducts = storeProducts.dispatch
-
-    const dispatchUser = storeUser.dispatch
+    const dispatch = useDispatch()
 
     const forNavDrop = useRef()
 
@@ -97,9 +95,13 @@ function App(){
 
     const [profileHeight, setProfileHeight] = useState(0)
 
-    const state = storeProducts.getState().products
+    const state = useSelector(state => state.products)
 
-    const user = storeUser.getState().user
+    const user = useSelector(state => state.user)
+
+    const [Suzer, setSuzer] = useState(undefined)
+
+    const [loading, setLoading] = useState(true)
 
     const [droProfileB, setDroProfile] = useState(false)
 
@@ -155,6 +157,8 @@ function App(){
         }
     ])
 
+
+
     useEffect(() => {
         if(forNavDrop.current){
             setNavHeight(Number(forNavDrop.current.offsetHeight))
@@ -174,29 +178,35 @@ function App(){
                 .then(result => result.json())
                 .then(result => {
                     if(result.user){
-                        dispatchUser(setUser(result))
-                        dispatchProducts(setModule({data: result.user}))
+                        storeUser.dispatch(setUser(result))
+                        dispatch(setModule({data: result.user}))
                     }
                 })
                 .catch(e => {
-                    dispatchUser(setLoading())
+                    storeUser.dispatch(setLoading())
                     localStorage.removeItem('token')
                     if(localStorage.getItem('products')){
-                        dispatchProducts(setModule({data: JSON.parse(localStorage.getItem('products'))}))
+                        dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
                     } else {
                         localStorage.setItem('products', JSON.stringify(state))
                     }
                 })
             } else {
-                dispatchUser(setLoading())
+                dispatch(setLoading())
                 if(localStorage.getItem('products')){
-                    dispatchProducts(setModule({data: JSON.parse(localStorage.getItem('products'))}))
+                    dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
                 } else {
                     localStorage.setItem('products', JSON.stringify(state))
                 }
             }
         })()
     }, [])
+
+    storeUser.subscribe(() => {
+        const {loading, user} = storeUser.getState().user
+        setLoading(loading)
+        setSuzer(user)
+    })
 
     return (<>
     {modal != ' ' ? modal == 'login' ? <div className="forModal">
@@ -234,19 +244,19 @@ function App(){
                         login.forEach((item, index) => {
                             obj[item.name] = item.value
                         })
-                        // dispatchUser(Auth({logType: 'pass', obj}))
+                        // dispatch(Auth({logType: 'pass', obj}))
                         await fetch(config.baseUrl + '/login', {method: 'POST', body: JSON.stringify({logType: 'pass', obj})})
                         .then(result => result.json())
                         .then(result => {
                             if(result.user){
-                                dispatchUser(setUser(result))
-                                dispatchProducts(setModule({data: result.user}))
+                                dispatch(setUser(result))
+                                dispatch(setModule({data: result.user}))
                                 localStorage.setItem('token', result.token)
                             }
                         })
                         .catch(e => {
                             if(localStorage.getItem('products')){
-                                dispatchProducts(setModule({data: JSON.parse(localStorage.getItem('products'))}))
+                                dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
                             } else {
                                 localStorage.setItem('products', JSON.stringify(state))
                             }
@@ -302,7 +312,7 @@ function App(){
                 </div>
                 <div className="headerNavSearch">
                     {
-                        user.user !== undefined ? (
+                        Suzer !== undefined ? (
                             <DropDownElem elementHeight={6 * profileHeight} className={`profileDrop ${droProfileB ? 'open' : ''}`}>
                                 <ul>
                                     {
@@ -319,10 +329,10 @@ function App(){
                                     <li ref={forProfileDrop}>
                                         <a onClick={() => {
                                             localStorage.removeItem('token')
-                                            dispatchUser(clearUser())
+                                            dispatch(clearUser())
                                             setDroProfile(false)
                                             if(localStorage.getItem('products')){
-                                                dispatchProducts(setModule({data: JSON.parse(localStorage.getItem('products'))}))
+                                                dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
                                             } else {
                                                 localStorage.setItem('products', JSON.stringify(state))
                                             }
@@ -346,7 +356,7 @@ function App(){
                             </Link>
                         ))
                     }
-                    {user.loading ? <LoginButton></LoginButton> : user.user ? <div onClick={() => {
+                    {loading ? <LoginButton></LoginButton> : Suzer ? <div onClick={() => {
                         setDroProfile(!droProfileB)
                     }}>
                         <div style={{width: 100,  display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
