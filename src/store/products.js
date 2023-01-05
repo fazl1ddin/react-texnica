@@ -1525,14 +1525,11 @@ const state = createSlice({
                                 }
                             }
                         ),
-                        headers: {
-                            // 'Access-Control-Allow-Methods': '*'
-                        }
                     })
                     .then(result => result.json())
                     .then(result => res = result)
                     if(res.message === 'User succesfully updated'){
-                        state[module] = [...state[module], { id, count}]
+                        state[module].push({ id, count})
                     } else {
 
                     }

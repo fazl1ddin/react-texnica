@@ -22,7 +22,7 @@ export const storeUser = configureStore({
 })
 
 export function some(module, id){
-    return false 
+    return store.getState()['products'][module].some(item => item.id == id)
 }
 
 export function contentById(module, id){
@@ -36,6 +36,8 @@ export function useFindById(module){
 
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(true)
+
+    console.log(state);
 
     useEffect(() => {
             if(state.length){

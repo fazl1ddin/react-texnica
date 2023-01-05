@@ -157,8 +157,6 @@ function App(){
         }
     ])
 
-
-
     useEffect(() => {
         if(forNavDrop.current){
             setNavHeight(Number(forNavDrop.current.offsetHeight))
@@ -180,6 +178,8 @@ function App(){
                     if(result.user){
                         storeUser.dispatch(setUser(result))
                         dispatch(setModule({data: result.user}))
+                    } else {
+                        throw result.message
                     }
                 })
                 .catch(e => {
@@ -192,7 +192,7 @@ function App(){
                     }
                 })
             } else {
-                dispatch(setLoading())
+                storeUser.dispatch(setLoading())
                 if(localStorage.getItem('products')){
                     dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
                 } else {
@@ -249,7 +249,7 @@ function App(){
                         .then(result => result.json())
                         .then(result => {
                             if(result.user){
-                                dispatch(setUser(result))
+                                storeUser.dispatch(setUser(result))
                                 dispatch(setModule({data: result.user}))
                                 localStorage.setItem('token', result.token)
                             }
@@ -329,7 +329,7 @@ function App(){
                                     <li ref={forProfileDrop}>
                                         <a onClick={() => {
                                             localStorage.removeItem('token')
-                                            dispatch(clearUser())
+                                            storeUser.dispatch(clearUser())
                                             setDroProfile(false)
                                             if(localStorage.getItem('products')){
                                                 dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
