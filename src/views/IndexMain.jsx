@@ -5,16 +5,14 @@ import * as img from './../img/index';
 import { useContext, useState } from 'react';
 import DropDown from '../contexts/dropDown';
 import { useSelector, useDispatch } from 'react-redux';
-import { add, remove } from './../store/products';
-import { some, stars } from './../store/index';
+import { some, stars, updateOne } from './../store/index';
 import useGetData from '../hooks/getData'
 import Loader from '../components/Loaders/Loader';
 import Products4Loader from '../components/Loaders/Products4Loader';
 import config from '../api/config';
+import CardUpdate from '../components/ButtonsForUpdate/CardUpdate';
 
 function IndexMain(){
-
-    const dispatch = useDispatch()
 
     const dropDown = useContext(DropDown)
 
@@ -88,7 +86,7 @@ function IndexMain(){
                                 <div className="xityProdajBox mb-15" key={every._id}>
                                     <Link to={`/product/${every._id}`}>
                                         <div className="sigveiWrap">
-                                            <img onClick={() => dispatch( some('viewed', every._id) ? remove({module: 'viewed', id: every._id}) : add({ module: 'viewed', id: every._id }))} src={`${every.product[0]}`} className='sigvei' />
+                                            <img onClick={() => updateOne(some('viewed', every._id) ? 'remove' : 'add', 'viewed', every._id)} src={`${every.product[0]}`} className='sigvei' />
                                         </div>
                                     </Link>
                                     {
@@ -125,17 +123,13 @@ function IndexMain(){
                                             <h4><span className="spanone">{every.sale} %</span> <span className="spantwo">— {every.space} ₽</span></h4>
                                         </div>
                                         <div className="statslike">
-                                            <div className={`likebutton arbuttons ${!some('favorites', every._id) ? 'add' : 'remove'}`} onClick={() => dispatch( some('favorites', every._id) ? remove({module: 'favorites', id: every._id}) : add({ module: 'favorites', id: every._id }))}>
+                                            <div className={`likebutton arbuttons ${some('favorites', every._id) ?  'remove' : 'add'}`} onClick={() => updateOne(some('favorites', every._id) ? 'remove' : 'add', 'favorites', every._id)}>
                                             </div>
-                                            <div className={`comparebutton arbuttons ${!some('compare', every._id) ? 'add' : 'remove'}`}  onClick={() => dispatch( some('compare', every._id) ? remove({module: 'compare', id: every._id}) : add({ module: 'compare', id: every._id }))}>
+                                            <div className={`comparebutton arbuttons ${some('compare', every._id) ?  'remove' : 'add'}`}  onClick={() => updateOne(some('compare', every._id) ? 'remove' : 'add', 'compare', every._id)}>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="cart">
-                                        <a href="">Купить в 1 клик</a>
-                                        <div className={`cartbutton arbuttons ${!some('cart', every._id) ? 'add' : 'remove'}`} onClick={() => dispatch( some('cart', every._id) ? remove({module: 'cart', id: every._id}) : add({ module: 'cart', id: every._id, count: 1 }))}>
-                                        </div>
-                                    </div>
+                                    <CardUpdate id={every._id}/>
                                 </div>
                             ))
                         }

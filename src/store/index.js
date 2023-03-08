@@ -1,7 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
-import products from './products';
+import products, { actions, setModule } from './products';
 import contents, { ok } from './contents';
-import user from './user';
+import user, { setUser } from './user';
+import { check, Checks, push, result } from './check';
 import { AiFillStar } from 'react-icons/ai'
 import { useEffect, useState } from "react";
 import config from "../api/config";
@@ -21,8 +22,38 @@ export const storeUser = configureStore({
     }
 })
 
-export function some(module, id){
-    return store.getState()['products'][module].some(item => item.id == id)
+export const storeProducts = configureStore({
+    reducer: {
+        products: products.reducer
+    }
+})
+
+export const storeResultCheck = configureStore({
+    reducer: {
+        result: result.reducer
+    }
+})
+
+export const storeCheck = configureStore({
+    reducer: {
+        check: check.reducer
+    }
+})
+
+export function useSome(id){
+    let arr = []
+    storeCheck.subscribe(() => {
+        arr = storeCheck.getState().check.checks
+    })
+    if(!arr.includes(id)) storeCheck.dispatch(push(id))
+}
+
+export function some(id){
+    let arr = []
+    storeResultCheck.subscribe(() => {
+        arr = storeResultCheck.getState().result.result
+    })
+    return arr.includes(id)
 }
 
 export function contentById(module, id){
@@ -36,8 +67,6 @@ export function useFindById(module){
 
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(true)
-
-    console.log(state);
 
     useEffect(() => {
             if(state.length){
@@ -68,6 +97,39 @@ export function useFindById(module){
     return {
         data,
         loading
+    }
+}
+
+export function updateOne(method, module, id, count){
+    const type = storeUser.getState().user.user
+    if(type){
+        (async () => {
+            const userId = storeUser.getState().user.user._id
+            let res;
+            await fetch(config.baseUrl + '/update-user', { 
+                method: 'PUT',
+                body: JSON.stringify(
+                    {
+                        id: userId,
+                        module,
+                        data: {id, count}
+                    }
+                ),
+            })
+            .then(result => result.json())
+            .then(result => res = result)
+            if(res.message === 'User succesfully updated'){
+                storeUser.dispatch(setUser({user: res.user}))
+                storeProducts.dispatch(setModule({data: res.user}))
+            } else {
+
+            }
+        })()
+    } else {
+        const data = JSON.parse(localStorage.getItem('products'))
+        data[module].push({ id, count})
+        localStorage.setItem('products', JSON.stringify(data))
+        storeProducts.dispatch(actions[method]({module, id, count}))
     }
 }
 

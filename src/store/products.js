@@ -1,7 +1,6 @@
 import * as img from './../img/index'
 import { createSlice, current } from "@reduxjs/toolkit";
-import { store, storeUser } from '.';
-import config from '../api/config';
+import { store, storeUser, UpdateOne } from '.';
 
 const state = createSlice({
     name: 'products',
@@ -1509,37 +1508,8 @@ const state = createSlice({
     },
     reducers: {
         add(state, payloads){
-            const type = storeUser.getState().user.user
             const {module, id, count} = payloads.payload
-            if(type){
-                (async () => {
-                    const userId = storeUser.getState().user.user._id
-                    let res;
-                    await fetch(config.baseUrl + '/update-user', { 
-                        method: 'PUT',
-                        body: JSON.stringify(
-                            {
-                                id: userId,
-                                arr: {
-                                    [module]: {id, count}
-                                }
-                            }
-                        ),
-                    })
-                    .then(result => result.json())
-                    .then(result => res = result)
-                    if(res.message === 'User succesfully updated'){
-                        state[module].push({ id, count})
-                    } else {
-
-                    }
-                })()
-            } else {
-                const data = JSON.parse(localStorage.getItem('products'))
-                data[module].push({ id, count})
-                localStorage.setItem('products', JSON.stringify(data))
-                state[module].push({ id, count})
-            }
+            state[module].push({ id, count})
         },
         remove(state, payloads){
             const type = storeUser.getState().user.user
@@ -1579,4 +1549,5 @@ const state = createSlice({
 })
 
 export default state
-export const {add, remove, changeCount, setModule} = state.actions
+export const actions = state.actions
+export const { setModule, changeCount } = state.actions

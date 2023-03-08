@@ -26,7 +26,8 @@ import Auth from "./store/auth";
 import { useRef } from "react";
 import { setModule } from "./store/products";
 import config from "./api/config";
-import { storeUser } from "./store";
+import { storeCheck, storeUser } from "./store";
+import { Checks } from "./store/check";
 
 const DropDownElem = styled.ul`
     &.open {
@@ -97,8 +98,6 @@ function App(){
 
     const state = useSelector(state => state.products)
 
-    const user = useSelector(state => state.user)
-
     const [Suzer, setSuzer] = useState(undefined)
 
     const [loading, setLoading] = useState(true)
@@ -156,6 +155,25 @@ function App(){
             valid: false
         }
     ])
+
+    const [checks, setChecks] = useState([])
+
+    storeCheck.subscribe(() => {
+        setChecks(storeCheck.getState().check.checks)
+    })
+
+    useEffect(() => {
+        (async () => {
+            const even = checks.length
+            await new Promise(resolve => setTimeout(resolve, 1500))
+            const after = checks.length
+            console.log('even => ', even);
+            console.log('after => ', after);
+            if(even == after){
+                storeCheck.dispatch(Checks({arr: checks, module: 'cart'}))
+            }
+        })()
+    }, [checks])
 
     useEffect(() => {
         if(forNavDrop.current){

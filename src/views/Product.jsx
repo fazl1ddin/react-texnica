@@ -1,11 +1,10 @@
 import React from 'react';
 import './../css/Product.css';
 import { Link, useLocation } from 'react-router-dom';
-import { useFindById, some, store } from '../store';
+import { useFindById, some, store, updateOne } from '../store';
 import { useState } from 'react';
 import { stars } from '../store';
 import { useDispatch } from 'react-redux';
-import { add, remove } from './../store/products';
 import * as img from './../img/index';
 
 function rec(){
@@ -105,9 +104,9 @@ function Product(){
                                 </div>
                             </div>
                             <div className="statslike">
-                                <div className={`likebutton arbuttons ${!some('favorites', products.id) ? 'add' : 'remove'}`} onClick={() => dispatch( some('favorites', products.id) ? remove({module: 'favorites', id: products.id}) : add({ module: 'favorites', id: products.id }))}>
+                                <div className={`likebutton arbuttons ${!some('favorites', products.id) ? 'add' : 'remove'}`} onClick={() => updateOne(some('favorites', products.id) ? 'remove' : 'add', 'favorites', products.id)}>
                                 </div>
-                                <div className={`comparebutton arbuttons ${!some('compare', products.id) ? 'add' : 'remove'}`}  onClick={() => dispatch( some('compare', products.id) ? remove({module: 'compare', id: products.id}) : add({ module: 'compare', id: products.id }))}>
+                                <div className={`comparebutton arbuttons ${!some('compare', products.id) ? 'add' : 'remove'}`}  onClick={() => updateOne(some('compare', products.id) ? 'remove' : 'add', 'compare', products.id)}>
                                 </div>
                             </div>
                         </div>
@@ -120,7 +119,7 @@ function Product(){
                                 <h3>{products.realPrice} ₽</h3>
                             </div>
                             <div className="cart">
-                                    <div className={`bought cartbutton arbuttons ${!some('cart', products.id) ? 'add' : 'remove'}`} onClick={() => dispatch( some('cart', products.id) ? remove({module: 'cart', id: products.id}) : add({ module: 'cart', id: products.id, count: 1 }))}>
+                                    <div className={`bought cartbutton arbuttons ${!some('cart', products.id) ? 'add' : 'remove'}`} onClick={() => updateOne(some('cart', products.id) ? 'remove' : 'add', 'cart', products.id, 1)}>
                                         <p>В корзину</p>
                                     </div>
                                 <a href="">Купить в 1 клик</a>
@@ -200,15 +199,15 @@ function Product(){
                                             <h4><span className="spanone">{item.sale} %</span> <span className="spantwo">— {item.space} ₽</span></h4>
                                         </div>
                                         <div className="statslike">
-                                            <div className={`likebutton arbuttons ${!some('favorites', item.id) ? 'add' : 'remove'}`} onClick={() => dispatch( some('favorites', item.id) ? remove({module: 'favorites', id: item.id}) : add({ module: 'favorites', id: item.id }))}>
+                                            <div className={`likebutton arbuttons ${!some('favorites', item.id) ? 'add' : 'remove'}`} onClick={() => dispatch(updateOne(some('favorites', item.id) ? 'remove' : 'add', 'favorites', item.id, ))}>
                                             </div>
-                                            <div className={`comparebutton arbuttons ${!some('compare', item.id) ? 'add' : 'remove'}`}  onClick={() => dispatch( some('compare', item.id) ? remove({module: 'compare', id: item.id}) : add({ module: 'compare', id: item.id }))}>
+                                            <div className={`comparebutton arbuttons ${!some('compare', item.id) ? 'add' : 'remove'}`}  onClick={() => dispatch(updateOne(some('compare', item.id) ? 'remove' : 'add', 'compare', item.id, ))}>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="cart">
                                         <a href="">Купить в 1 клик</a>
-                                        <div className={`cartbutton arbuttons ${!some('cart', item.id) ? 'add' : 'remove'}`} onClick={() => dispatch( some('cart', item.id) ? remove({module: 'cart', id: item.id}) : add({ module: 'cart', id: item.id, count: 1 }))}>
+                                        <div className={`cartbutton arbuttons ${!some('cart', item.id) ? 'add' : 'remove'}`} onClick={() => dispatch(updateOne(some('cart', item.id) ? 'remove' : 'add', 'cart', item.id, 1))}>
                                         </div>
                                     </div>
                                 </div>

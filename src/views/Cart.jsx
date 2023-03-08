@@ -2,8 +2,8 @@ import React, { useLayoutEffect } from 'react';
 import '../css/Cart.css';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { store, useFindById } from '../store/index';
-import { remove, changeCount } from '../store/products';
+import { store, updateOne, useFindById } from '../store/index';
+import { changeCount } from '../store/products';
 import * as img from '../img/index';
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -289,7 +289,7 @@ function Cart() {
 
     const dispatch = useDispatch()
 
-    const {data, loading} = useFindById('cart')
+    const {data, loading} = /*useFindById('cart')*/{data: [], loading: false}
 
     const total = useCallback(() => {
         return data.reduce((prev, next) => {
@@ -433,7 +433,7 @@ function Cart() {
                                                                     <h2>{product.realPrice} ₽</h2>
                                                                 </div>
                                                                 <button className="delete">
-                                                                    <img src={img.deleteB} onClick={() => dispatch(remove({ module: 'cart', id: product._id }))} />
+                                                                    <img src={img.deleteB} onClick={() => dispatch(updateOne('remove', 'cart', product._id))} />
                                                                 </button>
                                                             </div>
                                                         </div>
