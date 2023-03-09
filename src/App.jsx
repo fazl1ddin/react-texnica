@@ -156,24 +156,9 @@ function App(){
         }
     ])
 
-    const [checks, setChecks] = useState([])
-
-    storeCheck.subscribe(() => {
-        setChecks(storeCheck.getState().check.checks)
-    })
-
-    useEffect(() => {
-        (async () => {
-            const even = checks.length
-            await new Promise(resolve => setTimeout(resolve, 1500))
-            const after = checks.length
-            console.log('even => ', even);
-            console.log('after => ', after);
-            if(even == after){
-                storeCheck.dispatch(Checks({arr: checks, module: 'cart'}))
-            }
-        })()
-    }, [checks])
+    // storeCheck.subscribe(() => {
+    //     storeCheck.dispatch(Checks({arr: storeCheck.getState().check.checks, module: 'cart'}))
+    // })
 
     useEffect(() => {
         if(forNavDrop.current){

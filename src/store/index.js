@@ -41,11 +41,11 @@ export const storeCheck = configureStore({
 })
 
 export function useSome(id){
-    let arr = []
+    let check = storeCheck.getState().check
     storeCheck.subscribe(() => {
-        arr = storeCheck.getState().check.checks
+        check = storeCheck.getState().check
     })
-    if(!arr.includes(id)) storeCheck.dispatch(push(id))
+    if(!check.checks.includes(id)) storeCheck.dispatch(push(id))
 }
 
 export function some(id){

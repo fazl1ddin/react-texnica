@@ -3,8 +3,8 @@ import { storeUser } from ".";
 import config from "../api/config";
 
 export const Checks = createAsyncThunk(
-    'check/Checks',
-    async (state) => {
+    'result/Checks',
+    async (state, {dispatch, getState}) => {
         let user_id = storeUser.getState().user.user._id
         let res;
         await fetch(config.baseUrl + '/check-module', {method: 'POST', body: JSON.stringify({arr: state.arr, user_id, module: state.module})})
@@ -39,11 +39,13 @@ export const result = createSlice({
 export const check = createSlice({
     name: 'check',
     initialState: {
-        checks: []
+        checks: [],
+        lastUpdated: Date.now()
     },
     reducers: {
         push(state, payloads){
             state.checks.push(payloads.payload)
+            state.lastUpdated = Date.now()
         }
     }
 })
