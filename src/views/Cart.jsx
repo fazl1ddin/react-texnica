@@ -8,7 +8,7 @@ import * as img from '../img/index';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import config from '../api/config';
-import LoaderCart from '../components/Loaders/LoaderCart';
+import LoaderCart from '../components/ButtonsForUpdate/CardUpdateLoader';
 
 const wayget = {
     checkeDel: false,

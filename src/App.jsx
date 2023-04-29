@@ -28,6 +28,7 @@ import { setModule } from "./store/products";
 import config from "./api/config";
 import { storeCheck, storeUser } from "./store";
 import { Checks } from "./store/check";
+import RouterDots from "./components/RouterDots/RouterDots";
 
 const DropDownElem = styled.ul`
     &.open {
@@ -62,28 +63,24 @@ const droProfile = [
     },
 ]
 
-const routers = [
-    {
-        to: '/viewed',
-        class: 'viewed',
-        src: img.eye
-    },
-    {
-        to: '/favorites',
-        class: 'favorites',
-        src: img.like
-    },
-    {
-        to: '/compare',
-        class: 'compare',
-        src: img.compare
-    },
-    {
-        to: '/cart',
-        class: 'cart',
-        src: img.cart
-    },
-]
+function setProducts(setRouters, routers){
+    const products = localStorage.getItem('products')
+    if(products){
+        setRouters(routers.map(item => ({
+            ...item,
+            length: JSON.parse(products)[item.class].length
+        })))
+    } else {
+        const initialProducts = {
+            cart: [],
+            favorites: [],
+            compare: [],
+            viewed: []
+        }
+        localStorage.setItem('products', JSON.stringify(initialProducts))
+    }
+    
+}
 
 function App(){
     const dispatch = useDispatch()
@@ -96,7 +93,7 @@ function App(){
 
     const [profileHeight, setProfileHeight] = useState(0)
 
-    const state = useSelector(state => state.products)
+    const [loadingState, setLoadingState] = useState(true)
 
     const [Suzer, setSuzer] = useState(undefined)
 
@@ -156,9 +153,74 @@ function App(){
         }
     ])
 
-    // storeCheck.subscribe(() => {
-    //     storeCheck.dispatch(Checks({arr: storeCheck.getState().check.checks, module: 'cart'}))
-    // })
+    const [routers, setRouters] = useState([
+        {
+            to: '/viewed',
+            class: 'viewed',
+            src: img.eye,
+            length: undefined
+        },
+        {
+            to: '/favorites',
+            class: 'favorites',
+            src: img.like,
+            length: undefined
+        },
+        {
+            to: '/compare',
+            class: 'compare',
+            src: img.compare,
+            length: undefined
+        },
+        {
+            to: '/cart',
+            class: 'cart',
+            src: img.cart,
+            length: undefined
+        },
+    ])
+
+    useEffect(() => {
+        if(localStorage.getItem('token')){
+            (
+                async () => {
+                    await fetch(config.baseUrl + '/login', {method: 'POST', body: JSON.stringify({
+                        logType: 'token',
+                        token: localStorage.getItem('token')
+                    })})
+                    .then(result => result.json())
+                    .then(result => {
+                        if(result.message){
+                            localStorage.removeItem('token')
+                            setProducts(setRouters, routers)
+                            setLoadingState(false)
+                        } else {
+                            storeUser.dispatch(setUser(result))
+                        }
+                    })
+                    .catch(error => {
+                        if(error){
+                            console.log(error);
+                        }
+                    })
+                }
+            )()
+        } else {
+            setProducts(setRouters, routers)
+            setLoading(false)
+            setLoadingState(false)
+        }
+    }, [])
+
+    storeUser.subscribe(() => {
+        const {loading, user} = storeUser.getState().user
+        setLoading(loading)
+        setSuzer(user)
+        setRouters(routers.map(item => ({
+            ...item,
+            length: user[item.class].length
+        })))
+    })
 
     useEffect(() => {
         if(forNavDrop.current){
@@ -171,45 +233,6 @@ function App(){
             setProfileHeight(Number(forProfileDrop.current.offsetHeight))
         }
     }, [forProfileDrop.current])
-
-    useEffect(() => {
-        (async () => {
-            if(localStorage.getItem('token')){
-                await fetch(config.baseUrl + '/login', {method: 'POST', body: JSON.stringify({logType: 'token', token: localStorage.getItem('token')})})
-                .then(result => result.json())
-                .then(result => {
-                    if(result.user){
-                        storeUser.dispatch(setUser(result))
-                        dispatch(setModule({data: result.user}))
-                    } else {
-                        throw result.message
-                    }
-                })
-                .catch(e => {
-                    storeUser.dispatch(setLoading())
-                    localStorage.removeItem('token')
-                    if(localStorage.getItem('products')){
-                        dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
-                    } else {
-                        localStorage.setItem('products', JSON.stringify(state))
-                    }
-                })
-            } else {
-                storeUser.dispatch(setLoading())
-                if(localStorage.getItem('products')){
-                    dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
-                } else {
-                    localStorage.setItem('products', JSON.stringify(state))
-                }
-            }
-        })()
-    }, [])
-
-    storeUser.subscribe(() => {
-        const {loading, user} = storeUser.getState().user
-        setLoading(loading)
-        setSuzer(user)
-    })
 
     return (<>
     {modal != ' ' ? modal == 'login' ? <div className="forModal">
@@ -261,7 +284,7 @@ function App(){
                             if(localStorage.getItem('products')){
                                 dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
                             } else {
-                                localStorage.setItem('products', JSON.stringify(state))
+                                localStorage.setItem('products', JSON.stringify({}))
                             }
                         })
                         setModal(' ')
@@ -337,7 +360,12 @@ function App(){
                                             if(localStorage.getItem('products')){
                                                 dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
                                             } else {
-                                                localStorage.setItem('products', JSON.stringify(state))
+                                                localStorage.setItem('products', JSON.stringify({
+                                                    cart: Suzer.cart,
+                                                    favorites: Suzer.favorites,
+                                                    viewed: Suzer.viewed,
+                                                    compare: Suzer.compare
+                                                }))
                                             }
                                         }}>
                                             Выйти
@@ -351,14 +379,7 @@ function App(){
                         <img src={img.searchIcon}/>
                         Поиск
                     </button>
-                    {
-                        routers.map(router => (
-                            <Link className='dota' key={router.class} to={router.to}>
-                                {state[router.class].length ? <span className="dotspan">{state[router.class].length}</span> : ''}
-                                <img className={router.class} src={router.src}/>
-                            </Link>
-                        ))
-                    }
+                    <RouterDots loading={loadingState} routers={routers}/>
                     {loading ? <LoginButton></LoginButton> : Suzer ? <div onClick={() => {
                         setDroProfile(!droProfileB)
                     }}>
