@@ -5,19 +5,31 @@ import config from "../api/config";
 export const Checks = createAsyncThunk(
     'result/Checks',
     async (state, {dispatch, getState}) => {
-        let user_id = storeUser.getState().user.user._id
-        let res;
-        await fetch(config.baseUrl + '/check-module', {method: 'POST', body: JSON.stringify({arr: state.arr, user_id, module: state.module})})
-        .then(result => result.json())
-        .then(result => res = result)
-        return res
+        let user = storeUser.getState().user.user
+        if(user){
+            let res;
+            await fetch(config.baseUrl + '/check-module', {method: 'POST', body: JSON.stringify({arr: state.arr, user_id: user._id, module: state.module})})
+            .then(result => result.json())
+            .then(result => res = result)
+            return res
+        } else {
+            const products = localStorage.getItem('products')
+            if(products){
+                return JSON.parse(products)
+            } else {
+                return {}
+            }
+        }
     }
 )
 
 export const result = createSlice({
     name: 'result',
     initialState: {
-        result: [],
+        cart: [],
+        favorites: [],
+        viewed: [],
+        compare: [],
         loading: false
     },
     extraReducers: (builder) => {
@@ -26,7 +38,9 @@ export const result = createSlice({
                 state.loading = true
             })
             .addCase(Checks.fulfilled, (state, action) => {
-                state.result = action.payload
+                Object.entries(action.payload).forEach(([key, value], index) => {
+                    state[key] = value
+                })
                 state.loading = false
             })
             .addCase(Checks.rejected, (state, action) => {
@@ -39,13 +53,15 @@ export const result = createSlice({
 export const check = createSlice({
     name: 'check',
     initialState: {
-        checks: [],
-        lastUpdated: Date.now()
+        cart: [],
+        favorites: [],
+        viewed: [],
+        compare: [],
     },
     reducers: {
         push(state, payloads){
-            state.checks.push(payloads.payload)
-            state.lastUpdated = Date.now()
+            const {module, id} = payloads.payload
+            state[module].push(id)
         }
     }
 })

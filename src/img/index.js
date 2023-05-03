@@ -103,5 +103,7 @@ export {
     imgContent3,
     imgContent4,
     x,
-    profile
+    profile,
+    eye as viewed,
+    like as favorites,
 }

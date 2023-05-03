@@ -1,14 +1,16 @@
 import { Link } from "react-router-dom"
+import * as img from '../../img/index';
 import RouterDotsLoader from "./RouterDotsLoader"
 
 function RouterDots({routers, loading}){
-    return routers.map(router => 
+    console.log(routers);
+    return Object.entries(routers).map(([key, value]) => 
         loading ?
-        <RouterDotsLoader key={router.class}/>
+        <RouterDotsLoader key={key}/>
         :
-        <Link className='dota' key={router.class} to={router.to}>
-            {router.length ? <span className="dotspan">{router.length}</span> : null}
-            <img className={router.class} src={router.src}/>
+        <Link className='dota' key={key} to={`/${key}`}>
+            {value.length ? <span className="dotspan">{value.length}</span> : null}
+            <img className={key} src={img[key]}/>
         </Link>
     )
 }

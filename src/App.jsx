@@ -26,7 +26,7 @@ import Auth from "./store/auth";
 import { useRef } from "react";
 import { setModule } from "./store/products";
 import config from "./api/config";
-import { storeCheck, storeUser } from "./store";
+import { storeCheck, storeProducts, storeResultCheck, storeUser } from "./store";
 import { Checks } from "./store/check";
 import RouterDots from "./components/RouterDots/RouterDots";
 
@@ -63,25 +63,6 @@ const droProfile = [
     },
 ]
 
-function setProducts(setRouters, routers){
-    const products = localStorage.getItem('products')
-    if(products){
-        setRouters(routers.map(item => ({
-            ...item,
-            length: JSON.parse(products)[item.class].length
-        })))
-    } else {
-        const initialProducts = {
-            cart: [],
-            favorites: [],
-            compare: [],
-            viewed: []
-        }
-        localStorage.setItem('products', JSON.stringify(initialProducts))
-    }
-    
-}
-
 function App(){
     const dispatch = useDispatch()
 
@@ -90,6 +71,8 @@ function App(){
     const [navHeight, setNavHeight] = useState(0)
 
     const forProfileDrop = useRef()
+
+    const [modules, setModules] = useState({})
 
     const [profileHeight, setProfileHeight] = useState(0)
 
@@ -104,6 +87,8 @@ function App(){
     const [dropDown, setDropDown] = useState(false)
 
     const [modal, setModal] = useState(' ')
+
+    let check = {}
 
     const [login, setLogin] = useState([
         {
@@ -153,33 +138,6 @@ function App(){
         }
     ])
 
-    const [routers, setRouters] = useState([
-        {
-            to: '/viewed',
-            class: 'viewed',
-            src: img.eye,
-            length: undefined
-        },
-        {
-            to: '/favorites',
-            class: 'favorites',
-            src: img.like,
-            length: undefined
-        },
-        {
-            to: '/compare',
-            class: 'compare',
-            src: img.compare,
-            length: undefined
-        },
-        {
-            to: '/cart',
-            class: 'cart',
-            src: img.cart,
-            length: undefined
-        },
-    ])
-
     useEffect(() => {
         if(localStorage.getItem('token')){
             (
@@ -192,7 +150,6 @@ function App(){
                     .then(result => {
                         if(result.message){
                             localStorage.removeItem('token')
-                            setProducts(setRouters, routers)
                             setLoadingState(false)
                         } else {
                             storeUser.dispatch(setUser(result))
@@ -206,7 +163,18 @@ function App(){
                 }
             )()
         } else {
-            setProducts(setRouters, routers)
+            if(!localStorage.getItem('products')){
+                localStorage.setItem('products', JSON.stringify({
+                    allProducts: [],
+                    cart: [],
+                    favorites: [],
+                    compare: [],
+                    viewed: [],
+                }))
+            }
+            storeProducts.dispatch(setModule({
+                data: localStorage.getItem('products') && JSON.parse(localStorage.getItem('products'))
+            }))
             setLoading(false)
             setLoadingState(false)
         }
@@ -216,10 +184,14 @@ function App(){
         const {loading, user} = storeUser.getState().user
         setLoading(loading)
         setSuzer(user)
-        setRouters(routers.map(item => ({
-            ...item,
-            length: user[item.class].length
-        })))
+    })
+
+    storeProducts.subscribe(() => {
+        setModules(storeProducts.getState().products)
+    })
+
+    storeCheck.subscribe(() => {
+        check = storeCheck.getState().check
     })
 
     useEffect(() => {
@@ -233,6 +205,13 @@ function App(){
             setProfileHeight(Number(forProfileDrop.current.offsetHeight))
         }
     }, [forProfileDrop.current])
+
+    useEffect(() => {
+        const timer = setTimeout(() => storeResultCheck.dispatch(Checks({module: 'cart', arr: []})), 1500)
+        return () => {
+            clearTimeout(timer)
+        }
+    }, [check])
 
     return (<>
     {modal != ' ' ? modal == 'login' ? <div className="forModal">
@@ -379,7 +358,7 @@ function App(){
                         <img src={img.searchIcon}/>
                         Поиск
                     </button>
-                    <RouterDots loading={loadingState} routers={routers}/>
+                    <RouterDots loading={loadingState} routers={modules}/>
                     {loading ? <LoginButton></LoginButton> : Suzer ? <div onClick={() => {
                         setDroProfile(!droProfileB)
                     }}>

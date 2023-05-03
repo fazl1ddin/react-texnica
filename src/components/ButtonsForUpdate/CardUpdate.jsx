@@ -4,16 +4,18 @@ import { Checks } from "../../store/check"
 
 function CardUpdate({id}){
 
-    useSome(id)
+    const [some, setSome] = useState(false)
 
-    storeCheck.subscribe(() => {
-        if((Date.now() - storeCheck.getState().check.lastUpdated) > 1500) storeResultCheck.dispatch(Checks({arr: storeCheck.getState().check.checks, module: 'cart'}))
+    useSome('cart', id)
+
+    storeResultCheck.subscribe(() => {
+        setSome(storeResultCheck.getState().result['cart'].some(item => item.id === id))
     })
 
     return <>
         <div className="cart">
             <a href="">Купить в 1 клик</a>
-            <div className={`cartbutton arbuttons ${some(id) ? 'remove' : 'add'}`} onClick={() => updateOne(some(id) ? 'remove' : 'add', 'cart', id, 1)}>
+            <div className={`cartbutton arbuttons ${some ? 'remove' : 'add'}`} onClick={() => updateOne(some ? 'remove' : 'add', 'cart', id, 1)}>
             </div>
         </div>
     </>

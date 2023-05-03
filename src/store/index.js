@@ -1,8 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
 import products, { actions, setModule } from './products';
-import contents, { ok } from './contents';
+import contents from './contents';
 import user, { setUser } from './user';
-import { check, Checks, push, result } from './check';
+import { check, push, result } from './check';
 import { AiFillStar } from 'react-icons/ai'
 import { useEffect, useState } from "react";
 import config from "../api/config";
@@ -40,18 +40,18 @@ export const storeCheck = configureStore({
     }
 })
 
-export function useSome(id){
-    let check = storeCheck.getState().check
+export function useSome(module ,id){
+    let check = storeCheck.getState().check[module]
     storeCheck.subscribe(() => {
-        check = storeCheck.getState().check
+        check = storeCheck.getState().check[module]
     })
-    if(!check.checks.includes(id)) storeCheck.dispatch(push(id))
+    if(!check.includes(id)) storeCheck.dispatch(push({module, id}))
 }
 
-export function some(id){
+export function some(module, id){
     let arr = []
     storeResultCheck.subscribe(() => {
-        arr = storeResultCheck.getState().result.result
+        arr = storeResultCheck.getState().result[module]
     })
     return arr.includes(id)
 }
