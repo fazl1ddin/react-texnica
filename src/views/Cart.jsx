@@ -2,13 +2,14 @@ import React, { useLayoutEffect } from 'react';
 import '../css/Cart.css';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { store, updateOne, useFindById } from '../store/index';
+import { store, storeProducts, updateOne, useFindById } from '../store/index';
 import { changeCount } from '../store/products';
 import * as img from '../img/index';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import config from '../api/config';
-import LoaderCart from '../components/ButtonsForUpdate/CardUpdateLoader';
+import useGetPAC from '../hooks/getProductsAtCart';
+import LoaderCart from '../components/Loaders/LoaderCart';
 
 const wayget = {
     checkeDel: false,
@@ -285,11 +286,9 @@ const wayget = {
 }
 
 function Cart() {
-    const state = useSelector(state => state.products)
+    const { dispatch } = storeProducts
 
-    const dispatch = useDispatch()
-
-    const {data, loading} = /*useFindById('cart')*/{data: [], loading: false}
+    const {data, loading} = useGetPAC()
 
     const total = useCallback(() => {
         return data.reduce((prev, next) => {
@@ -299,8 +298,8 @@ function Cart() {
 
     const productsCount = () => {
         let arr = {}
-        for (let i = 0; i < state.cart.length; i++) {
-            arr[i] = state.cart[i].count
+        for (let i = 0; i < data.length; i++) {
+            arr[i] = data[i].count ? data[i].count : 1
         }
         return arr
     }
@@ -311,16 +310,16 @@ function Cart() {
         const parsed = Object.values(value).map(item => parseInt(item))
         if (parsed[key] != NaN) {
             setValue({ ...value, key: Math.min(Math.max(parsed[key], 1), 10) })
-            dispatch(changeCount({ id, value: Math.min(Math.max(parsed[key], 1), 10) }))
+            storeProducts.dispatch(changeCount({ id, value: Math.min(Math.max(parsed[key], 1), 10) }))
         } else {
             setValue({ ...value, key: 1 })
-            dispatch(changeCount({ id, value: 1 }))
+            storeProducts.dispatch(changeCount({ id, value: 1 }))
         }
     }
 
     useEffect(() => {
         setValue(productsCount())
-    }, [state.cart])
+    }, [data])
 
     const [checker, setChecker] = useState({
         tovari: 'start',
@@ -332,9 +331,9 @@ function Cart() {
     const [canSend, setCanSend] = useState(false)
 
     useEffect(() => {
-        if (state.cart.length > 0) setChecker({ ...checker, tovari: 'middle' })
+        if (data.length > 0) setChecker({ ...checker, tovari: 'middle' })
         else setChecker({ ...checker, tovari: 'start' })
-    }, [state.cart.length])
+    }, [data.length])
 
     const [settings, setSettings] = useState({
         one: 'pick',
@@ -382,7 +381,7 @@ function Cart() {
 
     useEffect(() => {
         let boolean = false
-        if (state.cart.length > 0) {
+        if (data.length > 0) {
             boolean = Object.values(checker).every((item) => item == 'end') == true && man.every(item => item.valid == true) == true
         }
         setCanSend(boolean)
@@ -398,51 +397,50 @@ function Cart() {
                             <div className={`vashZakaz ${checker.tovari == 'start' ? 'empty' : checker.tovari == 'end' ? 'end' : ''}`}>
                                 <h3 className="pb-0">Ваш заказ</h3>
                                 {
-                                    loading ? (
-                                        <LoaderCart/>
-                                    ) : (
-                                        <div className="obb">
-                                            <div className="tovari">
-                                                {
-                                                    data.map((product, i) => (
-                                                        <div className="tovar" key={product._id ? product._id : i}>
-                                                            <div className="imgt">
-                                                                <img className="img" src={product.product[0]} />
-                                                                {
-                                                                    product.protection ? <img src={config.baseUrl + '/images/aqua.png'} className='aqua' />
-                                                                    : null
-                                                                }
-                                                            </div>
-                                                            <div className="ff">
-                                                                <h4>{product.productName}</h4>
-                                                                <form>
-                                                                    <button type="button" onClick={() => {
-                                                                        setValue({ ...value, [i]: product.count })
-                                                                        dispatch(changeCount({ id: product._id, value: Math.max(1, product.count - 1) }))
-                                                                    }}>-</button>
-                                                                    <input type="text" value={value[i]} onChange={e => setValue({ ...value, [i]: e.target.value })} onBlur={() => onBlur(product._id, i)} />
-                                                                    <button type="button" onClick={() => {
-                                                                        setValue({ ...value, [i]: product.count })
-                                                                        dispatch(changeCount({ id: product._id, value: Math.min(10, product.count + 1) }))
-                                                                    }}>+</button>
-                                                                </form>
-                                                                <div className="price">
-                                                                    {
-                                                                        product.price != product.realPrice ? (<del>{product.price} ₽</del>) : undefined
-                                                                    }
-                                                                    <h2>{product.realPrice} ₽</h2>
-                                                                </div>
-                                                                <button className="delete">
-                                                                    <img src={img.deleteB} onClick={() => dispatch(updateOne('remove', 'cart', product._id))} />
-                                                                </button>
-                                                            </div>
+                                    loading ?
+                                    <LoaderCart/>
+                                    :
+                                    <div className="obb">
+                                        <div className="tovari">
+                                            {
+                                                data.map((product, i) => (
+                                                    <div className="tovar" key={product._id ? product._id : i}>
+                                                        <div className="imgt">
+                                                            <img className="img" src={product.product[0]} />
+                                                            {
+                                                                product.protection ? <img src={config.baseUrl + '/images/aqua.png'} className='aqua' />
+                                                                : null
+                                                            }
                                                         </div>
-                                                    ))
-                                                }
-                                            </div>
-                                            <button className="change" onClick={() => setChecker({ ...checker, tovari: 'middle' })}>Изменить</button>
+                                                        <div className="ff">
+                                                            <h4>{product.productName}</h4>
+                                                            <form>
+                                                                <button type="button" onClick={() => {
+                                                                    setValue({ ...value, [i]: product.count })
+                                                                    storeProducts.dispatch(changeCount({ id: product._id, value: Math.max(1, product.count - 1) }))
+                                                                }}>-</button>
+                                                                <input type="text" value={value[i] ? value[i] : 1} onChange={e => setValue({ ...value, [i]: e.target.value })} onBlur={() => onBlur(product._id, i)} />
+                                                                <button type="button" onClick={() => {
+                                                                    setValue({ ...value, [i]: product.count })
+                                                                    storeProducts.dispatch(changeCount({ id: product._id, value: Math.min(10, product.count + 1) }))
+                                                                }}>+</button>
+                                                            </form>
+                                                            <div className="price">
+                                                                {
+                                                                    product.price != product.realPrice ? (<del>{product.price} ₽</del>) : undefined
+                                                                }
+                                                                <h2>{product.realPrice} ₽</h2>
+                                                            </div>
+                                                            <button className="delete">
+                                                                <img src={img.deleteB} onClick={() => dispatch(updateOne('remove', 'cart', product._id))} />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            }
                                         </div>
-                                    )
+                                        <button className="change" onClick={() => setChecker({ ...checker, tovari: 'middle' })}>Изменить</button>
+                                    </div>
                                 }
                             </div>
                             <button className={`dalee ${checker.tovari == 'middle' ? '' : 'none'}`} onClick={() => {
@@ -610,13 +608,13 @@ function Cart() {
                         <div className="itogoContent">
                             <h1>Итого</h1>
                             <div className="summu">
-                                <h5>{ state.cart.length > 0 ? state.cart.length + ' товара на сумму' : 'Корзина пусто' }<span>{ state.cart.length > 0 ? (total() + ' ₽') : null }</span></h5>
+                                <h5>{ data.length > 0 ? data.length + ' товара на сумму' : 'Корзина пусто' }<span>{ data.length > 0 ? (total() + ' ₽') : null }</span></h5>
                                 {
-                                    state.cart.length > 0 ? <h5>Стоимость доставки <span>бесплатно</span></h5> : null
+                                    data.length > 0 ? <h5>Стоимость доставки <span>бесплатно</span></h5> : null
                                 }
                             </div>
                             {
-                                state.cart.length > 0 ? 
+                                data.length > 0 ? 
                                 <div className="oplata">
                                     <h4>К оплате</h4>
                                     <h1>{ total() } ₽</h1>
@@ -666,7 +664,7 @@ export default Cart
 //             nadzor(){
 //                 if(this.$route == '/cart'){
 //                 if(this.length == 0){
-//                     this.ready[0] = 'start'
+//                     this.ready = 'start'
 //                 }
 //             },
 //             readySend(){if(this.$route == '/cart'){
@@ -702,11 +700,11 @@ export default Cart
 //             ...mapActions('cart', { count 'count', increase 'increase', decrease 'decrease', input 'input', modelStreet 'modelStreet', modelFlat 'modelFlat', typePay 'typePay', modeler 'modeler', remove 'remove' }),
 //             onInput(id, e){
 //                 let index = store.getters['cart/id'].indexOf(id)
-//                 let last = this.all.products[index].count
+//                 let last = this.all.data[index].count
 //                 this.input({ id id, count e.target.value })
-//                 if(e.target.value !== last && last === this.all.products[index].count){
-//                     e.target.value = this.all.products[index].count
-//                     console.log(this.all.products[index].count);
+//                 if(e.target.value !== last && last === this.all.data[index].count){
+//                     e.target.value = this.all.data[index].count
+//                     console.log(this.all.data[index].count);
 //                 }
 //             },
 //             changer(index){
@@ -725,7 +723,7 @@ export default Cart
 //         },
 //         created(){
 //             if(this.length != 0){
-//                 this.ready[0] = 'middle'
+//                 this.ready = 'middle'
 //             }
 //         },
 //         beforeUpdate(){

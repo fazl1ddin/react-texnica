@@ -2,7 +2,6 @@ import { configureStore } from "@reduxjs/toolkit";
 import products, { actions, setModule } from './products';
 import contents from './contents';
 import user, { setUser } from './user';
-import { check, push, result } from './check';
 import { AiFillStar } from 'react-icons/ai'
 import { useEffect, useState } from "react";
 import config from "../api/config";
@@ -28,32 +27,11 @@ export const storeProducts = configureStore({
     }
 })
 
-export const storeResultCheck = configureStore({
-    reducer: {
-        result: result.reducer
-    }
-})
-
-export const storeCheck = configureStore({
-    reducer: {
-        check: check.reducer
-    }
-})
-
 export function useSome(module ,id){
-    let check = storeCheck.getState().check[module]
-    storeCheck.subscribe(() => {
-        check = storeCheck.getState().check[module]
-    })
-    if(!check.includes(id)) storeCheck.dispatch(push({module, id}))
 }
 
 export function some(module, id){
-    let arr = []
-    storeResultCheck.subscribe(() => {
-        arr = storeResultCheck.getState().result[module]
-    })
-    return arr.includes(id)
+    
 }
 
 export function contentById(module, id){
@@ -109,10 +87,18 @@ export function updateOne(method, module, id, count){
             await fetch(config.baseUrl + '/update-user', { 
                 method: 'PUT',
                 body: JSON.stringify(
+                    count ?
                     {
                         id: userId,
                         module,
-                        data: {id, count}
+                        data: {id, count},
+                        method
+                    }
+                    :
+                    {
+                        id: userId,
+                        module,
+                        method
                     }
                 ),
             })
@@ -129,7 +115,7 @@ export function updateOne(method, module, id, count){
         const data = JSON.parse(localStorage.getItem('products'))
         data[module].push({ id, count})
         localStorage.setItem('products', JSON.stringify(data))
-        storeProducts.dispatch(actions[method]({module, id, count}))
+        storeProducts.dispatch(setModule({data: data}))
     }
 }
 

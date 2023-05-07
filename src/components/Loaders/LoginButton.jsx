@@ -1,7 +1,8 @@
 import './css.css'
 
 function LoginButton(){
-    return (<div style={{
+    return (
+        <div style={{
             width: 100,
             height: 48,
             display: 'flex',

@@ -3,7 +3,6 @@ import * as img from '../../img/index';
 import RouterDotsLoader from "./RouterDotsLoader"
 
 function RouterDots({routers, loading}){
-    console.log(routers);
     return Object.entries(routers).map(([key, value]) => 
         loading ?
         <RouterDotsLoader key={key}/>

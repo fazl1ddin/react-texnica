@@ -20,13 +20,9 @@ function useGetData(path, method, typeRes){
         })()
     }, [refetch])
 
-    storeProducts.subscribe(() => {
-        setRefetch(!refetch)
-    })
-
     return {
-        data: data,
-        loading: loading,
+        data,
+        loading,
     }
 }
 

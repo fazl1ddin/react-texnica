@@ -26,8 +26,7 @@ import Auth from "./store/auth";
 import { useRef } from "react";
 import { setModule } from "./store/products";
 import config from "./api/config";
-import { storeCheck, storeProducts, storeResultCheck, storeUser } from "./store";
-import { Checks } from "./store/check";
+import { storeProducts, storeResultCheck, storeUser } from "./store";
 import RouterDots from "./components/RouterDots/RouterDots";
 
 const DropDownElem = styled.ul`
@@ -87,8 +86,6 @@ function App(){
     const [dropDown, setDropDown] = useState(false)
 
     const [modal, setModal] = useState(' ')
-
-    let check = {}
 
     const [login, setLogin] = useState([
         {
@@ -153,6 +150,8 @@ function App(){
                             setLoadingState(false)
                         } else {
                             storeUser.dispatch(setUser(result))
+                            storeProducts.dispatch(setModule({data: result.user}))
+                            setLoadingState(false)
                         }
                     })
                     .catch(error => {
@@ -190,10 +189,6 @@ function App(){
         setModules(storeProducts.getState().products)
     })
 
-    storeCheck.subscribe(() => {
-        check = storeCheck.getState().check
-    })
-
     useEffect(() => {
         if(forNavDrop.current){
             setNavHeight(Number(forNavDrop.current.offsetHeight))
@@ -205,13 +200,6 @@ function App(){
             setProfileHeight(Number(forProfileDrop.current.offsetHeight))
         }
     }, [forProfileDrop.current])
-
-    useEffect(() => {
-        const timer = setTimeout(() => storeResultCheck.dispatch(Checks({module: 'cart', arr: []})), 1500)
-        return () => {
-            clearTimeout(timer)
-        }
-    }, [check])
 
     return (<>
     {modal != ' ' ? modal == 'login' ? <div className="forModal">
@@ -255,7 +243,7 @@ function App(){
                         .then(result => {
                             if(result.user){
                                 storeUser.dispatch(setUser(result))
-                                dispatch(setModule({data: result.user}))
+                                storeProducts.dispatch(setModule({data: result.user}))
                                 localStorage.setItem('token', result.token)
                             }
                         })

@@ -1,21 +1,25 @@
-import { useState } from "react"
-import { useSome, updateOne, some, storeCheck, storeResultCheck } from "../../store"
-import { Checks } from "../../store/check"
+import { useEffect, useState } from "react"
+import { updateOne, storeProducts } from "../../store"
 
 function CardUpdate({id}){
 
     const [some, setSome] = useState(false)
 
-    useSome('cart', id)
-
-    storeResultCheck.subscribe(() => {
-        setSome(storeResultCheck.getState().result['cart'].some(item => item.id === id))
-    })
+    useEffect(() => {
+        setSome(storeProducts.getState().products.cart.some((item) => item.id === id))
+        const unsubscribe = storeProducts.subscribe(() => {
+            setSome(storeProducts.getState().products.cart.some((item) => item.id === id))
+        })
+        return () => {
+            unsubscribe()
+        }
+    }, [])
+    
 
     return <>
         <div className="cart">
             <a href="">Купить в 1 клик</a>
-            <div className={`cartbutton arbuttons ${some ? 'remove' : 'add'}`} onClick={() => updateOne(some ? 'remove' : 'add', 'cart', id, 1)}>
+            <div className={`cartbutton arbuttons ${some ? 'remove' : 'add'}`} onClick={() => updateOne(some ? 'remove' : 'add', 'cart', id, 1 )}>
             </div>
         </div>
     </>

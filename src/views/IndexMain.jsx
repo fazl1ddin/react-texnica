@@ -11,6 +11,8 @@ import Loader from '../components/Loaders/Loader';
 import Products4Loader from '../components/Loaders/Products4Loader';
 import config from '../api/config';
 import CardUpdate from '../components/ButtonsForUpdate/CardUpdate';
+import FavoritesUpdate from '../components/ButtonsForUpdate/FavoritesUpdate';
+import CompareUpdate from '../components/ButtonsForUpdate/CompareUpdate';
 
 function IndexMain(){
 
@@ -54,9 +56,8 @@ function IndexMain(){
                     every: state.slice(last, i).map((item, index) => ({
                         ...item,
                         get space(){
-                            const count = this.price - (this.price * this.sale / 100)
-                            const [_, num, suffix] = (this.price - count).toString().match(/^(.*?)((?:[,.]\d+)?|)$/)
-                            return num.replace(/\B(?=(?:\d{3})*$)/g, ' ') + suffix
+                            const formatter = new Intl.NumberFormat('en-US')
+                            return formatter.format(this.price - (this.price * this.sale / 100))
                         },
                         get realPrice(){
                             return this.price - (this.price * this.sale / 100)
@@ -123,10 +124,8 @@ function IndexMain(){
                                             <h4><span className="spanone">{every.sale} %</span> <span className="spantwo">— {every.space} ₽</span></h4>
                                         </div>
                                         <div className="statslike">
-                                            <div className={`likebutton arbuttons ${some('favorites', every._id) ?  'remove' : 'add'}`} onClick={() => updateOne(some('favorites', every._id) ? 'remove' : 'add', 'favorites', every._id)}>
-                                            </div>
-                                            <div className={`comparebutton arbuttons ${some('compare', every._id) ?  'remove' : 'add'}`}  onClick={() => updateOne(some('compare', every._id) ? 'remove' : 'add', 'compare', every._id)}>
-                                            </div>
+                                            <FavoritesUpdate id={every._id}/>
+                                            <CompareUpdate id={every._id}/>
                                         </div>
                                     </div>
                                     <CardUpdate id={every._id}/>
