@@ -2,13 +2,13 @@ import { useEffect, useState } from "react"
 import { storeProducts } from "../store"
 import config from "../api/config"
 
-function useGetPAC(){
+function useGetPAF(){
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(true)
     const [products, setProducts] = useState([])
 
     storeProducts.subscribe(() => {
-        setProducts(storeProducts.getState().products.cart)
+        setProducts(storeProducts.getState().products.favorites)
     })
 
     useEffect(() => {
@@ -43,4 +43,4 @@ function useGetPAC(){
     }
 }
 
-export default useGetPAC
+export default useGetPAF
