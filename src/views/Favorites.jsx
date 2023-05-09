@@ -2,27 +2,27 @@ import React, { useState, useCallback } from 'react';
 import './../css/Favorites.css'
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { useFindById, some, stars, updateOne } from '../store';
+import { useFindById, some, stars, updateOne, storeUser, storeProducts } from '../store';
 import * as img from './../img/index';
 import useGetPAF from '../hooks/getProductsAtFav';
 import FavoritesUpdate from '../components/ButtonsForUpdate/FavoritesUpdate';
 import CompareUpdate from '../components/ButtonsForUpdate/CompareUpdate';
 import CardUpdate from '../components/ButtonsForUpdate/CardUpdate';
 import config from '../api/config';
+import LoaderUserPanel from '../components/Loaders/LoaderUserPanel';
+import { clearUser } from '../store/user';
+import { setModule } from '../store/products';
 
-function Favorites({setModal}){
+function Favorites({setModal, user, loadingUser, drops}){
     const [settings, setSettings] = useState({ filter: '', filterPrice: '' })
 
     const {data, loading, products: productes} = useGetPAF()
 
     const products = useCallback(() => {
-        if(data.length != 0){
-            let allProducts = data
-            if(settings.filter != 'Все' && settings.filter != '') allProducts = allProducts.filter(item => item.specification['Тип:'] == settings.filter )
-            if(settings.filterPrice != '') allProducts.sort((a, b) => settings.filterPrice == 'expensive' ? b.realPrice - a.realPrice : a.realPrice - b.realPrice)
-            return allProducts
-        }
-        return null
+        let allProducts = data
+        if(settings.filter != 'Все' && settings.filter != '') allProducts = allProducts.filter(item => item.specification['Тип:'] == settings.filter )
+        if(settings.filterPrice != '') allProducts.sort((a, b) => settings.filterPrice == 'expensive' ? b.realPrice - a.realPrice : a.realPrice - b.realPrice)
+        return allProducts
     }, [settings, data])
     
     return (
@@ -31,8 +31,50 @@ function Favorites({setModal}){
                 <h1>Избранное</h1>
                 <div className="favoritesContent">
                     <div className="userPanel">
-                        <p>Войдите или зарегистрируйтесь</p>
-                        <button className="headerButton">Войти</button>
+                        {
+                            loadingUser ? 
+                                <LoaderUserPanel/>
+                            :
+                            user ? 
+                            <div className='profileDrop'>
+                                <ul>
+                                    {
+                                        drops.map(item => (
+                                            <li key={item.title}>
+                                                <Link to={item.path} state={item.stateTab}>
+                                                    {
+                                                        item.title
+                                                    }
+                                                </Link>
+                                            </li>
+                                        ))
+                                    }
+                                    <li>
+                                        <a onClick={() => {
+                                            localStorage.removeItem('token')
+                                            storeUser.dispatch(clearUser())
+                                            if(localStorage.getItem('products')){
+                                                storeProducts.dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
+                                            } else {
+                                                localStorage.setItem('products', JSON.stringify({
+                                                    cart: user.cart,
+                                                    favorites: user.favorites,
+                                                    viewed: user.viewed,
+                                                    compare: user.compare
+                                                }))
+                                            }
+                                        }}>
+                                            Выйти
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            :
+                            <div className='un'>
+                                <p>Войдите или зарегистрируйтесь</p>
+                                <button className="headerButton" onClick={() => setModal('login')}>Войти</button>
+                            </div>
+                        }
                     </div>
                     <div className="filterContent">
                         <div className="filter">
@@ -52,7 +94,7 @@ function Favorites({setModal}){
                             loading ? 
                             'fasfaaffasasf'
                             :
-                            products() !== null ? products().map((every, i) => (
+                            products().length ? products().map((every, i) => (
                                 <div className="xityProdajBox mb-15" key={every._id}>
                                     <Link to={`/product/${every._id}`}>
                                         <div className="sigveiWrap">

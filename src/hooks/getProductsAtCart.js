@@ -28,6 +28,7 @@ function useGetPAC(){
                                     }
                                 }
                             }
+                            return item
                         }))
                         setLoading(false)
                     })

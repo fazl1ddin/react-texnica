@@ -113,7 +113,11 @@ export function updateOne(method, module, id, count){
         })()
     } else {
         const data = JSON.parse(localStorage.getItem('products'))
-        data[module].push({ id, count})
+        if(method === 'add'){
+            data[module].push({ id, count})
+        } else if(method === 'remove'){
+            data[module] = data[module].filter(item => item.id !== id)
+        }
         localStorage.setItem('products', JSON.stringify(data))
         storeProducts.dispatch(setModule({data: data}))
     }

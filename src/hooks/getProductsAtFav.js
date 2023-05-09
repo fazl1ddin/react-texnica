@@ -22,12 +22,12 @@ function useGetPAF(){
                             if(products[index].id === item._id){
                                 return {
                                     ...item,
-                                    count: products[index].count,
                                     get realPrice(){
                                         return item.price - (item.price * item.sale / 100)
                                     }
                                 }
                             }
+                            return item
                         }))
                         setLoading(false)
                     })
