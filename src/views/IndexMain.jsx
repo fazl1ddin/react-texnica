@@ -13,6 +13,7 @@ import config from '../api/config';
 import CardUpdate from '../components/ButtonsForUpdate/CardUpdate';
 import FavoritesUpdate from '../components/ButtonsForUpdate/FavoritesUpdate';
 import CompareUpdate from '../components/ButtonsForUpdate/CompareUpdate';
+import ProductImage from '../components/ProductImage/ProductImage';
 
 function IndexMain(){
 
@@ -56,11 +57,12 @@ function IndexMain(){
                     every: state.slice(last, i).map((item, index) => ({
                         ...item,
                         get space(){
-                            const formatter = new Intl.NumberFormat('en-US')
-                            return formatter.format(this.price - (this.price * this.sale / 100))
+                            const formatter = new Intl.NumberFormat('ru')
+                            return formatter.format(this.price * this.sale / 100)
                         },
                         get realPrice(){
-                            return this.price - (this.price * this.sale / 100)
+                            const formatter = new Intl.NumberFormat('ru')
+                            return formatter.format(this.price - (this.price * this.sale / 100))
                         },
                     })),
                     title: content[i / 4 - 1].title,
@@ -85,11 +87,7 @@ function IndexMain(){
                         {
                             item.every.map(every => (
                                 <div className="xityProdajBox mb-15" key={every._id}>
-                                    <Link to={`/product/${every._id}`}>
-                                        <div className="sigveiWrap">
-                                            <img onClick={() => updateOne(some('viewed', every._id) ? 'remove' : 'add', 'viewed', every._id)} src={`${every.product[0]}`} className='sigvei' />
-                                        </div>
-                                    </Link>
+                                    <ProductImage id={every._id} srcs={every.product}/>
                                     {
                                         every.protection ? <img src={config.baseUrl + '/images/aqua.png'} className='aqua' />
                                         : null

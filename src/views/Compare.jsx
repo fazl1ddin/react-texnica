@@ -5,65 +5,25 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { useFindById, some, stars, updateOne } from "../store";
 import * as img from '../img/index';
+import useGetPAC from '../hooks/getProductsAtFac';
+import config from '../api/config';
+import FavoritesUpdate from '../components/ButtonsForUpdate/FavoritesUpdate';
+import CompareUpdate from '../components/ButtonsForUpdate/CompareUpdate';
+import CardUpdate from '../components/ButtonsForUpdate/CardUpdate';
 
 function Compare(){
-    const state = useSelector(state => state.products)
+    const [only, setOnly] = useState(true)
+
+    const { data, loading, products: productes} = useGetPAC(only)
 
     const [settings, setSettings] = useState({ filter: '', only: true })
 
     const [current, setCurrent] = useState(0)
 
     const products = useCallback(() => {
-        if(state.compare.length != 0){
-            let allProducts = []
-            for(let i = 0; i < state.compare.length; i++){
-                // allProducts[i] = useFindById(state.compare[i].id)
-            }
+        if(data.length != 0){
+            let allProducts = data
             if(settings.filter != 'Все' && settings.filter != '') allProducts = allProducts.filter(item => item.specification['Тип:'] == settings.filter )
-            function removeDuplicates(arr){
-
-                const result = []
-                const duplicatesIndices = []
-
-                arr.forEach((current, index) => {
-
-                    if(duplicatesIndices.includes(index)) return
-
-                    result.push(current)
-
-                    for(let comparisonIndex = index + 1; comparisonIndex < arr.length; comparisonIndex++){
-
-                        const comparison = arr[comparisonIndex]
-                        const currentKeys = Object.keys(current.specification)
-                        const comparisonKeys = Object.keys(comparison.specification)
-
-                        if(currentKeys.length !== comparisonKeys.length) continue
-
-                        const currentKeysString = currentKeys.sort().join("").toLowerCase()
-                        const comparisonKeysString = comparisonKeys.sort().join("").toLowerCase()
-
-                        if(currentKeysString !== comparisonKeysString) continue
-
-                        const comparison1 = arr[comparisonIndex]
-
-                        let valuesEqual = true
-                        for(let i = 0; i < currentKeys.length; i++){
-                            const key = currentKeys[i]
-                            if(current.specification[key] !== comparison.specification[key] ||
-                                current.realPrice !== comparison1.realPrice ||
-                                current.productName !== comparison1.productName){
-                                valuesEqual = false
-                                break
-                            }
-                        }
-
-                        if(valuesEqual) duplicatesIndices.push(comparisonIndex)
-
-                    }
-                })
-                return result
-            }
-            if(settings.only) allProducts = removeDuplicates(allProducts)
             let arr = []
             let n = window.innerWidth <= 770 ? 2 : 3
             let last = 0
@@ -77,7 +37,7 @@ function Compare(){
             return arr
         }
         return []
-    }, [state.compare, settings])
+    }, [data, settings, only])
 
     const table = () => {
         const keys = Object.keys(products()[0][0].specification).splice(1)
@@ -105,60 +65,60 @@ function Compare(){
                 </select>
                 <div className="xityProdaj">
                 {
-                    products().length != 0 ? products()[current < products().length ? current : 0].map((item, i) => (
-                        <div className="xityProdajBox mb-15" key={item.id}>
-                            <Link to={`/product/${item.id}`}>
-                                <img src={item.product.src[0]} className={item.product.class}/>
+                    products().length ? products()[current < products().length ? current : 0].map((every, i) => (
+                        <div className="xityProdajBox mb-15" key={every._id}>
+                            <Link to={`/product/${every._id}`}>
+                                <div className="sigveiWrap">
+                                    <img onClick={() => updateOne(some('viewed', every._id) ? 'remove' : 'add', 'viewed', every._id)} src={`${every.product[0]}`} className='sigvei' />
+                                </div>
                             </Link>
-                            <img src={item.protection.src} className={item.protection.class}/>
+                            {
+                                every.protection ? <img src={config.baseUrl + '/images/aqua.png'} className='aqua' />
+                                : null
+                            }
                             <div className="notific">
-                                <p className={item.news.class}>{ item.news.content }</p>
-                                <p className={item.hit.class}>{ item.hit.content }</p>
+                                {
+                                    every.news && <p className='novelty'>Новинка</p>
+                                }
+                                {
+                                    every.hit && <p className='xit'>Хит продаж</p>
+                                }                                                
                             </div>
                             <div className="xityProdajTexti">
-                                <h5>{ item.specification.productName } {item.id}</h5>
-                                <h3>{ item.productName }</h3>
+                                <h5>{every.specification.productName}</h5>
+                                <h3>{every.productName}</h3>
                             </div>
                             <div className="rateStar">
                                 <div className='ratesStars'>
-                                    {stars(item.rates)}
+                                    {
+                                        stars(every.rates)
+                                    }
                                 </div>
                                 <div className="comments">
                                     <img src={img.messageSquare} />
-                                    <h5>({ item.comments.length })</h5>
+                                    <h5>({every.comments.length})</h5>
                                 </div>
                             </div>
                             <div className="prices">
                                 <div className="pricesText">
-                                    <del className={item.price == item.realPrice ? 'visible' : ''}>{ item.price }₽</del>
-                                    <h3>{ item.realPrice + " ₽" }</h3>
-                                    <h4><span className="spanone">{ item.sale + "%" }</span> <span className="spantwo">— { item.space + " ₽" }</span></h4>
+                                    <del className={`${every.price == every.realPrice ? 'visible' : ''}`}>{every.price} ₽</del>
+                                    <h3>{every.realPrice} ₽</h3>
+                                    <h4><span className="spanone">{every.sale} %</span> <span className="spantwo">— {every.space} ₽</span></h4>
                                 </div>
                                 <div className="statslike">
-                                    <div className={`likebutton arbuttons ${!some('favorites', item.id) ? 'add' : 'remove'}`} onClick={() => updateOne(some('favorites', item.id) ? 'remove' : 'add', 'favorites', item.id)}>
-                                    </div>
-                                    <div className={`comparebutton arbuttons ${!some('compare', item.id) ? 'add' : 'remove'}`}  onClick={() => updateOne(some('compare', item.id) ? 'remove' : 'add', 'compare', item.id)}>
-                                    </div>
+                                    <FavoritesUpdate id={every._id}/>
+                                    <CompareUpdate id={every._id}/>
                                 </div>
                             </div>
-                            <div className="cart">
-                                <a href="">Купить в 1 клик</a>
-                                <div className={`cartbutton arbuttons ${!some('cart', item.id) ? 'add' : 'remove'}`} onClick={() => updateOne(some('cart', item.id) ? 'remove' : 'add', 'cart', item.id, 1)}>
-                                </div>
-                            </div>
+                            <CardUpdate id={every._id}/>
                         </div>
-                    )) : null
+                    )) : <div className="w-75pr">Пусто</div>
                 }
                 </div>
                 <div className="only">
-                    <input type="checkbox" id="only" checked={settings.only} onChange={e => setSettings({...settings, only: e.target.checked})}/>
+                    <input type="checkbox" id="only" checked={only} onChange={e => setOnly(!only)}/>
                     <label htmlFor="only">Только&nbsp;различающиеся</label>
                 </div>
-                {
-                    products().length === 0 ? (
-                        <div className="w-75pr">Пусто</div>
-                    ) : null
-                }
             </div>
             {
                 products().length ? (
@@ -172,7 +132,7 @@ function Compare(){
                                     </th>
                                     {
                                         products()[current < products().length ? current : 0].map((product) => (
-                                            <td key={product.id}>
+                                            <td key={product._id}>
                                                 {product.specification[item]}
                                             </td>
                                         ))

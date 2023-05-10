@@ -117,6 +117,8 @@ export function updateOne(method, module, id, count){
             data[module].push({ id, count})
         } else if(method === 'remove'){
             data[module] = data[module].filter(item => item.id !== id)
+        } else {
+            return 
         }
         localStorage.setItem('products', JSON.stringify(data))
         storeProducts.dispatch(setModule({data: data}))
