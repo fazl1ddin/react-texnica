@@ -49,34 +49,12 @@ function IndexMain(){
     ]
 
     const products = (start, end) => {
-        let news = []
-        let last = 0
-        for (let i = last; i <= Math.floor(state.length / 4) * 4; i += 4) {
-            if (last !== 0 || i !== 0){
-                news[i / 4 - 1] = {
-                    every: state.slice(last, i).map((item, index) => ({
-                        ...item,
-                        get space(){
-                            const formatter = new Intl.NumberFormat('ru')
-                            return formatter.format(this.price * this.sale / 100)
-                        },
-                        get realPrice(){
-                            const formatter = new Intl.NumberFormat('ru')
-                            return formatter.format(this.price - (this.price * this.sale / 100))
-                        },
-                    })),
-                    title: content[i / 4 - 1].title,
-                    href: content[i / 4 - 1].href
-                }
-            }
-            last = i
-        }
+        const news = data
 
         const loaders = []
         for (let index = 0; index < end - start; index++) {
             loaders.push(<Products4Loader key={index}/>)
         }
-        
         return loading ? loaders : news.slice(start, end).map(item => {
 
             return (<div className="xityProdaj" key={item.title}>
