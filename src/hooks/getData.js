@@ -21,7 +21,20 @@ function useGetData(path, method, typeRes){
     }, [refetch])
 
     return {
-        data,
+        data: data.map((item, index) => ({
+            ...item,
+            every: item.every.map((product, index) => ({
+                ...product,
+                get space(){
+                    const formatter = new Intl.NumberFormat('ru')
+                    return formatter.format(this.price * this.sale / 100)
+                },
+                get realPrice(){
+                    const formatter = new Intl.NumberFormat('ru')
+                    return formatter.format(this.price - (this.price * this.sale / 100))
+                },
+            }))
+        })),
         loading,
     }
 }

@@ -21,32 +21,7 @@ function IndexMain(){
 
     const [pagination, setPagination] = useState(0)
 
-    const {data, loading} = useGetData('/products', 'GET', [])
-
-    const state = data
-
-    const content = [
-        {
-            title: "Хиты продаж",
-            href: "Все товары",
-        },
-        {
-            title: "Новинки",
-            href: "Все товары",
-        },
-        {
-            title: "Сигвеи",
-            href: "Все товары",
-        },
-        {
-            title: "Моноколеса",
-            href: "Все товары",
-        },
-        {
-            title: "Электровелосипеды",
-            href: "Все товары",
-        }
-    ]
+    const {data, loading} = useGetData('/index-products', 'GET', [])
 
     const products = (start, end) => {
         const news = data
@@ -57,7 +32,7 @@ function IndexMain(){
         }
         return loading ? loaders : news.slice(start, end).map(item => {
 
-            return (<div className="xityProdaj" key={item.title}>
+            return (<div className="xityProdaj" key={item._id}>
                 <div className="window">
                     <h1>{item.title}</h1>
                     <a href="" className="a">{item.href}</a>
