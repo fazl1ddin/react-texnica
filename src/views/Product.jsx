@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import * as img from './../img/index';
 import useGetRec from '../hooks/getProduct';
 import useGetProduct from '../hooks/getProduct';
+import config from '../api/config';
 
 function rec(){
     const arr = []
@@ -72,7 +73,10 @@ function Product(){
                                 products.product.map((item, i) => (
                                     <div key={i}>
                                         <img src={`${item}`} className="productImg"/>
-                                        <img src={`${products.protection.src}`} className={`protection`}/>
+                                        {
+                                            item.protection ? <img src={config.baseUrl + '/images/aqua.png'} className='aqua' />
+                                            : null
+                                        }
                                     </div>
                                 ))
                             }
