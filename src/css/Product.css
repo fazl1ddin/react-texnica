@@ -104,6 +104,7 @@
 }
 .cartbutton.bought.remove {
     background-size: auto;
+    background-color: #edf2f6;
 }
 .cartbutton.bought.remove p {
     opacity: 0;

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import config from "../api/config";
+import { getRealPrice, getSpace } from "../store";
 
 function useGetProduct(id){
     const [data, setData] = useState({})
@@ -19,14 +20,8 @@ function useGetProduct(id){
 
     return [{
         ...data,
-        get space(){
-            const formatter = new Intl.NumberFormat('ru')
-            return formatter.format(this.price * this.sale / 100)
-        },
-        get realPrice(){
-            const formatter = new Intl.NumberFormat('ru')
-            return formatter.format(this.price - (this.price * this.sale / 100))
-        }
+        space: getSpace(data),
+        realPrice: getRealPrice(data)
     }, loading]
 }
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import './../css/Product.css';
 import { Link, useLocation } from 'react-router-dom';
-import { useFindById, some, store, updateOne } from '../store';
+import { useFindById, some, store, updateOne, storeUser } from '../store';
 import { useState } from 'react';
 import { stars } from '../store';
 import { useDispatch } from 'react-redux';
@@ -9,24 +9,19 @@ import * as img from './../img/index';
 import useGetRec from '../hooks/getProduct';
 import useGetProduct from '../hooks/getProduct';
 import config from '../api/config';
+import FavoritesUpdate from '../components/ButtonsForUpdate/FavoritesUpdate';
+import CompareUpdate from '../components/ButtonsForUpdate/CompareUpdate';
+import CardUpdateLong from '../components/ButtonsForUpdate/CardUpdateLong';
+import ProductImage from '../components/ProductImage/ProductImage';
+import CardUpdate from '../components/ButtonsForUpdate/CardUpdate';
+import useGetRecs from '../hooks/getRecs';
 
-function rec(){
-    const arr = []
-    for(let i = 0; i < 4; i++){
-        const allProducts = store.getState()['products']['allProducts']
-        arr[i] = allProducts[Math.floor(Math.random() * ((allProducts.length - 1) - 0 + 1)) + 0]
-    }
-    return arr
-}
-
-const recomendtion = rec()
-
-function Product(){
-    const dispatch = useDispatch()
+function Product({user, setLoginModal}){
+    const [recomendtion, recLoading] = useGetRecs()
 
     const [current, setCurrent] = useState(0)
 
-    const [currentDes, setCurrentDes] = useState(0)
+    const [currentDes, setCurrentDes] = useState(2)
 
     const descriptions = [
         'Описание',
@@ -63,6 +58,96 @@ function Product(){
     }
 
     return loading ? 'adassas' : (
+        {modal != ' ' ? modal == 'login' ? <div className="forModal">
+        <div className="centerWrap singIn">
+            <div className="modalTitle">
+                <h2>Вход</h2>
+                <div className="x" onClick={() => setModal(' ')}>
+                    <img src={img.x}/>
+                </div>
+            </div>
+            <div className="modalBody">
+                <form>
+                    {
+                        login.map((item, index) => <React.Fragment key={item.name}>
+                            <label htmlFor={item.name}>{item.title}</label>
+                            <input type="text" value={item.value} name="text" id={item.name} onChange={e => {
+                                setLogin(login.map((item, i) => {
+                                    if(index == i) return {
+                                        ...item,
+                                        value: e.target.value,
+                                        valid: item.pattern.test(item.value),
+                                    }
+                                    return item
+                                }))
+                            }}/>
+                        </React.Fragment>)
+                    }
+                    <a href="">Забыли пароль?</a>
+                    <div>
+                        <input type="checkbox" name="save" id="save" />
+                        <label htmlFor="save">Запомнить меня</label>
+                    </div>
+                    <button type="button" onClick={async () => {
+                        let obj = {};
+                        login.forEach((item, index) => {
+                            obj[item.name] = item.value
+                        })
+                        // dispatch(Auth({logType: 'pass', obj}))
+                        await fetch(config.baseUrl + '/login', {method: 'POST', body: JSON.stringify({logType: 'pass', obj})})
+                        .then(result => result.json())
+                        .then(result => {
+                            if(result.user){
+                                storeUser.dispatch(setUser(result))
+                                storeProducts.dispatch(setModule({data: result.user}))
+                                localStorage.setItem('token', result.token)
+                            }
+                        })
+                        .catch(e => {
+                            if(localStorage.getItem('products')){
+                                dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
+                            } else {
+                                localStorage.setItem('products', JSON.stringify({}))
+                            }
+                        })
+                        setModal(' ')
+                    }}>Войти</button>
+                    <a onClick={() => setModal('singUp')}>Зарегистрироваться</a>
+                </form>
+            </div>
+        </div>
+        </div> : <div className="forModal">
+            <div className="centerWrap singUp">
+                <div className="modalTitle">
+                    <h2>Регистрация</h2>
+                    <div className="x">
+                        <img src={img.x} onClick={() => setModal(' ')}/>
+                    </div>
+                </div>
+                <div className="modalBody">
+                    <form>
+                        {
+                            singUp.map((item, index) => <React.Fragment key={item.name}>
+                                <label htmlFor={item.name}>{item.title}</label>
+                                <input type="text" value={item.value} id={item.name} onChange={e => {
+                                    setSingUp(singUp.map((item, i) => {
+                                        if(index == i) return {
+                                            ...item,
+                                            value: e.target.value,
+                                            valid: item.pattern.test(item.value),
+                                        }
+                                        return item
+                                    }))
+                                }}/>
+                            </React.Fragment>)
+                        }
+                        <p>Регистрируясь, вы соглашаетесь с&nbsp;<a href="">пользовательским соглашением</a></p>
+                        <button type="button" onClick={() => {}}>Зарегистрироваться</button>
+                        <a onClick={() => setModal('login')}>Войти</a>
+                    </form>
+                </div>
+            </div>
+        </div> : null}
         <div className='product'>
             <div className='window'>
                 <div className="productContent">
@@ -111,10 +196,8 @@ function Product(){
                                     </div>
                                 </div>
                                 <div className="statslike">
-                                    <div className={`likebutton arbuttons ${!some('favorites', products.id) ? 'add' : 'remove'}`} onClick={() => updateOne(some('favorites', products.id) ? 'remove' : 'add', 'favorites', products.id)}>
-                                    </div>
-                                    <div className={`comparebutton arbuttons ${!some('compare', products.id) ? 'add' : 'remove'}`}  onClick={() => updateOne(some('compare', products.id) ? 'remove' : 'add', 'compare', products.id)}>
-                                    </div>
+                                    <FavoritesUpdate id={products._id}/>
+                                    <CompareUpdate id={products._id}/>
                                 </div>
                             </div>
                             <div className="productPricesBox">
@@ -125,12 +208,7 @@ function Product(){
                                     </div>
                                     <h3>{products.realPrice} ₽</h3>
                                 </div>
-                                <div className="cart">
-                                        <div className={`bought cartbutton arbuttons ${!some('cart', products.id) ? 'add' : 'remove'}`} onClick={() => updateOne(some('cart', products.id) ? 'remove' : 'add', 'cart', products.id, 1)}>
-                                            <p>В корзину</p>
-                                        </div>
-                                    <a href="">Купить в 1 клик</a>
-                                </div>
+                                <CardUpdateLong id={products._id}/>
                             </div>
                         </div>
                         <div className="wayget">
@@ -173,52 +251,51 @@ function Product(){
                             <h1>Рекомендуем</h1>
                             <div className="xityProdajContent">
                                 {
-                                //     recomendtion.map((item, i) => (
-                                //     <div className="xityProdajBox mb-15" key={i}>
-                                //         <p>{item._id}</p>
-                                //         <Link to={`/product/${item.id}`}>
-                                //             <img src={item.product.src[0]} className={item.product.class}/>
-                                //         </Link>
-                                //         <img src={item.protection.src} className={item.protection.class}/>
-                                //         <div className="notific">
-                                //             <p className={item.news.class}>{item.news.content}</p>
-                                //             <p className={item.hit.class}>{item.hit.content}</p>
-                                //         </div>
-                                //         <div className="xityProdajTexti">
-                                //             <h5>{item.specification.productName}</h5>
-                                //             <h3>{item.productName}</h3>
-                                //         </div>
-                                //         <div className="rateStar">
-                                //             <div className='ratesStars'>
-                                //                 {
-                                //                     stars(item.rates)
-                                //                 }
-                                //             </div>
-                                //             <div className="comments">
-                                //                 <img src={img.messageSquare} />
-                                //                 <h5>({item.comments.length})</h5>
-                                //             </div>
-                                //         </div>
-                                //         <div className="prices">
-                                //             <div className="pricesText">
-                                //                 <del className={`${item.price == item.realPrice ? 'visible' : ''}`}>{item.price} ₽</del>
-                                //                 <h3>{item.realPrice} ₽</h3>
-                                //                 <h4><span className="spanone">{item.sale} %</span> <span className="spantwo">— {item.space} ₽</span></h4>
-                                //             </div>
-                                //             <div className="statslike">
-                                //                 <div className={`likebutton arbuttons ${!some('favorites', item.id) ? 'add' : 'remove'}`} onClick={() => dispatch(updateOne(some('favorites', item.id) ? 'remove' : 'add', 'favorites', item.id, ))}>
-                                //                 </div>
-                                //                 <div className={`comparebutton arbuttons ${!some('compare', item.id) ? 'add' : 'remove'}`}  onClick={() => dispatch(updateOne(some('compare', item.id) ? 'remove' : 'add', 'compare', item.id, ))}>
-                                //                 </div>
-                                //             </div>
-                                //         </div>
-                                //         <div className="cart">
-                                //             <a href="">Купить в 1 клик</a>
-                                //             <div className={`cartbutton arbuttons ${!some('cart', item.id) ? 'add' : 'remove'}`} onClick={() => dispatch(updateOne(some('cart', item.id) ? 'remove' : 'add', 'cart', item.id, 1))}>
-                                //             </div>
-                                //         </div>
-                                //     </div>
-                                // ))
+                                    recLoading ? 'asffsaasf' :
+                                    recomendtion.map((item, i) => (
+                                        <div className="xityProdajBox mb-15" key={item._id}>
+                                            <ProductImage id={item._id} srcs={item.product}/>
+                                            {
+                                                item.protection ? <img src={config.baseUrl + '/images/aqua.png'} className='aqua' />
+                                                : null
+                                            }
+                                            <div className="notific">
+                                                {
+                                                    item.news && <p className='novelty'>Новинка</p>
+                                                }
+                                                {
+                                                    item.hit && <p className='xit'>Хит продаж</p>
+                                                }                                                
+                                            </div>
+                                            <div className="xityProdajTexti">
+                                                <h5>{item.specification.productName}</h5>
+                                                <h3>{item.productName}</h3>
+                                            </div>
+                                            <div className="rateStar">
+                                                <div className='ratesStars'>
+                                                    {
+                                                        stars(item.rates)
+                                                    }
+                                                </div>
+                                                <div className="comments">
+                                                    <img src={img.messageSquare} />
+                                                    <h5>({item.comments.length})</h5>
+                                                </div>
+                                            </div>
+                                            <div className="prices">
+                                                <div className="pricesText">
+                                                    <del className={`${item.price == item.realPrice ? 'visible' : ''}`}>{item.price} ₽</del>
+                                                    <h3>{item.realPrice} ₽</h3>
+                                                    <h4><span className="spanone">{item.sale} %</span> <span className="spantwo">— {item.space} ₽</span></h4>
+                                                </div>
+                                                <div className="statslike">
+                                                    <FavoritesUpdate id={item._id}/>
+                                                    <CompareUpdate id={item._id}/>
+                                                </div>
+                                            </div>
+                                            <CardUpdate id={item._id}/>
+                                        </div>
+                                    ))
                                 }
                             </div>
                         </div>
@@ -227,7 +304,7 @@ function Product(){
                                 <table>
                                     <tbody>
                                         {
-                                            Object.keys(products.specification).splice(1).map((item, i) => (
+                                            Object.keys(products.specification).splice(2 ).map((item, i) => (
                                                 <tr key={item}>
                                                     <th>{item}</th>
                                                     <td>{products.specification[item]}</td>
@@ -240,27 +317,44 @@ function Product(){
                         ) : (
                             <div className="rates">
                                 <div className="ratesContent">
-                                    <div className="ratesAcc">
-                                        <div className="aboutRate">
-                                            <img src={img.avatar}/>
-                                            <h4>Александр <span>07 июня 2021</span></h4>
-                                            <div className="ratesStars">
-                                                {
-                                                    stars(products.rates)
-                                                }
+                                    {
+                                        products.comments.map((item, index) => (
+                                            <div className="ratesAcc" key={index}>
+                                                <div className="aboutRate">
+                                                    <img src={img.avatar}/>
+                                                    <h4>Александр <span>{new Intl.DateTimeFormat('ru', {
+                                                        year: 'numeric',
+                                                        month: 'long',
+                                                        day: 'numeric'
+                                                    }).format(item.date)}</span></h4>
+                                                    <div className="ratesStars">
+                                                        {
+                                                            stars(item.rate)
+                                                        }
+                                                    </div>
+                                                    <span>({item.rate} из 5)</span>
+                                                </div>
+                                                <div className="rateContent">
+                                                    <h4>{item.title}</h4>
+                                                    <p dangerouslySetInnerHTML={{__html: item.content}}></p>
+                                                </div>
                                             </div>
-                                            <span>({products.rates} из 5)</span>
+                                        ))
+                                    }
+                                    {
+                                        user ?
+                                        <div className="newRate">
+                                            <h4>Напишите своё мнение о товаре</h4>
+                                            <p>Сделайте выбор других покупалетей легче</p>
+                                            <button>Написать отзыв</button>
                                         </div>
-                                        <div className="rateContent">
-                                            <h4>Отличный самокат!</h4>
-                                            <p>Катаюсь каждый день после работы, заряд держит отлично!</p>
+                                        :
+                                        <div className="newRate">
+                                            <h4>Напишите своё мнение о товаре</h4>
+                                            <p>Сначала войдите или зарегистрируйтесь</p>
+                                            <button onClick={() => setLoginModal('login')}>Написать отзыв</button>
                                         </div>
-                                    </div>
-                                    <div className="newRate">
-                                        <h4>Напишите своё мнение о товаре</h4>
-                                        <p>Сделайте выбор других покупалетей легче</p>
-                                        <button>Написать отзыв</button>
-                                    </div>
+                                    }
                                 </div>
                             </div>
                         )}

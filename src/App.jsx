@@ -524,7 +524,7 @@ function App(){
                 <IndexMain/>
             </DropDown.Provider>}>
         </Route>,
-        <Route path="/product/:id" element={<Product/>}></Route>,
+        <Route path="/product/:id" element={<Product setLoginModal={setModal} user={Suzer} loadingUser={loading}/>}></Route>,
         <Route path="/viewed" element={<Viewed/>}/>
         <Route path="/favorites" element={<Favorites drops={droProfile} setModal={setModal} user={Suzer} loadingUser={loading}/>}></Route>,
         <Route path="/compare" element={<Compare/>}></Route>,
