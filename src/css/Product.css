@@ -197,6 +197,9 @@
     font-family: 'Exo 2';
     font-weight: 400;
 }
+.tabs .rates {
+    display: flex;
+}
 .description p {
     font-size: 16px;
 }
@@ -216,8 +219,9 @@
 }
 .ratesContent {
     display: flex;
-    align-items: center;
-    justify-content: flex-start;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-direction: column;
     font-family: 'Exo 2';
 }
 .ratesAcc {
@@ -225,6 +229,7 @@
     border-radius: 10px;
     background-color: #EDF2F6;
     padding: 40px;
+    margin-bottom: 10px;
 }
 .aboutRate {
     display: flex;
@@ -246,8 +251,8 @@
 }
 .aboutRate .rates {
     display: flex;
-    align-items: center;
-    justify-content: flex-start;
+    align-items: start;
+    justify-content: space-between;
     margin-right: 10px;
 }
 .aboutRate .rates img {

@@ -18,11 +18,35 @@ function useGetProduct(id){
         })()
     }, [])
 
+    useEffect(() => {
+        (async () => {
+            let newComments = []
+            for (let index = 0; index < data?.comments?.length; index++) {
+                const element = data?.comments?.[index];
+                let obj = {}
+                await fetch(config.baseUrl + '/get-user-data', { method: 'POST', body: JSON.stringify({userId: element.userId, keys: ['name']}) })
+                .then(result => result.json())
+                .then(result => {
+                    obj = {
+                        ...element,
+                        ...result
+                    }
+                    setLoading(false)
+                })
+                newComments[index] = obj
+            }
+            setData({
+                ...data,
+                comments: newComments
+            })
+        })()
+    }, [loading])
+
     return [{
         ...data,
         space: getSpace(data),
         realPrice: getRealPrice(data)
-    }, loading]
+    }, loading, setData]
 }
 
 export default useGetProduct

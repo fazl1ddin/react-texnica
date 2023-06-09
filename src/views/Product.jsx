@@ -17,6 +17,32 @@ import CardUpdate from '../components/ButtonsForUpdate/CardUpdate';
 import useGetRecs from '../hooks/getRecs';
 
 function Product({user, setLoginModal}){
+    const [modal, setModal] = useState(false)
+
+    const [fields, setFields] = useState([
+        {
+            title: 'Заголовок',
+            name: 'title',
+            value: '',
+            pattern: /[0-9\\.,:]/,
+            valid: false
+        },
+        {
+            title: 'Текст отзыва',
+            name: 'content',
+            value: '',
+            pattern: /[0-9\\.,:]/,
+            valid: false
+        },
+        {
+            title: 'Оценка',
+            name: 'rate',
+            value: '',
+            pattern: /[0-9\\.,:]/,
+            valid: false
+        }
+    ])
+
     const [recomendtion, recLoading] = useGetRecs()
 
     const [current, setCurrent] = useState(0)
@@ -33,7 +59,7 @@ function Product({user, setLoginModal}){
 
     const currentId = pathname[pathname.length - 1]
     
-    const [products, loading] = useGetProduct(currentId)
+    const [products, loading, setData] = useGetProduct(currentId)
 
     const pagination = () => {
         if(!loading){
@@ -57,97 +83,59 @@ function Product({user, setLoginModal}){
         }
     }
 
-    return loading ? 'adassas' : (
-        {modal != ' ' ? modal == 'login' ? <div className="forModal">
-        <div className="centerWrap singIn">
-            <div className="modalTitle">
-                <h2>Вход</h2>
-                <div className="x" onClick={() => setModal(' ')}>
-                    <img src={img.x}/>
-                </div>
-            </div>
-            <div className="modalBody">
-                <form>
-                    {
-                        login.map((item, index) => <React.Fragment key={item.name}>
-                            <label htmlFor={item.name}>{item.title}</label>
-                            <input type="text" value={item.value} name="text" id={item.name} onChange={e => {
-                                setLogin(login.map((item, i) => {
-                                    if(index == i) return {
-                                        ...item,
-                                        value: e.target.value,
-                                        valid: item.pattern.test(item.value),
-                                    }
-                                    return item
-                                }))
-                            }}/>
-                        </React.Fragment>)
-                    }
-                    <a href="">Забыли пароль?</a>
-                    <div>
-                        <input type="checkbox" name="save" id="save" />
-                        <label htmlFor="save">Запомнить меня</label>
+    return loading ? 'adassas' : (<>
+        {
+            modal ? 
+            <div className="forModal">
+                <div className="centerWrap singIn">
+                    <div className="modalTitle">
+                        <h2>Отзыв</h2>
+                        <div className="x" onClick={() => setModal(false)}>
+                            <img src={img.x}/>
+                        </div>
                     </div>
-                    <button type="button" onClick={async () => {
-                        let obj = {};
-                        login.forEach((item, index) => {
-                            obj[item.name] = item.value
-                        })
-                        // dispatch(Auth({logType: 'pass', obj}))
-                        await fetch(config.baseUrl + '/login', {method: 'POST', body: JSON.stringify({logType: 'pass', obj})})
-                        .then(result => result.json())
-                        .then(result => {
-                            if(result.user){
-                                storeUser.dispatch(setUser(result))
-                                storeProducts.dispatch(setModule({data: result.user}))
-                                localStorage.setItem('token', result.token)
+                    <div className="modalBody">
+                        <form>
+                            {
+                                fields.map((item, index) => <React.Fragment key={item.name}>
+                                    <label htmlFor={item.name}>{item.title}</label>
+                                    <input type="text" value={item.value} name="text" id={item.name} onChange={e => {
+                                        setFields(fields.map((item, i) => {
+                                            if(index == i) return {
+                                                ...item,
+                                                value: e.target.value,
+                                                valid: item.pattern.test(item.value),
+                                            }
+                                            return item
+                                        }))
+                                    }}/>
+                                </React.Fragment>)
                             }
-                        })
-                        .catch(e => {
-                            if(localStorage.getItem('products')){
-                                dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
-                            } else {
-                                localStorage.setItem('products', JSON.stringify({}))
-                            }
-                        })
-                        setModal(' ')
-                    }}>Войти</button>
-                    <a onClick={() => setModal('singUp')}>Зарегистрироваться</a>
-                </form>
-            </div>
-        </div>
-        </div> : <div className="forModal">
-            <div className="centerWrap singUp">
-                <div className="modalTitle">
-                    <h2>Регистрация</h2>
-                    <div className="x">
-                        <img src={img.x} onClick={() => setModal(' ')}/>
+                            <button type="button" onClick={async () => {
+                                let obj = {};
+                                fields.forEach((item, index) => {
+                                    obj[item.name] = item.value
+                                })
+                                // dispatch(Auth({logType: 'pass', obj}))
+                                await fetch(config.baseUrl + '/add-comment', {method: 'POST', body: JSON.stringify({
+                                    productId: products._id,
+                                    userId: user._id,
+                                    ...obj
+                                })})
+                                .then(result => result.json())
+                                .then(result => {
+                                    setData(result)
+                                })
+                                .catch(e => {
+                                    console.log(e);
+                                })
+                                setModal(false)
+                            }}>Добавить</button>
+                        </form>
                     </div>
                 </div>
-                <div className="modalBody">
-                    <form>
-                        {
-                            singUp.map((item, index) => <React.Fragment key={item.name}>
-                                <label htmlFor={item.name}>{item.title}</label>
-                                <input type="text" value={item.value} id={item.name} onChange={e => {
-                                    setSingUp(singUp.map((item, i) => {
-                                        if(index == i) return {
-                                            ...item,
-                                            value: e.target.value,
-                                            valid: item.pattern.test(item.value),
-                                        }
-                                        return item
-                                    }))
-                                }}/>
-                            </React.Fragment>)
-                        }
-                        <p>Регистрируясь, вы соглашаетесь с&nbsp;<a href="">пользовательским соглашением</a></p>
-                        <button type="button" onClick={() => {}}>Зарегистрироваться</button>
-                        <a onClick={() => setModal('login')}>Войти</a>
-                    </form>
-                </div>
-            </div>
-        </div> : null}
+            </div> : null
+        }
         <div className='product'>
             <div className='window'>
                 <div className="productContent">
@@ -322,7 +310,7 @@ function Product({user, setLoginModal}){
                                             <div className="ratesAcc" key={index}>
                                                 <div className="aboutRate">
                                                     <img src={img.avatar}/>
-                                                    <h4>Александр <span>{new Intl.DateTimeFormat('ru', {
+                                                    <h4>{item.name} <span>{new Intl.DateTimeFormat('ru', {
                                                         year: 'numeric',
                                                         month: 'long',
                                                         day: 'numeric'
@@ -341,28 +329,28 @@ function Product({user, setLoginModal}){
                                             </div>
                                         ))
                                     }
-                                    {
-                                        user ?
-                                        <div className="newRate">
-                                            <h4>Напишите своё мнение о товаре</h4>
-                                            <p>Сделайте выбор других покупалетей легче</p>
-                                            <button>Написать отзыв</button>
-                                        </div>
-                                        :
-                                        <div className="newRate">
-                                            <h4>Напишите своё мнение о товаре</h4>
-                                            <p>Сначала войдите или зарегистрируйтесь</p>
-                                            <button onClick={() => setLoginModal('login')}>Написать отзыв</button>
-                                        </div>
-                                    }
                                 </div>
+                                {
+                                    user ?
+                                    <div className="newRate">
+                                        <h4>Напишите своё мнение о товаре</h4>
+                                        <p>Сделайте выбор других покупалетей легче</p>
+                                        <button onClick={() => setModal(true)}>Написать отзыв</button>
+                                    </div>
+                                    :
+                                    <div className="newRate">
+                                        <h4>Напишите своё мнение о товаре</h4>
+                                        <p>Сначала войдите или зарегистрируйтесь</p>
+                                        <button onClick={() => setLoginModal('login')}>Написать отзыв</button>
+                                    </div>
+                                }
                             </div>
                         )}
                     </div>
                 </div>
             </div>
         </div>
-    )
+        </>)
 }
 
 export default Product
