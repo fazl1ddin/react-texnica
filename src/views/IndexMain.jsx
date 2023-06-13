@@ -5,7 +5,7 @@ import * as img from './../img/index';
 import { useContext, useState } from 'react';
 import DropDown from '../contexts/dropDown';
 import { useSelector, useDispatch } from 'react-redux';
-import { some, stars, updateOne } from './../store/index';
+import { getRealPrice, getSpace, some, stars, updateOne } from './../store/index';
 import useGetData from '../hooks/getData'
 import Loader from '../components/Loaders/Loader';
 import Products4Loader from '../components/Loaders/Products4Loader';
@@ -38,7 +38,11 @@ function IndexMain(){
                     <a href="" className="a">{item.href}</a>
                     <div className="xityProdajContent">
                         {
-                            item.every.map(every => (
+                            item.every.map((item, index) => ({
+                                ...item,
+                                space: getSpace(item),
+                                realPrice: getRealPrice(item)
+                            })).map(every => (
                                 <div className="xityProdajBox mb-15" key={every._id}>
                                     <ProductImage id={every._id} srcs={every.product}/>
                                     {
