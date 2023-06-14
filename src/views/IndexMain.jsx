@@ -14,12 +14,16 @@ import CardUpdate from '../components/ButtonsForUpdate/CardUpdate';
 import FavoritesUpdate from '../components/ButtonsForUpdate/FavoritesUpdate';
 import CompareUpdate from '../components/ButtonsForUpdate/CompareUpdate';
 import ProductImage from '../components/ProductImage/ProductImage';
+import useGetIndexPromos from '../hooks/getIndexPromos';
+import LoaderIndexPromos from '../components/Loaders/LoaderIndexPromos';
 
 function IndexMain(){
 
     const dropDown = useContext(DropDown)
 
     const [pagination, setPagination] = useState(0)
+
+    const [promos, pLoading] = useGetIndexPromos()
 
     const {data, loading} = useGetData('/index-products', 'GET', [])
 
@@ -151,14 +155,21 @@ function IndexMain(){
         <div className="banner">
             <div className="window">
                 <div className="bannerContent">
-                    <div className="bannerBox">
-                        <h1 className="w-210">Скидки до 30% на сигвеи</h1>
-                        <img src={img.sale1} alt="" />
-                    </div>
-                    <div className="bannerBox">
-                        <h1 className="w-180">Неделя смарт часов</h1>
-                        <img src={img.sale2} alt="" />
-                    </div>
+                {
+                        pLoading ? 
+                        <>
+                            <LoaderIndexPromos/>
+                            <LoaderIndexPromos/>
+                        </>
+                        : 
+                        promos.slice(0, 2).map((item, index) => 
+                        (
+                            <div className="bannerBox">
+                                <h1 className={item.with.reduce((p, c) => p += (c + ' '), '')}>{item.title}</h1>
+                                <img src={img[item.img]} alt="" />
+                            </div>
+                        ))
+                    }
                 </div>
             </div>
         </div>
@@ -168,14 +179,21 @@ function IndexMain(){
         <div className="banner pb-40">
             <div className="window">
                 <div className="bannerContent">
-                    <div className="bannerBox">
-                        <h1 className="w-180">Распродажа до — 50%</h1>
-                        <img src={img.sale3} />
-                    </div>
-                    <div className="bannerBox pr-0">
-                        <h1 className="w-330">Smart Balance Premium по специальной цене</h1>
-                        <img src={img.sale4} className="mr-20" />
-                    </div>
+                    {
+                        pLoading ? 
+                        <>
+                            <LoaderIndexPromos/>
+                            <LoaderIndexPromos/>
+                        </>
+                        : 
+                        promos.slice(2, 4).map((item, index) => 
+                        (
+                            <div className="bannerBox">
+                                <h1 className={item.with.reduce((p, c) => p += (c + ' '), '')}>{item.title}</h1>
+                                <img src={img[item.img]} alt="" />
+                            </div>
+                        ))
+                    }
                 </div>
             </div>
         </div>
