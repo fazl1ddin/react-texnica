@@ -7,6 +7,34 @@ import { useEffect, useState } from "react";
 import config from "../api/config";
 import { useSelector } from "react-redux";
 
+export function removeDuplicates(arr, key){
+
+    const result = []
+    const duplicatesIndices = []
+
+    arr.forEach((current, index) => {
+
+        if(duplicatesIndices.includes(index)) return
+
+        result.push(current.specification[key])
+
+        for(let comparisonIndex = index + 1; comparisonIndex < arr.length; comparisonIndex++){
+
+            const comparison = arr[comparisonIndex]
+
+            let valuesEqual = true
+            if(current.specification[key] !== comparison.specification[key]){
+                valuesEqual = false
+                break
+            }
+
+            if(valuesEqual) duplicatesIndices.push(comparisonIndex)
+
+        }
+    })
+    return result
+}
+
 export function getSpace(context){
     if(context)
     return new Intl.NumberFormat('ru').format(context.price * context.sale / 100)

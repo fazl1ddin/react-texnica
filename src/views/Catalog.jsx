@@ -1,42 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { some, stars, updateOne } from '../store/index';
+import { getRealPrice, getSpace, removeDuplicates, some, stars, updateOne } from '../store/index';
 import * as img from '../img/index';
 import '../css/Catalog.css';
 import { useCallback } from 'react';
+import useGetAP from '../hooks/getAllProducts';
+import config from '../api/config';
+import FavoritesUpdate from '../components/ButtonsForUpdate/FavoritesUpdate';
+import CompareUpdate from '../components/ButtonsForUpdate/CompareUpdate';
+import CardUpdate from '../components/ButtonsForUpdate/CardUpdate';
+import ProductImage from '../components/ProductImage/ProductImage';
 
 const polzunok = 14
 
-function removeDuplicates(arr, key){
-
-    const result = []
-    const duplicatesIndices = []
-
-    arr.forEach((current, index) => {
-
-        if(duplicatesIndices.includes(index)) return
-
-        result.push(current.specification[key])
-
-        for(let comparisonIndex = index + 1; comparisonIndex < arr.length; comparisonIndex++){
-
-            const comparison = arr[comparisonIndex]
-
-            let valuesEqual = true
-            if(current.specification[key] !== comparison.specification[key]){
-                valuesEqual = false
-                break
-            }
-
-            if(valuesEqual) duplicatesIndices.push(comparisonIndex)
-
-        }
-    })
-    return result
-}
-
 function Catalog(){
+    const [{data: products, filtersChecks}, loading] = useGetAP(1, 12)
+
     const state = useSelector(state => state.products)
 
     const arr = state.allProducts.map((item) => item.realPrice)
@@ -138,34 +118,6 @@ function Catalog(){
     useEffect(() => {
         setFilter({...filter, realPrices: {min: minValue, max: maxValue}})
     }, [can])
-
-    const products = useCallback(() => {
-        let products = state.allProducts
-
-        if(filter.podsvetka !== null && filter.podsvetka != ''){
-            products = products.filter((item) => item.specification['Круиз-контроль'] == filter.podsvetka)
-        }
-
-        if(filter.moshnost !== null && filter.moshnost != ''){
-            products = products.filter((item, index) => filter.moshnost.includes(item.specification['Мощность двигателя'].toString()))
-        }
-
-        if(filter.maksSpeed !== null && filter.maksSpeed != ''){
-            products = products.filter((item, index) => filter.maksSpeed.includes(item.specification['Макс. скорость до (км/ч):'].toString()))
-        }
-
-        products = products.filter(item => {
-            return item.realPrice <= maxValue && item.realPrice >= minValue
-        })
-
-        return products
-    }, [filter])
-
-    const filtersChecks = {
-        podsvetka: removeDuplicates(state.allProducts, 'Круиз-контроль'),
-        moshnost: removeDuplicates(state.allProducts, 'Мощность двигателя'),
-        maksSpeed: removeDuplicates(state.allProducts, 'Макс. скорость до (км/ч):')
-    }
 
     const filters = [
         {
@@ -294,80 +246,88 @@ function Catalog(){
         <div className="catalog">
             <div className="window">
                 <h1>Каталог</h1>
-                <div className="catalogContent">
-                    <div className="filter">
-                        {
-                            filters.map((item, index) => (
-                                <div className={`drop ${openIndex[item.key] ? 'anim' : ''}`} key={index}>
-                                    <button onClick={() => setOpenIndex({...openIndex, [item.key]: !openIndex[item.key]})} className={openIndex[item.key] ? '' : 'droper'}>{ item.title }</button>
-                                    {item.content}
-                                </div>
-                            ))
-                        }
-                    </div>
-                    <div>
-                        <div className="filters">
+                {
+                    loading ? 'assafsaafsfas'
+                    :
+                    <div className="catalogContent">
+                        <div className="filter">
                             {
-                                filter.podsvetka !== null && filter.podsvetka !== '' ? <p>Подсветка: {filter.podsvetka}
-                                    <img src={img.x} className='deleteBut' onClick={() => setFilter({...filter, podsvetka: null})}/>
-                                </p> : null
-                            }
-                            {
-                                filter.moshnost !== null && filter.moshnost.length != 0 ? 
-                                filter.moshnost.length != 1 ? 
-                                <p>Мощность двигателя (Ватт) от {filter.moshnost.sort((a, b) => a - b)[0]} до {filter.moshnost.sort((a, b) => b - a)[0]}
-                                    <img src={img.x} className='deleteBut' onClick={() => setFilter({...filter, moshnost: null})}/>
-                                </p> : 
-                                <p>Мощность двигателя (Ватт): {filter.moshnost[0]}
-                                    <img src={img.x} className='deleteBut' onClick={() => setFilter({...filter, moshnost: null})}/>
-                                </p>
-                                : null
-                            }
-                            {
-                                filter.maksSpeed !== null && filter.maksSpeed.length != 0 ? 
-                                filter.maksSpeed.length > 1 ? 
-                                <p>Максимальная скорость (км/ч) от {filter.maksSpeed.sort((a, b) => a - b)[0]} до {filter.maksSpeed.sort((a, b) => b - a)[0]}
-                                    <img src={img.x} className='deleteBut' onClick={() => setFilter({...filter, maksSpeed: null})}/>
-                                </p> : 
-                                <p>Максимальная скорость (км/ч): {filter.maksSpeed[0]}
-                                    <img src={img.x} className='deleteBut' onClick={() => setFilter({...filter, maksSpeed: null})}/>
-                                </p>
-                                : null
-                            }
-                            {
-                                filter.realPrices.min != min || filter.realPrices.max != max ? 
-                                <p>Цена: от {filter.realPrices.min} ₽ до {filter.realPrices.max} ₽
-                                    <img src={img.x} className='deleteBut' onClick={() => setFilter({...filter, realPrices: {min: min, max: max}})}/>
-                                </p> 
-                                : null
-                            }
-                            {
-                                !Object.values(filter).every((item) => typeof item == 'object') ? <button className='clear' onClick={() => {
-                                    let obj = {}
-                                    Object.keys(filter).forEach((iteme) => {
-                                        obj[iteme] = null
-                                        obj['realPrices'] = {min: min, max: max}
-                                    })
-                                    setFilter(obj)
-                                }}>Очистить фильтры</button> : 
-                                null                                
+                                filters.map((item, index) => (
+                                    <div className={`drop ${openIndex[item.key] ? 'anim' : ''}`} key={index}>
+                                        <button onClick={() => setOpenIndex({...openIndex, [item.key]: !openIndex[item.key]})} className={openIndex[item.key] ? '' : 'droper'}>{ item.title }</button>
+                                        {item.content}
+                                    </div>
+                                ))
                             }
                         </div>
-                        <div className="xityProdajContent">
-                        {
-                            products().map((item) => (
-                                <div className="xityProdajBox" key={item.id}>
-                                    <Link to={`/product/${item.id}`}>
-                                        <img src={item.product.src[0]} className={item.product.class}/>
-                                    </Link>
-                                    <img src={item.protection.src} className={item.protection.class}/>
+                        <div>
+                            <div className="filters">
+                                {
+                                    filter.podsvetka !== null && filter.podsvetka !== '' ? <p>Подсветка: {filter.podsvetka}
+                                        <img src={img.x} className='deleteBut' onClick={() => setFilter({...filter, podsvetka: null})}/>
+                                    </p> : null
+                                }
+                                {
+                                    filter.moshnost !== null && filter.moshnost.length != 0 ? 
+                                    filter.moshnost.length != 1 ? 
+                                    <p>Мощность двигателя (Ватт) от {filter.moshnost.sort((a, b) => a - b)[0]} до {filter.moshnost.sort((a, b) => b - a)[0]}
+                                        <img src={img.x} className='deleteBut' onClick={() => setFilter({...filter, moshnost: null})}/>
+                                    </p> : 
+                                    <p>Мощность двигателя (Ватт): {filter.moshnost[0]}
+                                        <img src={img.x} className='deleteBut' onClick={() => setFilter({...filter, moshnost: null})}/>
+                                    </p>
+                                    : null
+                                }
+                                {
+                                    filter.maksSpeed !== null && filter.maksSpeed.length != 0 ? 
+                                    filter.maksSpeed.length > 1 ? 
+                                    <p>Максимальная скорость (км/ч) от {filter.maksSpeed.sort((a, b) => a - b)[0]} до {filter.maksSpeed.sort((a, b) => b - a)[0]}
+                                        <img src={img.x} className='deleteBut' onClick={() => setFilter({...filter, maksSpeed: null})}/>
+                                    </p> : 
+                                    <p>Максимальная скорость (км/ч): {filter.maksSpeed[0]}
+                                        <img src={img.x} className='deleteBut' onClick={() => setFilter({...filter, maksSpeed: null})}/>
+                                    </p>
+                                    : null
+                                }
+                                {
+                                    filter.realPrices.min != min || filter.realPrices.max != max ? 
+                                    <p>Цена: от {filter.realPrices.min} ₽ до {filter.realPrices.max} ₽
+                                        <img src={img.x} className='deleteBut' onClick={() => setFilter({...filter, realPrices: {min: min, max: max}})}/>
+                                    </p> 
+                                    : null
+                                }
+                                {
+                                    !Object.values(filter).every((item) => typeof item == 'object') ? <button className='clear' onClick={() => {
+                                        let obj = {}
+                                        Object.keys(filter).forEach((iteme) => {
+                                            obj[iteme] = null
+                                            obj['realPrices'] = {min: min, max: max}
+                                        })
+                                        setFilter(obj)
+                                    }}>Очистить фильтры</button> : 
+                                    null                                
+                                }
+                            </div>
+                            <div className="xityProdajContent">
+                            {
+                                products.map((item) => (
+                                    <div className="xityProdajBox mb-15" key={item._id}>
+                                    <ProductImage id={item._id} srcs={item.product}/>
+                                    {
+                                        item.protection ? <img src={config.baseUrl + '/images/aqua.png'} className='aqua' />
+                                        : null
+                                    }
                                     <div className="notific">
-                                        <p className={item.news.class}>{ item.news.content }</p>
-                                        <p className={item.hit.class}>{ item.hit.content }</p>
+                                        {
+                                            item.news && <p className='novelty'>Новинка</p>
+                                        }
+                                        {
+                                            item.hit && <p className='xit'>Хит продаж</p>
+                                        }                                                
                                     </div>
                                     <div className="xityProdajTexti">
-                                        <h5>{ item.specification.productName }</h5>
-                                        <h3>{ item.productName }</h3>
+                                        <h5>{item.specification.productName}</h5>
+                                        <h3>{item.productName}</h3>
                                     </div>
                                     <div className="rateStar">
                                         <div className='ratesStars'>
@@ -387,23 +347,18 @@ function Catalog(){
                                             <h4><span className="spanone">{item.sale} %</span> <span className="spantwo">— {item.space} ₽</span></h4>
                                         </div>
                                         <div className="statslike">
-                                            <div className={`likebutton arbuttons ${!some('favorites', item.id) ? 'add' : 'remove'}`} onClick={() => updateOne(some('favorites', item.id) ? 'remove' : 'add', 'favorites', item.id)}>
-                                            </div>
-                                            <div className={`comparebutton arbuttons ${!some('compare', item.id) ? 'add' : 'remove'}`}  onClick={() => updateOne(some('compare', item.id) ? 'remove' : 'add', 'compare', item.id)}>
-                                            </div>
+                                            <FavoritesUpdate id={item._id}/>
+                                            <CompareUpdate id={item._id}/>
                                         </div>
                                     </div>
-                                    <div className="cart">
-                                        <a href="">Купить в 1 клик</a>
-                                        <div className={`cartbutton arbuttons ${!some('cart', item.id) ? 'add' : 'remove'}`} onClick={() => updateOne(some('cart', item.id) ? 'remove' : 'add', 'cart', item.id, 1)}>
-                                        </div>
-                                    </div>
+                                    <CardUpdate id={item._id}/>
                                 </div>
-                            ))
-                        }
+                                ))
+                            }
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
             </div>
         </div>
     )
