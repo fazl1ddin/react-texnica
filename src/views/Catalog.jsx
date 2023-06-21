@@ -21,9 +21,14 @@ function Catalog(){
 
     const arr = state.allProducts.map((item) => item.realPrice)
 
-    const min = Math.min(...arr)
+    const [min, setMin] = useState(0)
 
-    const max = Math.max(...arr)
+    const [max, setMax] = useState(0)
+
+    useEffect(() => {
+        setMin(filtersChecks.price ? filtersChecks.price.min : 0)
+        setMax(filtersChecks.price ? filtersChecks.price.max : 0)
+    }, [filtersChecks])
 
     const [can, setCan] = useState(false)
 
@@ -119,7 +124,7 @@ function Catalog(){
         setFilter({...filter, realPrices: {min: minValue, max: maxValue}})
     }, [can])
 
-    const filters = [
+    const filters = loading ? [] : [
         {
             key: 'price',
             title: 'Цена, ₽',
@@ -342,7 +347,7 @@ function Catalog(){
                                     </div>
                                     <div className="prices">
                                         <div className="pricesText">
-                                            <del className={`${item.price == item.realPrice ? 'visible' : ''}`}>{item.price} ₽</del>
+                                            <del className={`${!item.sale ? 'visible' : ''}`}>{item.price} ₽</del>
                                             <h3>{item.realPrice} ₽</h3>
                                             <h4><span className="spanone">{item.sale} %</span> <span className="spantwo">— {item.space} ₽</span></h4>
                                         </div>

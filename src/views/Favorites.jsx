@@ -114,8 +114,8 @@ function Favorites({setModal, user, loadingUser, drops}){
                                         }                                                
                                     </div>
                                     <div className="xityProdajTexti">
-                                        <h5>{every.specification.productName}</h5>
-                                        <h3>{every.productName}</h3>
+                                        <h5>{every.specification.productName.value}</h5>
+                                        <h3>{every.productName.value}</h3>
                                     </div>
                                     <div className="rateStar">
                                         <div className='ratesStars'>

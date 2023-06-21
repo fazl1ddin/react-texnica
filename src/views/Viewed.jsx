@@ -53,8 +53,8 @@ function Viewed(){
                                     <p className={item.hit.class}>{ item.hit.content }</p>
                                 </div>
                                 <div className="xityProdajTexti">
-                                    <h5>{ item.specification.productName }</h5>
-                                    <h3>{ item.productName }</h3>
+                                    <h5>{ item.specification.productName.value }</h5>
+                                    <h3>{ item.productName.value }</h3>
                                 </div>
                                 <div className="rateStar">
                                     <div className='ratesStars'>

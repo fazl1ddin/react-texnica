@@ -16,8 +16,9 @@ function useGetAP(page, perPage){
             )})
             .then(result => result.json())
             .then(result => {
-                setData(result)
                 setLoading(false)
+                setData(result.products)
+                setFiltersChecks(result.filtersChecks)
             })
             .catch(e => console.log(e))
         })()
@@ -30,7 +31,7 @@ function useGetAP(page, perPage){
                 space: getSpace(item),
                 realPrice: getRealPrice(item)
             })),
-            filtersChecks: filtersChecks
+            filtersChecks
         }
     , loading, page, perPage]
 }

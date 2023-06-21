@@ -139,7 +139,7 @@ function Product({user, setLoginModal}){
         <div className='product'>
             <div className='window'>
                 <div className="productContent">
-                    <h1 className="title">{products.productName}</h1>
+                    <h1 className="title">{products.productName.value}</h1>
                     <div className="productGallery">
                         <div className="central">
                             {
@@ -169,7 +169,7 @@ function Product({user, setLoginModal}){
                         </div>
                     </div>
                     <div className="productText">
-                        <h1>{products.productName}</h1>
+                        <h1>{products.productName.value}</h1>
                         <div className="productPrices">
                             <div className="productPricesBox">
                                 <div className="rateStar">
@@ -256,8 +256,8 @@ function Product({user, setLoginModal}){
                                                 }                                                
                                             </div>
                                             <div className="xityProdajTexti">
-                                                <h5>{item.specification.productName}</h5>
-                                                <h3>{item.productName}</h3>
+                                                <h5>{item.specification.productName.value}</h5>
+                                                <h3>{item.productName.value}</h3>
                                             </div>
                                             <div className="rateStar">
                                                 <div className='ratesStars'>

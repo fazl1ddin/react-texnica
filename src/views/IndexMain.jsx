@@ -62,7 +62,7 @@ function IndexMain(){
                                         }                                                
                                     </div>
                                     <div className="xityProdajTexti">
-                                        <h5>{every.specification.productName}</h5>
+                                        <h5>{every.specification.productName.value}</h5>
                                         <h3>{every.productName}</h3>
                                     </div>
                                     <div className="rateStar">
@@ -78,7 +78,7 @@ function IndexMain(){
                                     </div>
                                     <div className="prices">
                                         <div className="pricesText">
-                                            <del className={`${every.price == every.realPrice ? 'visible' : ''}`}>{every.price} ₽</del>
+                                            <del className={`${every.sale ? '' : 'visible'}`}>{every.price} ₽</del>
                                             <h3>{every.realPrice} ₽</h3>
                                             <h4><span className="spanone">{every.sale} %</span> <span className="spantwo">— {every.space} ₽</span></h4>
                                         </div>

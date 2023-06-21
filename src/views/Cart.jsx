@@ -413,7 +413,7 @@ function Cart() {
                                                             }
                                                         </div>
                                                         <div className="ff">
-                                                            <h4>{product.productName}</h4>
+                                                            <h4>{product.productName.value}</h4>
                                                             <form>
                                                                 <button type="button" onClick={() => {
                                                                     setValue({ ...value, [i]: product.count })

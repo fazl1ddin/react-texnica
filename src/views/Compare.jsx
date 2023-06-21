@@ -11,6 +11,25 @@ import FavoritesUpdate from '../components/ButtonsForUpdate/FavoritesUpdate';
 import CompareUpdate from '../components/ButtonsForUpdate/CompareUpdate';
 import CardUpdate from '../components/ButtonsForUpdate/CardUpdate';
 
+const table = {
+    "speed": "Макс. скорость до (км/ч)",
+    "type": "Тип:",
+    "power": "Мощность двигателя",
+    "charge": "Пробег на одном заряде",
+    "frontBrake": "Тип переднего тормоза",
+    "cruise": "Круиз-контроль",
+    "power1": "Мощность двигателя1",
+    "power2": "Мощность двигателя2",
+    "charge1": "Пробег на одном заряде1",
+    "frontBrake1": "Тип переднего тормоза1",
+    "cruise1": "Круиз-контроль1",
+    "power3": "Мощность двигателя3",
+    "charge2": "Пробег на одном заряде2",
+    "frontBrake2": "Тип переднего тормоза2",
+    "cruise2": "Круиз-контроль2",
+    "frontBrake3": "Тип переднего тормоза3"
+  }
+
 function Compare(){
     const [only, setOnly] = useState(true)
 
@@ -38,11 +57,6 @@ function Compare(){
         }
         return []
     }, [data, settings, only])
-
-    const table = () => {
-        const keys = Object.keys(products()[0][0].specification).splice(1)
-        return keys
-    }
 
     useEffect(() => {
         setCurrent(0)
@@ -125,15 +139,15 @@ function Compare(){
                     <table>
                         <tbody>
                         {
-                            table().map((item) => (
-                                <tr key={item}>
+                            Object.entries(table).map(([key, value]) => (
+                                <tr key={key}>
                                     <th>
-                                        {item}
+                                        {value}
                                     </th>
                                     {
                                         products()[current < products().length ? current : 0].map((product) => (
                                             <td key={product._id}>
-                                                {product.specification[item]}
+                                                {product.specification[key]}
                                             </td>
                                         ))
                                     }
