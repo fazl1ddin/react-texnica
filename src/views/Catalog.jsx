@@ -11,6 +11,7 @@ import FavoritesUpdate from '../components/ButtonsForUpdate/FavoritesUpdate';
 import CompareUpdate from '../components/ButtonsForUpdate/CompareUpdate';
 import CardUpdate from '../components/ButtonsForUpdate/CardUpdate';
 import ProductImage from '../components/ProductImage/ProductImage';
+import Polzunok from '../components/Polzunok/Polzunok';
 
 const polzunok = 14
 
@@ -129,55 +130,7 @@ function Catalog(){
             key: 'price',
             title: 'Цена, ₽',
             content: <div className={`dropContent`}>
-                    <div className="dropInput">
-                        <span>от</span>
-                        <input value={values.min} type="text" onChange={e => setValues({...values, min: e.target.value})} onBlur={handler}/>
-                        <span>до</span>
-                        <input value={values.max} type="text" onChange={e => setValues({...values, max: e.target.value})} onBlur={handler}/>
-                    </div>
-                    <div className="input-range">
-                        <input
-    
-                            style={styles.min}
-    
-                            type="range"
-    
-                            id='min'
-    
-                            name='min'
-    
-                            step={10}
-    
-                            min={min}
-    
-                            max={middle}
-    
-                            value={minValue}
-    
-                            onChange={({ target }) => setMinValue(Math.round(Number(target.value)))} />
-    
-                        {/* <div className="bg" style={styleBg}></div> */}
-    
-                        <input
-    
-                            style={styles.max}
-    
-                            type="range"
-    
-                            id='max'
-    
-                            name='max'
-    
-                            step={10}
-    
-                            min={middle}
-    
-                            max={max}
-    
-                            value={maxValue}
-    
-                            onChange={({ target }) => setMaxValue(Math.round(Number(target.value)))} />
-                    </div>
+                <Polzunok step={10} min={[min, setMin]} max={[max, setMax]}/>
                 <button className="change" onClick={() => setCan(true)}>Применить</button>
             </div>
         },

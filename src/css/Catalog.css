@@ -150,10 +150,8 @@
     padding: 5px 0;
 }
 .input-range {
-    display: flex;
-    align-items: center;
     width: 310px;
-    overflow: hidden;
+    height: 15px;
     position: relative;
     margin-top: 20px;
 }
@@ -162,11 +160,12 @@
     background-color: #4878a6;
     height: 6px;
 }
-.input-range input {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    outline: none !important;
-    background: transparent;
+.input-range .buttons {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: #4878a6;
+    position: absolute;
 }
 .filters {
     display: flex;
