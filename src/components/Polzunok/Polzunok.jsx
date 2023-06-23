@@ -9,14 +9,16 @@ function Polzunok({step, min, max}){
         isDrag = true
         prevX = buttone.clientX
         maxPos = buttone.target.offsetParent.getBoundingClientRect().width
+        let dotOB = buttone.clientX - buttone.target.getBoundingClientRect().left
         const handlerW = (mousee) => {
             // console.log(maxPos);
             // console.log(minPos);
             const xc = mousee.clientX
             const bxc = buttone.clientX
             if(isDrag){
+                minPos = (xc - buttone.target.offsetParent.getBoundingClientRect().left) - dotOB
                 let curX = mousee.clientX
-                console.log(`xc : ${xc},`, `bxc : ${bxc},`, `minPos : ${minPos}`);
+                // console.log(`xc : ${xc},`, `bxc : ${bxc},`, `minPos : ${minPos}`);
                 // if(curX > prevX){
                 //     minPos = xc - bxc
                 //     console.log('right');
@@ -25,7 +27,9 @@ function Polzunok({step, min, max}){
                 //     console.log('left');
                 //     buttone.target.style.transform = `translateX(${minPos + (xc - bxc)}px)`
                 // }
-                buttone.target.style.transform = `translateX(${xc - buttone.target.offsetParent.getBoundingClientRect().left}px)`
+                if(((buttone.target.offsetParent.getBoundingClientRect().left + dotOB) < mousee.clientX && minPos < maxPos)){
+                    buttone.target.style.transform = `translateX(${minPos}px)`
+                }
                 prevX = curX
             }
             // console.log('mouse xc  ' + xc, 'buttons xc  ' + bxc);
