@@ -16,13 +16,16 @@ function Polzunok({step, min, max}){
             const bxc = buttone.clientX
             if(isDrag){
                 let curX = mousee.clientX
-                if(curX > prevX){
-                    console.log('right');
-                    buttone.target.style.transform = `translateX(${xc - bxc}px)`
-                } else if(curX < prevX){
-                    console.log('left');
-                    buttone.target.style.transform = `translateX(${xc - bxc}px)`
-                }
+                console.log(`xc : ${xc},`, `bxc : ${bxc},`, `minPos : ${minPos}`);
+                // if(curX > prevX){
+                //     minPos = xc - bxc
+                //     console.log('right');
+                //     buttone.target.style.transform = `translateX(${xc - bxc}px)`
+                // } else if(curX < prevX){
+                //     console.log('left');
+                //     buttone.target.style.transform = `translateX(${minPos + (xc - bxc)}px)`
+                // }
+                buttone.target.style.transform = `translateX(${xc - buttone.target.offsetParent.getBoundingClientRect().left}px)`
                 prevX = curX
             }
             // console.log('mouse xc  ' + xc, 'buttons xc  ' + bxc);
