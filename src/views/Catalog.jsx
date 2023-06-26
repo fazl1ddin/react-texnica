@@ -130,7 +130,7 @@ function Catalog(){
             key: 'price',
             title: 'Цена, ₽',
             content: <div className={`dropContent`}>
-                <Polzunok step={10} min={[min, setMin]} max={[max, setMax]}/>
+                <Polzunok prices={filtersChecks.price} step={10} min={[min, setMin]} max={[max, setMax]}/>
                 <button className="change" onClick={() => setCan(true)}>Применить</button>
             </div>
         },

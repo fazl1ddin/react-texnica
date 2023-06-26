@@ -1,38 +1,40 @@
 import { useState } from "react"
 
-function Polzunok({step, min, max}){
+function Polzunok({step, min, max, prices}){
     const [minv, setMin] = min
     const [maxv, setMax] = max
-    // const [minPos, setMinPos] = useState(0)
-    // const [maxPos, setMaxPos] = useState(0)
+    const defMin  = prices ? prices.min : 0
+    const defMax = prices ? prices.max : 0
     let minPos = 0
     let maxPos = 0
     let isDrag = false
     const handler = (buttone, type) => {
+        const prom = (defMax - defMin) / Math.round(buttone.target.offsetParent.getBoundingClientRect().width)
         isDrag = true
-        minPos = minPos || buttone.target.offsetParent.getBoundingClientRect().left - 14
         maxPos = maxPos || buttone.target.offsetParent.getBoundingClientRect().width - 14
         let dotOB = buttone.clientX - buttone.target.getBoundingClientRect().left
         const handlerW = (mousee) => {
             const xc = mousee.clientX
             if (isDrag) {
                 if (type === 'min') {
-                    if(((buttone.target.offsetParent.getBoundingClientRect().left + dotOB) < mousee.clientX && (xc - buttone.target.offsetParent.getBoundingClientRect().left) - dotOB < (maxPos - 14))){
+                    if(((buttone.target.offsetParent.getBoundingClientRect().left + dotOB) <= mousee.clientX && (xc - buttone.target.offsetParent.getBoundingClientRect().left) - dotOB < (maxPos - 14))){
+                        setMin(Math.round(defMin + (prom * minPos)))
                         minPos = (xc - buttone.target.offsetParent.getBoundingClientRect().left) - dotOB
                         buttone.target.style.transform = `translateX(${minPos}px)`
                     }
                 } else if (type === 'max') {
                     if ((((buttone.target.offsetParent.getBoundingClientRect().left + buttone.target.offsetParent.getBoundingClientRect().width + dotOB - 14) > mousee.clientX) && ((minPos + 14 + dotOB) < ((xc - buttone.target.offsetParent.getBoundingClientRect().left) - dotOB)))) {
+                        setMax(Math.round(defMin + (prom * maxPos)))
+                        console.log(defMin, prom, maxPos);
                         maxPos = (xc - buttone.target.offsetParent.getBoundingClientRect().left) - dotOB
                         buttone.target.style.right = `unset`
-                        buttone.target.style.transform = `translateX(${maxPos}px)`
+                        buttone.target.style.transform = `translateX(${maxPos - 14}px)`
                     }
                 }
             } 
         }
         window.addEventListener('mousemove', handlerW)
         window.addEventListener('mouseup', (mouseupe) => {
-            isDrag = false
             window.removeEventListener('mousemove', handlerW)
         })
     }
