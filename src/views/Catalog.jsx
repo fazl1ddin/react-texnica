@@ -12,11 +12,12 @@ import CompareUpdate from '../components/ButtonsForUpdate/CompareUpdate';
 import CardUpdate from '../components/ButtonsForUpdate/CardUpdate';
 import ProductImage from '../components/ProductImage/ProductImage';
 import Polzunok from '../components/Polzunok/Polzunok';
+import Pagination from '../components/Pagination/Pagination';
 
 const polzunok = 14
 
 function Catalog(){
-    const [{data: products, filtersChecks}, loading] = useGetAP(1, 12)
+    const [{data: products, filtersChecks, allength}, loading] = useGetAP(1, 12)
 
     const state = useSelector(state => state.products)
 
@@ -314,6 +315,7 @@ function Catalog(){
                                 ))
                             }
                             </div>
+                            <Pagination length={allength}/>
                         </div>
                     </div>
                 }
