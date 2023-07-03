@@ -1,7 +1,7 @@
 .news.new .news.promos, .news.promos {
     padding: 0;
 }
-.news.new .pagination, .news.promos .pagination {
+.pagination {
     margin: 40px auto;
     height: 48px;
 }
@@ -17,7 +17,7 @@
     justify-content: space-between;
     margin: 0 -5px;
 }
-.news.new .pagination a, .news.promos .pagination a {
+.pagination a {
     height: 48px;
     width: 48px;
     border: #EAEAF0 1px solid;
@@ -31,12 +31,12 @@
     padding: 0;
     color: #838688;
 }
-.news.new .pagination a.active, .news.promos .pagination a.active {
+.pagination a.active {
     background-color: #4878A6;
     border: none;
     color: #fff;
 }
-.news.new .pagination a::after, .news.promos .pagination a::after {
+.pagination a::after {
     display: none;
 }
 @media screen and (max-width: 770px) {
@@ -48,7 +48,7 @@
         margin-right: 0!important;
         margin-left: 0!important;
     }
-    .news.new .pagination {
+    .pagination {
         margin: 30px auto;
     }
     .news.new {

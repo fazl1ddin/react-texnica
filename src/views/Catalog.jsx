@@ -16,8 +16,14 @@ import Pagination from '../components/Pagination/Pagination';
 
 const polzunok = 14
 
-function Catalog(){
-    const [{data: products, filtersChecks, allength}, loading] = useGetAP(1, 12)
+function Catalog() {
+    const [page, setPage] = useState(1)
+
+    useEffect(() => {
+        console.log('assfsafsa');
+    }, [page])
+    
+    const [{data: products, filtersChecks, allength}, loading] = useGetAP(page, 12)
 
     const state = useSelector(state => state.products)
 
@@ -135,70 +141,70 @@ function Catalog(){
                 <button className="change" onClick={() => setCan(true)}>Применить</button>
             </div>
         },
-        {
-            key: 'podsvetka',
-            title: 'Подсветка',
-            get content(){
-                return <div className={`dropInputCheck min`}>
-                    {
-                        filtersChecks[this.key].map((item, i) => (
-                            <div className="checkbox" key={item}>
-                                <input className="custom-checkbox" onChange={e => setFilter({...filter, [this.key]: e.target.checked ? e.target.value : null})} checked={filter[this.key] == item} type="checkbox" id={`color-${item}`} value={item}/>
-                                <label htmlFor={`color-${item}`}>{item}</label>
-                            </div>
-                        ))
-                    }
-                </div>
-            }
-        },
-        {
-            key: 'moshnost',
-            title: 'Мощность двигателя (Ватт)',
-            get content(){
-                return <div className={`dropInputCheck max`}>
-                    {
-                        filtersChecks[this.key]
-                        .sort((a, b) => a - b)
-                        .map((item, i) => (
-                            <div className="checkbox" key={item}>
-                                <input className="custom-checkbox" type="checkbox" onChange={e => {
-                                    if(e.target.checked){
-                                        setMoshnosts([...moshnosts, [i] = e.target.value])
-                                    } else {
-                                        setMoshnosts(moshnosts.filter(items => moshnosts[i] != items))
-                                    }
-                                }} id={`color-${item}`} value={item}/>
-                                <label htmlFor={`color-${item}`}>{item}</label>
-                            </div>
-                        ))
-                    }
-                </div>
-            }            
-        },
-        {
-            key: 'maksSpeed',
-            title: 'Максимальная скорость (км/ч)',
-            get content(){
-                return <div className={`dropInputCheck min`}>
-                    {
-                        filtersChecks[this.key]
-                        .sort((a, b) => a - b)
-                        .map((item, i) => (
-                            <div className="checkbox" key={item}>
-                                <input className="custom-checkbox" type="checkbox" onChange={e => {
-                                    if(e.target.checked){
-                                        setMaxSpeeds([...maxSpeeds, [i] = e.target.value])
-                                    } else {
-                                        setMaxSpeeds(maxSpeeds.filter(items => maxSpeeds[i] != items))
-                                    }
-                                }} id={`color-${item}`} value={item}/>
-                                <label htmlFor={`color-${item}`}>{item}</label>
-                            </div>
-                        ))
-                    }
-                </div>
-            }
-        }
+        // {
+        //     key: 'podsvetka',
+        //     title: 'Подсветка',
+        //     get content(){
+        //         return <div className={`dropInputCheck min`}>
+        //             {
+        //                 filtersChecks[this.key].map((item, i) => (
+        //                     <div className="checkbox" key={item}>
+        //                         <input className="custom-checkbox" onChange={e => setFilter({...filter, [this.key]: e.target.checked ? e.target.value : null})} checked={filter[this.key] == item} type="checkbox" id={`color-${item}`} value={item}/>
+        //                         <label htmlFor={`color-${item}`}>{item}</label>
+        //                     </div>
+        //                 ))
+        //             }
+        //         </div>
+        //     }
+        // },
+        // {
+        //     key: 'moshnost',
+        //     title: 'Мощность двигателя (Ватт)',
+        //     get content(){
+        //         return <div className={`dropInputCheck max`}>
+        //             {
+        //                 filtersChecks[this.key]
+        //                 .sort((a, b) => a - b)
+        //                 .map((item, i) => (
+        //                     <div className="checkbox" key={item}>
+        //                         <input className="custom-checkbox" type="checkbox" onChange={e => {
+        //                             if(e.target.checked){
+        //                                 setMoshnosts([...moshnosts, [i] = e.target.value])
+        //                             } else {
+        //                                 setMoshnosts(moshnosts.filter(items => moshnosts[i] != items))
+        //                             }
+        //                         }} id={`color-${item}`} value={item}/>
+        //                         <label htmlFor={`color-${item}`}>{item}</label>
+        //                     </div>
+        //                 ))
+        //             }
+        //         </div>
+        //     }            
+        // },
+        // {
+        //     key: 'maksSpeed',
+        //     title: 'Максимальная скорость (км/ч)',
+        //     get content(){
+        //         return <div className={`dropInputCheck min`}>
+        //             {
+        //                 filtersChecks[this.key]
+        //                 .sort((a, b) => a - b)
+        //                 .map((item, i) => (
+        //                     <div className="checkbox" key={item}>
+        //                         <input className="custom-checkbox" type="checkbox" onChange={e => {
+        //                             if(e.target.checked){
+        //                                 setMaxSpeeds([...maxSpeeds, [i] = e.target.value])
+        //                             } else {
+        //                                 setMaxSpeeds(maxSpeeds.filter(items => maxSpeeds[i] != items))
+        //                             }
+        //                         }} id={`color-${item}`} value={item}/>
+        //                         <label htmlFor={`color-${item}`}>{item}</label>
+        //                     </div>
+        //                 ))
+        //             }
+        //         </div>
+        //     }
+        // }
     ]
 
     return (
@@ -315,7 +321,7 @@ function Catalog(){
                                 ))
                             }
                             </div>
-                            <Pagination length={allength}/>
+                                <Pagination length={allength} setPage={setPage} />
                         </div>
                     </div>
                 }

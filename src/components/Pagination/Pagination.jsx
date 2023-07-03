@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useSearchParams } from "react-router-dom"
 
-function Pagination({length}) {
+function Pagination({ length, setPage }) {
     const [params, setParams] = useSearchParams()
 
     useEffect(() => {
@@ -9,6 +9,11 @@ function Pagination({length}) {
     }, [])
 
     const [currentId, setCurrentId] = useState(Number(params.has('index') ? params.get('index') : 1))
+
+    useEffect(() => {
+        setParams({ index: currentId })
+        setPage(currentId)
+    }, [currentId])
 
     const pagination = () => {
         if(length <= 5){

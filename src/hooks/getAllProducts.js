@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import config from "../api/config"
 import { getRealPrice, getSpace } from "../store"
 
@@ -6,9 +6,11 @@ function useGetAP(page, perPage){
     const [data, setData] = useState([])
     const [filtersChecks, setFiltersChecks] = useState({})
     const [loading, setLoading] = useState(true)
+    const [allength, setAllength] = useState(0)
 
-    useState(() => {
+    useEffect(() => {
         (async () => {
+            setLoading(true)
             await fetch(config.baseUrl + '/products', {method: 'POST', body: JSON.stringify(
                 {
                     page, perPage
@@ -19,6 +21,7 @@ function useGetAP(page, perPage){
                 setLoading(false)
                 setData(result.products)
                 setFiltersChecks(result.filtersChecks)
+                setAllength(result.allength)
             })
             .catch(e => console.log(e))
         })()
@@ -31,7 +34,8 @@ function useGetAP(page, perPage){
                 space: getSpace(item),
                 realPrice: getRealPrice(item)
             })),
-            filtersChecks
+            filtersChecks,
+            allength
         }
     , loading, page, perPage]
 }
