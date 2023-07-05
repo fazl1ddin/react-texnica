@@ -61,7 +61,7 @@ function Pagination({ length, setPage }) {
         }
     }
     
-    return <div className={`pagination ${length < 5 ? 'minw' : 'maxw'}`}>
+    return <div className={`pagination ${length < 4 ? 'minw' : 'maxw'}`}>
         <div className="pagination-content">
             <a onClick={() => changePage(Math.max(currentId - 1, 0))}>&#9204;</a>
             {

@@ -18,8 +18,6 @@ const polzunok = 14
 
 function Catalog() {
     const [page, setPage] = useState(1)
-    
-    const [{data: products, filtersChecks, allength}, loading] = useGetAP(page, 12)
 
     const state = useSelector(state => state.products)
 
@@ -36,39 +34,6 @@ function Catalog() {
 
     const [can, setCan] = useState(false)
 
-    const [middle, setMiddle] = useState((min + max) / 2)
-
-    const [minValue, setMinValue] = useState(min)
-
-    const [maxValue, setMaxValue] = useState(max)
-
-    const width = 310
-
-    const minWidth = polzunok + ((middle - min) / (max - min)) * (width - 2 * polzunok)
-
-    const maxWidth = polzunok + ((max - middle) / (max - min)) * (width - 2 * polzunok)
-
-    const divWidth = polzunok + ((maxValue - minValue) / (max - min) * (width - 2 * polzunok))
-
-    const left = ((polzunok / 2) - (minValue) / (width + minWidth))
-
-    const right = (maxValue / width + polzunok / 2)
-
-    const styles = {
-        min: {
-            width: Math.round(minWidth)
-        },
-        max: {
-            width: Math.round(maxWidth)
-        }
-    }
-
-    const styleBg = {
-        width: divWidth,
-        left: left,
-        right: right,
-    }
-
     const [moshnosts, setMoshnosts] = useState([])
 
     const [maxSpeeds, setMaxSpeeds] = useState([])
@@ -82,6 +47,8 @@ function Catalog() {
         moshnost: null,
         maksSpeed: null
     })
+    
+    const [{data: products, filtersChecks, allength}, loading] = useGetAP(page, 12, filter)
 
     useEffect(() => {
         setFilter({...filter, maksSpeed: maxSpeeds})
@@ -98,34 +65,8 @@ function Catalog() {
         maksSpeed: false
     })
 
-    const [values, setValues] = useState({min: min, max: max})
-
     useEffect(() => {
-        setMiddle((minValue + maxValue) / 2)
-    }, [minValue, maxValue])
-
-    const handler = () => {
-        if(isNaN(values.min)){
-            setMinValue(min)
-        } else {
-            setMinValue(Math.min(max, Math.max(values.min, min)))
-        }
-        if(isNaN(values.max)){
-            setMaxValue(max)
-        } else {
-            setMaxValue(Math.min(max, Math.max(values.max, min)))
-        }
-        if(values.min != minValue || values.max != maxValue){
-            setValues({min: minValue, max: maxValue})
-        }
-    }
-
-    useEffect(() => {
-        setValues({min: minValue, max: maxValue})
-    }, [minValue, maxValue])
-
-    useEffect(() => {
-        setFilter({...filter, realPrices: {min: minValue, max: maxValue}})
+        setFilter({...filter, realPrices: {min ,max}})
     }, [can])
 
     const filters = loading ? [] : [
@@ -137,70 +78,70 @@ function Catalog() {
                 <button className="change" onClick={() => setCan(true)}>Применить</button>
             </div>
         },
-        // {
-        //     key: 'podsvetka',
-        //     title: 'Подсветка',
-        //     get content(){
-        //         return <div className={`dropInputCheck min`}>
-        //             {
-        //                 filtersChecks[this.key].map((item, i) => (
-        //                     <div className="checkbox" key={item}>
-        //                         <input className="custom-checkbox" onChange={e => setFilter({...filter, [this.key]: e.target.checked ? e.target.value : null})} checked={filter[this.key] == item} type="checkbox" id={`color-${item}`} value={item}/>
-        //                         <label htmlFor={`color-${item}`}>{item}</label>
-        //                     </div>
-        //                 ))
-        //             }
-        //         </div>
-        //     }
-        // },
-        // {
-        //     key: 'moshnost',
-        //     title: 'Мощность двигателя (Ватт)',
-        //     get content(){
-        //         return <div className={`dropInputCheck max`}>
-        //             {
-        //                 filtersChecks[this.key]
-        //                 .sort((a, b) => a - b)
-        //                 .map((item, i) => (
-        //                     <div className="checkbox" key={item}>
-        //                         <input className="custom-checkbox" type="checkbox" onChange={e => {
-        //                             if(e.target.checked){
-        //                                 setMoshnosts([...moshnosts, [i] = e.target.value])
-        //                             } else {
-        //                                 setMoshnosts(moshnosts.filter(items => moshnosts[i] != items))
-        //                             }
-        //                         }} id={`color-${item}`} value={item}/>
-        //                         <label htmlFor={`color-${item}`}>{item}</label>
-        //                     </div>
-        //                 ))
-        //             }
-        //         </div>
-        //     }            
-        // },
-        // {
-        //     key: 'maksSpeed',
-        //     title: 'Максимальная скорость (км/ч)',
-        //     get content(){
-        //         return <div className={`dropInputCheck min`}>
-        //             {
-        //                 filtersChecks[this.key]
-        //                 .sort((a, b) => a - b)
-        //                 .map((item, i) => (
-        //                     <div className="checkbox" key={item}>
-        //                         <input className="custom-checkbox" type="checkbox" onChange={e => {
-        //                             if(e.target.checked){
-        //                                 setMaxSpeeds([...maxSpeeds, [i] = e.target.value])
-        //                             } else {
-        //                                 setMaxSpeeds(maxSpeeds.filter(items => maxSpeeds[i] != items))
-        //                             }
-        //                         }} id={`color-${item}`} value={item}/>
-        //                         <label htmlFor={`color-${item}`}>{item}</label>
-        //                     </div>
-        //                 ))
-        //             }
-        //         </div>
-        //     }
-        // }
+        {
+            key: 'podsvetka',
+            title: 'Подсветка',
+            get content(){
+                return <div className={`dropInputCheck min`}>
+                    {
+                        filtersChecks[this.key].map((item, i) => (
+                            <div className="checkbox" key={item}>
+                                <input className="custom-checkbox" onChange={e => setFilter({...filter, [this.key]: e.target.checked ? e.target.value : null})} checked={filter[this.key] == item} type="checkbox" id={`color-${item}`} value={item}/>
+                                <label htmlFor={`color-${item}`}>{item}</label>
+                            </div>
+                        ))
+                    }
+                </div>
+            }
+        },
+        {
+            key: 'moshnost',
+            title: 'Мощность двигателя (Ватт)',
+            get content(){
+                return <div className={`dropInputCheck max`}>
+                    {
+                        filtersChecks[this.key]
+                        .sort((a, b) => a - b)
+                        .map((item, i) => (
+                            <div className="checkbox" key={item}>
+                                <input className="custom-checkbox" type="checkbox" onChange={e => {
+                                    if(e.target.checked){
+                                        setMoshnosts([...moshnosts, [i] = e.target.value])
+                                    } else {
+                                        setMoshnosts(moshnosts.filter(items => moshnosts[i] != items))
+                                    }
+                                }} id={`color-${item}`} value={item}/>
+                                <label htmlFor={`color-${item}`}>{item}</label>
+                            </div>
+                        ))
+                    }
+                </div>
+            }            
+        },
+        {
+            key: 'maksSpeed',
+            title: 'Максимальная скорость (км/ч)',
+            get content(){
+                return <div className={`dropInputCheck min`}>
+                    {
+                        filtersChecks[this.key]
+                        .sort((a, b) => a - b)
+                        .map((item, i) => (
+                            <div className="checkbox" key={item}>
+                                <input className="custom-checkbox" type="checkbox" onChange={e => {
+                                    if(e.target.checked){
+                                        setMaxSpeeds([...maxSpeeds, [i] = e.target.value])
+                                    } else {
+                                        setMaxSpeeds(maxSpeeds.filter(items => maxSpeeds[i] != items))
+                                    }
+                                }} id={`color-${item}`} value={item}/>
+                                <label htmlFor={`color-${item}`}>{item}</label>
+                            </div>
+                        ))
+                    }
+                </div>
+            }
+        }
     ]
 
     return (
