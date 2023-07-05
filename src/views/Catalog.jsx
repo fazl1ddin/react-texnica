@@ -18,10 +18,6 @@ const polzunok = 14
 
 function Catalog() {
     const [page, setPage] = useState(1)
-
-    useEffect(() => {
-        console.log('assfsafsa');
-    }, [page])
     
     const [{data: products, filtersChecks, allength}, loading] = useGetAP(page, 12)
 

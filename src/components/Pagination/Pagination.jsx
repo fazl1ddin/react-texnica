@@ -15,82 +15,42 @@ function Pagination({ length, setPage }) {
         setPage(currentId)
     }, [currentId])
 
-    const pagination = () => {
+    const pagin = (current, length) => {
+        let result = []
         if(length <= 5){
-            let pag = []
             for(let index = 1; index <= length; index++){
-                pag.push(index)
+                result.push(index)
             }
-            return pag
         } else {
-            let pag = {
-                start: [],
-                middle: '...',
-                end: []
-            }
-            if(window.screen.width == 414){
-                if(currentId < length / 2){
-                    if(currentId == 1){
-                        for(let i = currentId; i < currentId + 2; i++){
-                            pag.start[i] = i
-                        }
-                    } else {
-                        for(let i = currentId - 1; i < currentId + 1; i++){
-                            pag.start[i] = i
-                        }
+            if ((length / 2) > current) {
+                if (current === 1) {
+                    for (let index = 0; index < 3; index++) {
+                        result[index] = current + index
                     }
-                } else if(currentId == length / 2){
-                    pag.start = length / 2 - 1
-                    pag.middle = []
-                        for(let i = currentId; i < currentId + 1; i++){
-                            pag.middle[i] = i
-                        }
-                    pag.end = length / 2 + 1
                 } else {
-                    if(currentId == length ){
-                        for(let i = currentId; i > currentId - 2; i--){
-                            pag.end[i] = i
-                        }
-                    } else {
-                        for(let i = currentId + 1; i > currentId - 1; i--){
-                            pag.end[i] = i
-                        }
+                    for (let index = current - 1; index <= current + 1; index++) {
+                        result[index - 1] = index
                     }
                 }
+                result[4] = '...'
+                result[length - 1] = length
             } else {
-                if(currentId < Math.ceil(length / 2)){
-                    if(currentId < 2){
-                        for(let i = currentId; i <= currentId + 2; i++){
-                            pag.start[i] = i
-                        }
-                    } else {
-                        for(let i = currentId - 1; i <= currentId + 1; i++){
-                            pag.start[i] = i
-                        }
+                if (current === length) {
+                    for (let index = length; index > length - 3; index--) {
+                        result[index] = index
                     }
-                    pag.end = length
-                } else if (currentId == Math.ceil(length / 2)){
-                    pag.start = Math.ceil(length / 2) - 2
-                    pag.middle = []
-                    for(let i = currentId - 1; i <= currentId + 1; i++){
-                        pag.middle[i] = i
-                    }
-                    pag.end = Math.ceil(length / 2) - 2
                 } else {
-                    if(currentId == length){
-                        for(let i = currentId; i >= currentId - 2; i--){
-                            pag.end[i] = i
-                        }
-                    } else {
-                        for(let i = currentId + 1; i >= currentId - 1; i--){
-                            pag.end[i] = i
-                        }
+                    for (let index = current + 1; index >= current - 1; index--) {
+                        result[index] = index
                     }
-                    pag.start = 1
                 }
+                result[1] = '...'
+                result[0] = 1
             }
-            return [pag.start, pag.middle, pag.end].flat()
         }
+        return result.map((item, i) => (
+            <a key={i} className={item == current ? 'active' : ''} onClick={(e) => changePage(e.target.innerText)}>{ item }</a>
+        ))
     }
 
     const changePage = (item) => {
@@ -105,9 +65,7 @@ function Pagination({ length, setPage }) {
         <div className="pagination-content">
             <a onClick={() => changePage(Math.max(currentId - 1, 0))}>&#9204;</a>
             {
-                pagination().map((item, i) => (
-                    <a key={i} className={item == currentId ? 'active' : ''} onClick={(e) => changePage(e.target.innerText)}>{ item }</a>
-                ))
+                pagin(currentId, length)
             }
             <a onClick={() => changePage(Math.min(currentId + 1, length))}>&#9205;</a>
         </div>
