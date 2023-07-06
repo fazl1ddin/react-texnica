@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { getRealPrice, getSpace, removeDuplicates, some, stars, updateOne } from '../store/index';
 import * as img from '../img/index';
 import '../css/Catalog.css';
@@ -13,30 +13,22 @@ import CardUpdate from '../components/ButtonsForUpdate/CardUpdate';
 import ProductImage from '../components/ProductImage/ProductImage';
 import Polzunok from '../components/Polzunok/Polzunok';
 import Pagination from '../components/Pagination/Pagination';
-
-const polzunok = 14
+import useGetFCh from '../hooks/getFCh';
 
 function Catalog() {
-    const [page, setPage] = useState(1)
+    const [params, setParams] = useSearchParams()
 
-    const state = useSelector(state => state.products)
-
-    const arr = state.allProducts.map((item) => item.realPrice)
+    const [page, setPage] = useState(Number(params.has('index') ? params.get('index') : 1))
 
     const [min, setMin] = useState(0)
 
     const [max, setMax] = useState(0)
 
-    useEffect(() => {
-        setMin(filtersChecks.price ? filtersChecks.price.min : 0)
-        setMax(filtersChecks.price ? filtersChecks.price.max : 0)
-    }, [filtersChecks])
-
     const [can, setCan] = useState(false)
 
-    const [moshnosts, setMoshnosts] = useState([])
+    const [moshnosts, setMoshnosts] = useState(null)
 
-    const [maxSpeeds, setMaxSpeeds] = useState([])
+    const [maxSpeeds, setMaxSpeeds] = useState(null)
 
     const [filter, setFilter] = useState({
         realPrices: {
@@ -47,15 +39,26 @@ function Catalog() {
         moshnost: null,
         maksSpeed: null
     })
+
+    const [filtersChecks, loadingF] = useGetFCh()
     
-    const [{data: products, filtersChecks, allength}, loading] = useGetAP(page, 12, filter)
+    const [{data: products, allength}, loading] = useGetAP(page, 12, filter)
 
     useEffect(() => {
-        setFilter({...filter, maksSpeed: maxSpeeds})
+        setMin(filtersChecks.price ? filtersChecks.price.min : 0)
+        setMax(filtersChecks.price ? filtersChecks.price.max : 0)
+    }, [filtersChecks])
+
+    useEffect(() => {
+        if (maxSpeeds !== null) {
+            setFilter({...filter, maksSpeed: maxSpeeds})
+        }
     }, [maxSpeeds])
 
     useEffect(() => {
-        setFilter({...filter, moshnost: moshnosts})
+        if (moshnosts !== null) {
+            setFilter({...filter, moshnost: moshnosts})
+        }
     }, [moshnosts])
 
     const [openIndex, setOpenIndex] = useState({
@@ -66,16 +69,18 @@ function Catalog() {
     })
 
     useEffect(() => {
-        setFilter({...filter, realPrices: {min ,max}})
+        if (min & max) {
+            setFilter({...filter, realPrices: {min ,max}})
+        }
     }, [can])
 
-    const filters = loading ? [] : [
+    const filters = loadingF ? [] : [
         {
             key: 'price',
             title: 'Цена, ₽',
             content: <div className={`dropContent`}>
                 <Polzunok prices={filtersChecks.price} step={10} min={[min, setMin]} max={[max, setMax]}/>
-                <button className="change" onClick={() => setCan(true)}>Применить</button>
+                <button className="change" onClick={() => setCan(!can)}>Применить</button>
             </div>
         },
         {
@@ -105,7 +110,10 @@ function Catalog() {
                         .map((item, i) => (
                             <div className="checkbox" key={item}>
                                 <input className="custom-checkbox" type="checkbox" onChange={e => {
-                                    if(e.target.checked){
+                                    if (e.target.checked) {
+                                        if (moshnosts === null) {
+                                            return setMoshnosts([[i] = e.target.value])
+                                        }
                                         setMoshnosts([...moshnosts, [i] = e.target.value])
                                     } else {
                                         setMoshnosts(moshnosts.filter(items => moshnosts[i] != items))
@@ -129,7 +137,10 @@ function Catalog() {
                         .map((item, i) => (
                             <div className="checkbox" key={item}>
                                 <input className="custom-checkbox" type="checkbox" onChange={e => {
-                                    if(e.target.checked){
+                                    if (e.target.checked) {
+                                        if (maxSpeeds === null) {
+                                            return setMaxSpeeds([[i] = e.target.value])
+                                        }
                                         setMaxSpeeds([...maxSpeeds, [i] = e.target.value])
                                     } else {
                                         setMaxSpeeds(maxSpeeds.filter(items => maxSpeeds[i] != items))
@@ -149,7 +160,7 @@ function Catalog() {
             <div className="window">
                 <h1>Каталог</h1>
                 {
-                    loading ? 'assafsaafsfas'
+                    (loading && loadingF) ? 'assafsaafsfas'
                     :
                     <div className="catalogContent">
                         <div className="filter">
