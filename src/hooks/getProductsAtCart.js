@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
-import { storeProducts } from "../store"
+import { getRealPrice, getSpace, storeProducts } from "../store"
 import config from "../api/config"
 
 function useGetPAC(){
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(true)
-    const [products, setProducts] = useState([])
+    const [products, setProducts] = useState(storeProducts.getState().products.cart)
 
     storeProducts.subscribe(() => {
         setProducts(storeProducts.getState().products.cart)
@@ -15,7 +15,11 @@ function useGetPAC(){
         if(products.length){
            (
                 async () => {
-                    await fetch(config.baseUrl + '/product', { method: 'POST', body: JSON.stringify(products.map(item => ({_id: item.id}))) })
+                    await fetch(config.baseUrl + '/product', {
+                        method: 'POST', body: JSON.stringify({
+                            arr: products.map(item => ({ _id: item.id }))
+                        })
+                    })
                     .then(result => result.json())
                     .then(result => {
                         setData(result.map((item, index) => {
@@ -23,9 +27,8 @@ function useGetPAC(){
                                 return {
                                     ...item,
                                     count: products[index].count,
-                                    get realPrice(){
-                                        return item.price - (item.price * item.sale / 100)
-                                    }
+                                    realPrice: getRealPrice(item),
+                                    space: getSpace(item)
                                 }
                             }
                             return item

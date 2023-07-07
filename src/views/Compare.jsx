@@ -42,7 +42,7 @@ function Compare(){
     const products = useCallback(() => {
         if(data.length != 0){
             let allProducts = data
-            if(settings.filter != 'Все' && settings.filter != '') allProducts = allProducts.filter(item => item.specification['Тип:'] == settings.filter )
+            if(settings.filter !== 'Все' && settings.filter !== '') allProducts = allProducts.filter(item => item.specification['typeP'] == settings.filter )
             let arr = []
             let n = window.innerWidth <= 770 ? 2 : 3
             let last = 0
@@ -56,7 +56,7 @@ function Compare(){
             return arr
         }
         return []
-    }, [data, settings, only])
+    }, [data, settings, only, loading])
 
     useEffect(() => {
         setCurrent(0)
@@ -79,7 +79,7 @@ function Compare(){
                 </select>
                 <div className="xityProdaj">
                 {
-                    products().length ? products()[current < products().length ? current : 0].map((every, i) => (
+                    loading ? <>saffsfsaasfasa</> : products().length ? products()[current < products().length ? current : 0].map((every, i) => (
                         <div className="xityProdajBox mb-15" key={every._id}>
                             <Link to={`/product/${every._id}`}>
                                 <div className="sigveiWrap">
@@ -115,7 +115,7 @@ function Compare(){
                             </div>
                             <div className="prices">
                                 <div className="pricesText">
-                                    <del className={`${every.price == every.realPrice ? 'visible' : ''}`}>{every.price} ₽</del>
+                                    <del className={`${every.sale ? 'visible' : ''}`}>{every.price} ₽</del>
                                     <h3>{every.realPrice} ₽</h3>
                                     <h4><span className="spanone">{every.sale} %</span> <span className="spantwo">— {every.space} ₽</span></h4>
                                 </div>

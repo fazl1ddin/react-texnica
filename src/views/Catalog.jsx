@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useSearchParams } from 'react-router-dom';
-import { getRealPrice, getSpace, removeDuplicates, some, stars, updateOne } from '../store/index';
+import { getRealPrice, getSpace, some, stars, updateOne } from '../store/index';
 import * as img from '../img/index';
 import '../css/Catalog.css';
 import { useCallback } from 'react';
@@ -31,7 +31,7 @@ function Catalog() {
     const [maxSpeeds, setMaxSpeeds] = useState(null)
 
     const [filter, setFilter] = useState({
-        realPrices: {
+        prices: {
             min: null,
             max: null
         },
@@ -70,7 +70,7 @@ function Catalog() {
 
     useEffect(() => {
         if (min & max) {
-            setFilter({...filter, realPrices: {min ,max}})
+            setFilter({...filter, prices: {min ,max}})
         }
     }, [can])
 
@@ -160,7 +160,7 @@ function Catalog() {
             <div className="window">
                 <h1>Каталог</h1>
                 {
-                    (loading && loadingF) ? 'assafsaafsfas'
+                    (loading || loadingF) ? 'assafsaafsfas'
                     :
                     <div className="catalogContent">
                         <div className="filter">
@@ -203,9 +203,9 @@ function Catalog() {
                                     : null
                                 }
                                 {
-                                    filter.realPrices.min != min || filter.realPrices.max != max ? 
-                                    <p>Цена: от {filter.realPrices.min} ₽ до {filter.realPrices.max} ₽
-                                        <img src={img.x} className='deleteBut' onClick={() => setFilter({...filter, realPrices: {min: min, max: max}})}/>
+                                    (filter.prices.min && filter.prices.max) ? 
+                                    <p>Цена: от {filter.prices.min} ₽ до {filter.prices.max} ₽
+                                        <img src={img.x} className='deleteBut' onClick={() => setFilter({...filter, prices: {min: null, max: null}})}/>
                                     </p> 
                                     : null
                                 }
@@ -214,7 +214,7 @@ function Catalog() {
                                         let obj = {}
                                         Object.keys(filter).forEach((iteme) => {
                                             obj[iteme] = null
-                                            obj['realPrices'] = {min: min, max: max}
+                                            obj['prices'] = {min: min, max: max}
                                         })
                                         setFilter(obj)
                                     }}>Очистить фильтры</button> : 

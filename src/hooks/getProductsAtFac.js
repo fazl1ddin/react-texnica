@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react"
-import { storeProducts } from "../store"
+import { getSpace, storeProducts } from "../store"
+import { getRealPrice } from '../store/index'
 import config from "../api/config"
 
 function useGetPAC(only){
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(true)
-    const [products, setProducts] = useState([])
+    const [products, setProducts] = useState(storeProducts.getState().products.compare)
 
     storeProducts.subscribe(() => {
         setProducts(storeProducts.getState().products.compare)
@@ -21,21 +22,23 @@ function useGetPAC(only){
                     })})
                     .then(result => result.json())
                     .then(result => {
+                        setLoading(false)
                         setData(result.map((item, index) => {
                             if(products[index].id === item._id){
                                 return {
                                     ...item,
-                                    get realPrice(){
-                                        return item.price - (item.price * item.sale / 100)
-                                    }
+                                    realPrice: getRealPrice(item),
+                                    space: getSpace(item)
                                 }
                             }
                             return item
                         }))
-                        setLoading(false)
                     })
                 }
             )() 
+        } else {
+            setLoading(false)
+            setData([])
         }
     }, [products, only])
 

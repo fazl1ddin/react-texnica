@@ -292,7 +292,7 @@ function Cart() {
 
     const total = useCallback(() => {
         return data.reduce((prev, next) => {
-            return prev + next.realPrice * next.count
+            return prev + (next.price - (next.price * next.sale / 100)) * next.count
         }, 0)
     }, [data])
 
@@ -413,7 +413,7 @@ function Cart() {
                                                             }
                                                         </div>
                                                         <div className="ff">
-                                                            <h4>{product.productName.value}</h4>
+                                                            <h4>{product.productName}</h4>
                                                             <form>
                                                                 <button type="button" onClick={() => {
                                                                     setValue({ ...value, [i]: product.count })
@@ -427,7 +427,7 @@ function Cart() {
                                                             </form>
                                                             <div className="price">
                                                                 {
-                                                                    product.price != product.realPrice ? (<del>{product.price} ₽</del>) : undefined
+                                                                    product.sale ? (<del>{product.price} ₽</del>) : undefined
                                                                 }
                                                                 <h2>{product.realPrice} ₽</h2>
                                                             </div>
@@ -634,104 +634,3 @@ function Cart() {
 }
 
 export default Cart
-
-
-
-// export default {
-//         data () => ({
-//             one 'deliv',
-//             two 'Санкт-Петербург',
-//             three [],
-//             four [],
-//             five 'Завтра, 11 июля, вс',
-//             six '1500–1800 (бесплатно)',
-//             eight [],
-//             nine 4,
-//             ten '',
-//             go false
-//         }),
-//         computed {
-//             toAddress(){
-//                 if(this.go == true){
-//                     return this.pickUp(this.two)[this.four.children.address.id].address
-//                 }
-//             },
-//             toDate(){;
-//                 if(this.go == true){
-//                     return this.pickUp(this.two)[this.four.children.address.id].date
-//                 }
-//             },
-//             nadzor(){
-//                 if(this.$route == '/cart'){
-//                 if(this.length == 0){
-//                     this.ready = 'start'
-//                 }
-//             },
-//             readySend(){if(this.$route == '/cart'){
-//                 let valid = this.man.every(element => element.valid == true)
-//                 if(!valid){
-//                     this.man.filter(element => element.valid == false)
-//                 }
-//                 let valid2 = this.ready.slice(0, 3).every(element => element == 'end')
-//                 if(valid && valid2){
-//                     return true
-//                 } else {
-//                     return false
-//                 }
-//             },
-//             height(){
-//                 return function(index){if(this.$route == '/cart'){
-//                     return this.eight.slice(0, index).reduce((t, pr) => t + pr.clientHeight, 0) + (index - 1) * 20
-//                 }
-//             },
-//             eleven(){if(this.$route == '/cart'){
-//                 if(this.nine > this.eight.length){
-//                     this.nine = this.eight.length
-//                 }
-//                 let elv = this.eight.length - this.nine
-//                 if(elv > 10 && this.nine + 10 < this.eight.length){
-//                     return 10
-//                 } else if(elv < 10){
-//                     return elv % 10
-//                 }
-//             },
-//         },
-//         methods {
-//             ...mapActions('cart', { count 'count', increase 'increase', decrease 'decrease', input 'input', modelStreet 'modelStreet', modelFlat 'modelFlat', typePay 'typePay', modeler 'modeler', remove 'remove' }),
-//             onInput(id, e){
-//                 let index = store.getters['cart/id'].indexOf(id)
-//                 let last = this.all.data[index].count
-//                 this.input({ id id, count e.target.value })
-//                 if(e.target.value !== last && last === this.all.data[index].count){
-//                     e.target.value = this.all.data[index].count
-//                     console.log(this.all.data[index].count);
-//                 }
-//             },
-//             changer(index){
-//                 htmlFor(let i = 0; i < index; i++){
-//                     this.ready[i] = 'end'
-//                 }
-//                 htmlFor(let i = this.ready.length; i > index; i--){
-//                     this.ready[i] = 'start'
-//                 }
-//             },
-//             setItemRef(el){
-//                 if(el){
-//                     this.three.push(el)
-//                 }
-//             },
-//         },
-//         created(){
-//             if(this.length != 0){
-//                 this.ready = 'middle'
-//             }
-//         },
-//         beforeUpdate(){
-//             this.three = []
-//         },
-//         updated(){
-//             this.eight = this.three.flat()
-//             this.four = this.three.find(element => element.children.address.checked === true)
-//             this.four != undefined ? this.go = true  this.go
-//         },
-// }
