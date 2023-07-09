@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import config from '../api/config'
 import { storeProducts } from '../store'
 
-function useGetData(path, method, typeRes){
+function useGetData(path, typeRes){
 
     const [data, setData] = useState(typeRes)
     const [loading, setLoading] = useState(true)
@@ -10,7 +10,8 @@ function useGetData(path, method, typeRes){
     
     useEffect(() => {
         (async () => {
-            await fetch(config.baseUrl + path, { method: method.toUpperCase() })
+            setLoading(true)
+            await fetch(config.baseUrl + path, { method: 'GET' })
             .then(result => result.json())
             .then(result => {
                 setData(result)
@@ -20,10 +21,10 @@ function useGetData(path, method, typeRes){
         })()
     }, [refetch])
 
-    return {
+    return [
         data,
         loading,
-    }
+    ]
 }
 
 export default useGetData

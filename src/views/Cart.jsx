@@ -10,6 +10,8 @@ import { useEffect } from 'react';
 import config from '../api/config';
 import useGetPAC from '../hooks/getProductsAtCart';
 import LoaderCart from '../components/Loaders/LoaderCart';
+import useGetData from '../hooks/getData';
+import useGetAddress from '../hooks/getAddress';
 
 const wayget = {
     checkeDel: false,
@@ -285,6 +287,8 @@ const wayget = {
     },
 }
 
+const weekdays = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'];
+
 function Cart() {
     const { dispatch } = storeProducts
 
@@ -337,7 +341,7 @@ function Cart() {
 
     const [settings, setSettings] = useState({
         one: 'pick',
-        two: 'Санкт-Петербург',
+        two: '64a9591d49924fabc735110c',
         three: 'Завтра, 11 июля, вс',
         four: '15:00–18:00 (бесплатно)'
     })
@@ -348,7 +352,9 @@ function Cart() {
         comment: ''
     })
 
-    const addresses = wayget.pickUp[settings.two]
+    const [city, cLoading] = useGetData('/cities', [])
+
+    const [addresses, aLoading] = useGetAddress(settings.two)
 
     const [checked, setChecked] = useState(0)
 
@@ -459,22 +465,42 @@ function Cart() {
                                                     <p>{`${settings.two} ${address.street} ${address.home}`}</p>
                                                     <span>{`${settings.three} ${settings.four}`}</span>
                                                 </div> :
+                                                    aLoading ? <>fasfsafafsafafsafs</> : 
                                                     <div>
-                                                        <p>{addresses[checked].address}</p>
-                                                        <span>{addresses[checked].date}</span>
+                                                        <p>{`${city.find(cit => cit._id === addresses[checked].city).name}, ${addresses[checked].street}, ${addresses[checked].numberHome}`}</p>
+                                                        <span>
+                                                            {`
+                                                                ${weekdays[addresses[checked].weekdays[0]]}-
+                                                                ${weekdays[addresses[checked].weekdays[1]]} 
+                                                                ${
+                                                                addresses[checked].times[0] > 10 ? 
+                                                                addresses[checked].times[0] :
+                                                                '0' + addresses[checked].times[0]
+                                                                }:00 - 
+                                                                ${
+                                                                addresses[checked].times[1] > 10 ? 
+                                                                addresses[checked].times[1] :
+                                                                '0' + addresses[checked].times[1]
+                                                                }:00
+                                                            `}
+                                                        </span>
                                                     </div>
                                             }
                                         </div>
                                         <div className="regDel">
                                             <div>
                                                 <label htmlFor="cityr">Ваш город</label>
-                                                <select id="cityr" onChange={e => setSettings({ ...settings, two: e.target.value })}>
-                                                    {
-                                                        wayget.delivery.city.map((item) => (
-                                                            <option value={item} key={item}>{item}</option>
-                                                        ))
-                                                    }
-                                                </select>
+                                                {
+                                                    cLoading ? <>asfassgs</> :
+                                                    <select id="cityr" onChange={e => {setSettings({ ...settings, two: e.target.value })}}>
+                                                        {
+                                                            city.map((item) => (
+                                                                <option value={item._id} key={item._id}>{item.name}</option>
+                                                            ))
+                                                        }
+                                                    </select>
+                                                }
+                                                
                                             </div>
                                             <div className="pickup">
                                                 <div className={settings.one == 'deliv' ? 'active' : ''} onClick={() => setSettings({ ...settings, one: 'deliv' })}>
@@ -521,28 +547,52 @@ function Cart() {
                                                 <textarea cols="30" rows="10" value={address.comment} onChange={e => setAddress({ ...address, comment: e.target.value })}></textarea>
                                             </div>
                                         </div>
-                                        <div className={`pick ${settings.one == 'pick' ? '' : 'none'}`}>
-                                            <div className="aviable">
-                                                <h5>Товар доступен в 15 магазинах</h5>
-                                                <div>
-                                                    {
-                                                        addresses.map((item, i) => (
-                                                            <div key={i} onClick={() => setChecked(i)}>
-                                                                <input type="radio" name="address" id={i} />
-                                                                <label htmlFor={i}>
-                                                                    <p>{item.address} </p>
-                                                                    <span>{item.date}</span>
-                                                                </label>
-                                                            </div>
-                                                        ))
-                                                    }
+                                        {
+                                            (aLoading || cLoading) ? <>afsafsaffafasafs</> :
+                                            <div className={`pick ${settings.one == 'pick' ? '' : 'none'}`}>
+                                                <div className="aviable">
+                                                    <h5>Товар доступен в {addresses.length} магазинах</h5>
+                                                    <div>
+                                                        {
+                                                            addresses.map((item, i) => (
+                                                                <div key={i} onClick={() => setChecked(i)}>
+                                                                    <input type="radio" name="address" id={i} />
+                                                                    <label htmlFor={i}>
+                                                                        <p>
+                                                                            {`
+                                                                                ${city.find(cit => cit._id === item.city).name},
+                                                                                ${item.street}, 
+                                                                                ${item.numberHome}
+                                                                            `}
+                                                                        </p>
+                                                                        <span>
+                                                                            {`
+                                                                                ${weekdays[item.weekdays[0]]}-
+                                                                                ${weekdays[item.weekdays[1]]} 
+                                                                                ${
+                                                                                item.times[0] > 10 ? 
+                                                                                item.times[0] :
+                                                                                '0' + item.times[0]
+                                                                                }:00 - 
+                                                                                ${
+                                                                                item.times[1] > 10 ? 
+                                                                                item.times[1] :
+                                                                                '0' + item.times[1]
+                                                                                }:00
+                                                                            `}
+                                                                        </span>
+                                                                    </label>
+                                                                </div>
+                                                            ))
+                                                        }
+                                                    </div>
+                                                    <button type="button" className="yewe" click="nine == eight.length ? nine = 4  nine += eleven"> {'nine' == 'eight.length' ? 'Скрыть' : 'Показать еще ' + 'eleven'}</button>
                                                 </div>
-                                                <button type="button" className="yewe" click="nine == eight.length ? nine = 4  nine += eleven"> {'nine' == 'eight.length' ? 'Скрыть' : 'Показать еще ' + 'eleven'}</button>
-                                            </div>
-                                            <div className="map">
+                                                <div className="map">
 
+                                                </div>
                                             </div>
-                                        </div>
+                                        }
                                     </form>
                                     <button className="change" onClick={() => setChecker({ ...checker, delivery: 'middle' })}>Изменить</button>
                                 </div>

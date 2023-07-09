@@ -25,7 +25,7 @@ function IndexMain(){
 
     const [promos, pLoading] = useGetIndexPromos()
 
-    const {data, loading} = useGetData('/index-products', 'GET', [])
+    const [data, loading] = useGetData('/index-products', [])
 
     const products = (start, end) => {
         const news = data
