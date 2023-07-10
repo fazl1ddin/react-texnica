@@ -465,7 +465,7 @@ function Cart() {
                                                     <p>{`${settings.two} ${address.street} ${address.home}`}</p>
                                                     <span>{`${settings.three} ${settings.four}`}</span>
                                                 </div> :
-                                                    aLoading ? <>fasfsafafsafafsafs</> : 
+                                                    (aLoading || cLoading) ? <>fasfsafafsafafsafs</> : 
                                                     <div>
                                                         <p>{`${city.find(cit => cit._id === addresses[checked].city).name}, ${addresses[checked].street}, ${addresses[checked].numberHome}`}</p>
                                                         <span>
