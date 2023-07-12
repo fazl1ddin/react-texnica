@@ -292,7 +292,9 @@ const weekdays = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'];
 function Cart() {
     const { dispatch } = storeProducts
 
-    const {data, loading} = useGetPAC()
+    const { data, loading } = useGetPAC()
+    
+    const [ date, dLoading] = useGetData('/days-deliv', [])
 
     const total = useCallback(() => {
         return data.reduce((prev, next) => {
@@ -516,13 +518,20 @@ function Cart() {
                                         <div className={`address ${settings.one == 'deliv' ? '' : 'none'}`}>
                                             <div>
                                                 <h4>Дата</h4>
-                                                <select onChange={e => setSettings({ ...settings, three: e.target.value })}>
-                                                    {
-                                                        Object.values(wayget.delivery.address.date).map((item) => (
-                                                            <option value={item} key={item}>{item}</option>
-                                                        ))
-                                                    }
-                                                </select>
+                                                {
+                                                    dLoading ? <>afsdgsagd</> :
+                                                    <select onChange={e => setSettings({ ...settings, three: e.target.value })}>
+                                                        {
+                                                            date.map((item) => (
+                                                                <option value={item._id} key={item._id}>{new Intl.DateTimeFormat('ru', {
+                                                                    month: 'long',
+                                                                    day: 'numeric',
+                                                                    weekday: 'short',
+                                                                }).format(item.date * 1000)}</option>
+                                                            ))
+                                                        }
+                                                    </select>
+                                                }
                                             </div>
                                             <div>
                                                 <h4>Улица, дом/корпус</h4>
