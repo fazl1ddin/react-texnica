@@ -6,19 +6,21 @@ function useGetAddress(cityId) {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        (async () => {
-            setLoading(true)
-            await fetch(config.baseUrl + '/address-shops', {
-                method: 'post', body: JSON.stringify({
-                cityId
-            }) })
-            .then(result => result.json())
-            .then(result => {
-                setData(result)
-                setLoading(false)
-            })
-            .catch(e => console.log(e))
-        })()
+        if (cityId) {
+            (async () => {
+                setLoading(true)
+                await fetch(config.baseUrl + '/address-shops', {
+                    method: 'post', body: JSON.stringify({
+                    cityId
+                }) })
+                .then(result => result.json())
+                .then(result => {
+                    setData(result)
+                    setLoading(false)
+                })
+                .catch(e => console.log(e))
+            })()
+        }
     }, [cityId])
 
     return [ data, loading ]

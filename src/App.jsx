@@ -28,6 +28,9 @@ import { setModule } from "./store/products";
 import config from "./api/config";
 import { storeProducts, storeResultCheck, storeUser } from "./store";
 import RouterDots from "./components/RouterDots/RouterDots";
+import moment from "moment";
+import "moment/locale/ru"
+
 
 const DropDownElem = styled.ul`
     &.open {
@@ -63,6 +66,8 @@ const droProfile = [
 ]
 
 function App(){
+    moment().locale('ru')
+
     const dispatch = useDispatch()
 
     const forNavDrop = useRef()

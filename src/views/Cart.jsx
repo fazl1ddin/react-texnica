@@ -12,6 +12,9 @@ import useGetPAC from '../hooks/getProductsAtCart';
 import LoaderCart from '../components/Loaders/LoaderCart';
 import useGetData from '../hooks/getData';
 import useGetAddress from '../hooks/getAddress';
+import moment from 'moment/moment';
+import P390x48 from '../components/Loaders/390x48';
+import P430x330 from '../components/Loaders/430x330';
 
 const wayget = {
     checkeDel: false,
@@ -343,8 +346,8 @@ function Cart() {
 
     const [settings, setSettings] = useState({
         one: 'pick',
-        two: '64a9591d49924fabc735110c',
-        three: 'Завтра, 11 июля, вс',
+        two: null,
+        three: null,
         four: '15:00–18:00 (бесплатно)'
     })
 
@@ -355,6 +358,8 @@ function Cart() {
     })
 
     const [city, cLoading] = useGetData('/cities', [])
+
+    const [typePays, tLoading] = useGetData('/type-pays', [])
 
     const [addresses, aLoading] = useGetAddress(settings.two)
 
@@ -386,6 +391,18 @@ function Cart() {
             valid: false
         },
     ])
+
+    useEffect(() => {
+        if (settings.two === null && city.length) {
+            setSettings({...settings, two: city[0]._id})
+        }
+    }, [city])
+
+    useEffect(() => {
+        if (settings.three === null && date.length) {
+            setSettings({...settings, three: date[0]._id})
+        }
+    }, [date])
 
     useEffect(() => {
         let boolean = false
@@ -475,12 +492,12 @@ function Cart() {
                                                                 ${weekdays[addresses[checked].weekdays[0]]}-
                                                                 ${weekdays[addresses[checked].weekdays[1]]} 
                                                                 ${
-                                                                addresses[checked].times[0] > 10 ? 
+                                                                addresses[checked].times[0] >= 10 ? 
                                                                 addresses[checked].times[0] :
                                                                 '0' + addresses[checked].times[0]
                                                                 }:00 - 
                                                                 ${
-                                                                addresses[checked].times[1] > 10 ? 
+                                                                addresses[checked].times[1] >= 10 ? 
                                                                 addresses[checked].times[1] :
                                                                 '0' + addresses[checked].times[1]
                                                                 }:00
@@ -493,7 +510,7 @@ function Cart() {
                                             <div>
                                                 <label htmlFor="cityr">Ваш город</label>
                                                 {
-                                                    cLoading ? <>asfassgs</> :
+                                                    cLoading ? <P390x48/> :
                                                     <select id="cityr" onChange={e => {setSettings({ ...settings, two: e.target.value })}}>
                                                         {
                                                             city.map((item) => (
@@ -519,15 +536,13 @@ function Cart() {
                                             <div>
                                                 <h4>Дата</h4>
                                                 {
-                                                    dLoading ? <>afsdgsagd</> :
+                                                    dLoading ? <P390x48/> :
                                                     <select onChange={e => setSettings({ ...settings, three: e.target.value })}>
                                                         {
                                                             date.map((item) => (
-                                                                <option value={item._id} key={item._id}>{new Intl.DateTimeFormat('ru', {
-                                                                    month: 'long',
-                                                                    day: 'numeric',
-                                                                    weekday: 'short',
-                                                                }).format(item.date * 1000)}</option>
+                                                                <option value={item._id} key={item._id}>{moment(item.date * 1000).isAfter(moment(), 'day') ?
+                                                                    `Завтра, ${moment(item.date * 1000).format('Do, MMMM, dddd')}` :
+                                                                    moment(item.date * 1000).format('Do, MMMM, dddd')}</option>
                                                             ))
                                                         }
                                                     </select>
@@ -539,13 +554,44 @@ function Cart() {
                                             </div>
                                             <div>
                                                 <h4>Время</h4>
-                                                <select onChange={e => setSettings({ ...settings, four: e.target.value })}>
-                                                    {
-                                                        Object.values(wayget.delivery.address.clock).map((item) => (
-                                                            <option value={item} key={item}>{item}</option>
-                                                        ))
-                                                    }
-                                                </select>
+                                                {
+                                                    dLoading ? <P390x48/> :
+                                                    <select onChange={e => setSettings({ ...settings, four: e.target.value })}>
+                                                            {
+                                                                settings.three ? 
+                                                                date.find(item => item._id === settings.three).times.map((item) => (
+                                                                    <option value={item._id} key={item._id}>{
+                                                                        item.time[0] >= 10 ? 
+                                                                        item.time[0] :
+                                                                        '0' + item.time[0]
+                                                                        }:00 - 
+                                                                        {
+                                                                        item.time[1] >= 10 ? 
+                                                                        item.time[1] :
+                                                                        '0' + item.time[1]
+                                                                        }:00 {
+                                                                            item.isFree && "(бесплатно)"
+                                                                        }</option>
+                                                                ))
+                                                                : date[0].times.map((item) => (
+                                                                    <option value={item._id} key={item._id}>
+                                                                        {
+                                                                        item.time[0] >= 10 ? 
+                                                                        item.time[0] :
+                                                                        '0' + item.time[0]
+                                                                        }:00 - 
+                                                                        {
+                                                                        item.time[1] >= 10 ? 
+                                                                        item.time[1] :
+                                                                        '0' + item.time[1]
+                                                                        }:00 {
+                                                                            item.isFree && "(бесплатно)"
+                                                                        }</option>
+                                                                ))
+                                                        }
+                                                    </select>
+                                                }
+                                                
                                             </div>
                                             <div>
                                                 <h4>Квартира</h4>
@@ -556,52 +602,52 @@ function Cart() {
                                                 <textarea cols="30" rows="10" value={address.comment} onChange={e => setAddress({ ...address, comment: e.target.value })}></textarea>
                                             </div>
                                         </div>
-                                        {
-                                            (aLoading || cLoading) ? <>afsafsaffafasafs</> :
                                             <div className={`pick ${settings.one == 'pick' ? '' : 'none'}`}>
-                                                <div className="aviable">
-                                                    <h5>Товар доступен в {addresses.length} магазинах</h5>
-                                                    <div>
-                                                        {
-                                                            addresses.map((item, i) => (
-                                                                <div key={i} onClick={() => setChecked(i)}>
-                                                                    <input type="radio" name="address" id={i} />
-                                                                    <label htmlFor={i}>
-                                                                        <p>
-                                                                            {`
-                                                                                ${city.find(cit => cit._id === item.city).name},
-                                                                                ${item.street}, 
-                                                                                ${item.numberHome}
-                                                                            `}
-                                                                        </p>
-                                                                        <span>
-                                                                            {`
-                                                                                ${weekdays[item.weekdays[0]]}-
-                                                                                ${weekdays[item.weekdays[1]]} 
-                                                                                ${
-                                                                                item.times[0] > 10 ? 
-                                                                                item.times[0] :
-                                                                                '0' + item.times[0]
-                                                                                }:00 - 
-                                                                                ${
-                                                                                item.times[1] > 10 ? 
-                                                                                item.times[1] :
-                                                                                '0' + item.times[1]
-                                                                                }:00
-                                                                            `}
-                                                                        </span>
-                                                                    </label>
-                                                                </div>
-                                                            ))
-                                                        }
+                                            {
+                                                (aLoading || cLoading) ? <P430x330/> :
+                                                    <div className="aviable">
+                                                        <h5>Товар доступен в {addresses.length} магазинах</h5>
+                                                        <div>
+                                                            {
+                                                                addresses.map((item, i) => (
+                                                                    <div key={i} onClick={() => setChecked(i)}>
+                                                                        <input type="radio" name="address" id={i} />
+                                                                        <label htmlFor={i}>
+                                                                            <p>
+                                                                                {`
+                                                                                    ${city.find(cit => cit._id === item.city).name},
+                                                                                    ${item.street}, 
+                                                                                    ${item.numberHome}
+                                                                                `}
+                                                                            </p>
+                                                                            <span>
+                                                                                {`
+                                                                                    ${weekdays[item.weekdays[0]]}-
+                                                                                    ${weekdays[item.weekdays[1]]} 
+                                                                                    ${
+                                                                                    item.times[0] >= 10 ? 
+                                                                                    item.times[0] :
+                                                                                    '0' + item.times[0]
+                                                                                    }:00 - 
+                                                                                    ${
+                                                                                    item.times[1] >= 10 ? 
+                                                                                    item.times[1] :
+                                                                                    '0' + item.times[1]
+                                                                                    }:00
+                                                                                `}
+                                                                            </span>
+                                                                        </label>
+                                                                    </div>
+                                                                ))
+                                                            }
+                                                        </div>
+                                                        <button type="button" className="yewe" click="nine == eight.length ? nine = 4  nine += eleven"> {'nine' == 'eight.length' ? 'Скрыть' : 'Показать еще ' + 'eleven'}</button>
                                                     </div>
-                                                    <button type="button" className="yewe" click="nine == eight.length ? nine = 4  nine += eleven"> {'nine' == 'eight.length' ? 'Скрыть' : 'Показать еще ' + 'eleven'}</button>
-                                                </div>
+                                            }
                                                 <div className="map">
 
                                                 </div>
                                             </div>
-                                        }
                                     </form>
                                     <button className="change" onClick={() => setChecker({ ...checker, delivery: 'middle' })}>Изменить</button>
                                 </div>
@@ -616,11 +662,10 @@ function Cart() {
                                 <div className="obb">
                                     <form className="cash">
                                         <select>
-                                            <option value="Наличными">Наличными</option>
-                                            <option value="Mastercard">Mastercard</option>
-                                            <option value="Visa">Visa</option>
-                                            <option value="МИР">МИР</option>
-                                            <option value="Qiwi">Qiwi</option>
+                                            {
+                                                tLoading ? <P390x48/> :
+                                                typePays.map(item => <option value={item._id}>{item.name}</option>)
+                                            }
                                         </select>
                                     </form>
                                     <button className="change" onClick={() => {
