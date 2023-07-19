@@ -292,7 +292,7 @@ const wayget = {
 
 const weekdays = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"];
 
-function Cart() {
+function Cart({user, setModal}) {
   const { dispatch } = storeProducts;
 
   const { data, loading } = useGetPAC();
@@ -339,6 +339,10 @@ function Cart() {
     recipient: "start",
   });
 
+  const [read, setRead] = useState(true);
+
+  const [typePay, setTypePay] = useState(null);
+
   const [canSend, setCanSend] = useState(false);
 
   useEffect(() => {
@@ -350,7 +354,7 @@ function Cart() {
     one: "pick",
     two: null,
     three: null,
-    four: "15:00–18:00 (бесплатно)",
+    four: null,
   });
 
   const [address, setAddress] = useState({
@@ -371,24 +375,28 @@ function Cart() {
     {
       name: "Имя",
       value: "",
+      key: "first_name",
       pattern: /[0-9\\.,:]/,
       valid: false,
     },
     {
       name: "Фамилия",
       value: "",
+      key: "last_name",
       pattern: /[0-9\\.,:]/,
       valid: false,
     },
     {
       name: "Номер телефона",
       value: "",
+      key: "phone_number",
       pattern: /[0-9\\.,:]/,
       valid: false,
     },
     {
       name: "Эл. почта",
       value: "",
+      key: "email",
       pattern: /[0-9\\.,:]/,
       valid: false,
     },
@@ -402,19 +410,72 @@ function Cart() {
 
   useEffect(() => {
     if (settings.three === null && date.length) {
-      setSettings({ ...settings, three: date[0]._id });
+      setSettings({
+        ...settings,
+        three: date[0]._id,
+        four: date[0].times[0]._id,
+      });
     }
   }, [date]);
+
+  useEffect(() => {
+    if (typePay === null && typePays.length) {
+      setTypePay(typePays[0]._id);
+    }
+  }, [typePays]);
 
   useEffect(() => {
     let boolean = false;
     if (data.length > 0) {
       boolean =
         Object.values(checker).every((item) => item == "end") == true &&
-        man.every((item) => item.valid == true) == true;
+        man.every((item) => item.valid == true) == true &&
+        read;
     }
     setCanSend(boolean);
-  }, [checker, man]);
+  }, [checker, man, read]);
+
+  const submit = async (e) => {
+    if(user){
+      const response = await fetch(config.baseUrl + "/order", {
+        method: "POST",
+        body: JSON.stringify(
+          settings.one === "deliv"
+            ? {
+                date: settings.three,
+                time: settings.four,
+                ...address,
+                typePay,
+                getter: Object.fromEntries(
+                  man.map((item) => {
+                    return [[item.key], item.value];
+                  })
+                ),
+                city: settings.two
+              }
+            : {
+              address: {
+                city: settings.two,
+                shop: addresses[checked],
+              },
+              status: 0,
+              orderDate: moment(),
+              userId: user._id,
+              getter: Object.fromEntries(
+                man.map((item) => {
+                  return [[item.key], item.value];
+                })
+              ),
+              products: data.map(item => item._id),
+              price: total(),
+              typePay: typePay,
+            }
+        ),
+      });
+    } else {
+      setModal('singUp')
+    }
+  };
 
   return (
     <div className="oformleniye">
@@ -547,13 +608,92 @@ function Cart() {
                   <form className="delivery">
                     <div className="to">
                       <h5 className="type">
-                        {"one" == "deliv" ? "Доставка " : "Самовывоз из"}
+                        {settings.one == "deliv" ? "Доставка " : "Самовывоз из"}
                       </h5>
                       {settings.one == "deliv" ? (
-                        <div>
-                          <p>{`${settings.two} ${address.street} ${address.home}`}</p>
-                          <span>{`${settings.three} ${settings.four}`}</span>
-                        </div>
+                        settings.two &&
+                        settings.three &&
+                        settings.four && (
+                          <div>
+                            <p>{`${
+                              city.find((item) => item._id === settings.two)
+                                .name
+                            } ${address.street} ${address.home}`}</p>
+                            <span>{`${
+                              moment(
+                                date.find((item) => item._id === settings.three)
+                                  .date * 1000
+                              ).isAfter(moment(), "day")
+                                ? `Завтра, ${moment(
+                                    date.find(
+                                      (item) => item._id === settings.three
+                                    ).date * 1000
+                                  ).format("Do, MMMM, dddd")}`
+                                : moment(
+                                    date.find(
+                                      (item) => item._id === settings.three
+                                    ).date * 1000
+                                  ).format("Do, MMMM, dddd")
+                            }, ${
+                              date
+                                .find((item) => item._id === settings.three)
+                                .times.find(
+                                  (item) => item._id === settings.four
+                                ).time[0] >= 10
+                                ? date
+                                    .find((item) => item._id === settings.three)
+                                    .times.find(
+                                      (item) => item._id === settings.four
+                                    ).time[0]
+                                : "0" +
+                                  date
+                                    .find((item) => item._id === settings.three)
+                                    .times.find(
+                                      (item) => item._id === settings.four
+                                    ).time[0]
+                            }
+                                    :00 -
+                                    ${
+                                      date
+                                        .find(
+                                          (item) => item._id === settings.three
+                                        )
+                                        .times.find(
+                                          (item) => item._id === settings.four
+                                        ).time[1] >= 10
+                                        ? date
+                                            .find(
+                                              (item) =>
+                                                item._id === settings.three
+                                            )
+                                            .times.find(
+                                              (item) =>
+                                                item._id === settings.four
+                                            ).time[1]
+                                        : "0" +
+                                          date
+                                            .find(
+                                              (item) =>
+                                                item._id === settings.three
+                                            )
+                                            .times.find(
+                                              (item) =>
+                                                item._id === settings.four
+                                            ).time[1]
+                                    }
+                                    :00 ${
+                                      date
+                                        .find(
+                                          (item) => item._id === settings.three
+                                        )
+                                        .times.find(
+                                          (item) => item._id === settings.four
+                                        ).isFree
+                                        ? "(бесплатно)"
+                                        : ""
+                                    }`}</span>
+                          </div>
+                        )
                       ) : aLoading || cLoading ? (
                         <>fasfsafafsafafsafs</>
                       ) : (
@@ -705,6 +845,7 @@ function Cart() {
                       <div>
                         <h4>Улица, дом/корпус</h4>
                         <input
+                          required
                           type="text"
                           value={address.street}
                           onChange={(e) =>
@@ -755,6 +896,7 @@ function Cart() {
                       <div>
                         <h4>Квартира</h4>
                         <input
+                          required
                           type="text"
                           value={address.home}
                           onChange={(e) =>
@@ -899,9 +1041,15 @@ function Cart() {
                     {tLoading ? (
                       <P390x48 />
                     ) : (
-                      <select>
+                      <select
+                        onChange={(e) => {
+                          setTypePay(e.target.value);
+                        }}
+                      >
                         {typePays.map((item) => (
-                          <option value={item._id}>{item.name}</option>
+                          <option value={item._id} key={item._id}>
+                            {item.name}
+                          </option>
                         ))}
                       </select>
                     )}
@@ -995,14 +1143,22 @@ function Cart() {
                 </div>
               ) : null}
               <button
+                onClick={submit}
                 className={`zakazat ${canSend ? "ready" : ""}`}
-                disabled="!readySend"
+                disabled={!canSend}
               >
                 Оформить заказ
               </button>
             </div>
             <form>
-              <input type="checkbox" id="soglasheniya" defaultChecked={true} />
+              <input
+                onChange={(e) => {
+                  setRead(e.target.checked);
+                }}
+                type="checkbox"
+                id="soglasheniya"
+                defaultChecked={true}
+              />
               <label htmlFor="soglasheniya">
                 Подтверждая заказ, я принимаю условия{" "}
                 <a href="">пользовательского соглашения</a>

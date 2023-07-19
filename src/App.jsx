@@ -533,7 +533,7 @@ function App(){
         <Route path="/viewed" element={<Viewed/>}/>
         <Route path="/favorites" element={<Favorites drops={droProfile} setModal={setModal} user={Suzer} loadingUser={loading}/>}></Route>,
         <Route path="/compare" element={<Compare/>}></Route>,
-        <Route path="/cart" element={<Cart/>}></Route>,
+        <Route path="/cart" element={<Cart user={Suzer} setModal={setModal}/>}></Route>,
         <Route path="/about-us" element={<AboutUs/>}></Route>,
         <Route path="/warranty" element={<Warranty/>}></Route>,
         <Route path="/new/:id" element={<NewContent/>}></Route>,
