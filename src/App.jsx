@@ -475,16 +475,16 @@ function App(){
                             </Link>
                         </div>
                         <li>
-                            <a>О компании</a>
+                            <Link to={'/about-us'}>О компании</Link>
                         </li>
                         <li>
-                            <a>Акции</a>
+                            <Link to={'/promos'}>Акции</Link>
                         </li>
                         <li>
                             <a>Рассрочка 0–0-12</a>
                         </li>
                         <li>
-                            <a>Сервис и ремонт</a>
+                            <Link to={'/warranty'}>Сервис и ремонт</Link>
                         </li>
                         <li>
                             <a>Опт/дропшиппинг</a>
@@ -502,16 +502,16 @@ function App(){
                     </ul>
                 <ol className="navbarul">
                     <li>
-                        <a href="">О компании</a>
+                        <Link to={'/about-us'}>О компании</Link>
                     </li>
                     <li>
-                        <a href="">Акции</a>
+                        <Link to={'/promos'}>Акции</Link>
                     </li>
                     <li>
                         <a href="">Рассрочка 0|0|18</a>
                     </li>
                     <li>
-                        <a href="">Сервис и гарантия</a>
+                        <Link to={'/warranty'}>Сервис и гарантия</Link>
                     </li>
                     <li>
                         <a href="">Опт/дропшиппинг</a>

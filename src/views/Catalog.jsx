@@ -28,10 +28,6 @@ function Catalog() {
 
   const [can, setCan] = useState(false);
 
-  const [moshnosts, setMoshnosts] = useState(null);
-
-  const [maxSpeeds, setMaxSpeeds] = useState(null);
-
   const [filter, setFilter] = useState({
     prices: {
       min: null,
@@ -50,18 +46,6 @@ function Catalog() {
     setMin(filtersChecks.price ? filtersChecks.price.min : 0);
     setMax(filtersChecks.price ? filtersChecks.price.max : 0);
   }, [filtersChecks]);
-
-  useEffect(() => {
-    if (maxSpeeds !== null) {
-      setFilter({ ...filter, maksSpeed: maxSpeeds });
-    }
-  }, [maxSpeeds]);
-
-  useEffect(() => {
-    if (moshnosts !== null) {
-      setFilter({ ...filter, moshnost: moshnosts });
-    }
-  }, [moshnosts]);
 
   const [openIndex, setOpenIndex] = useState({
     price: false,
@@ -96,111 +80,91 @@ function Catalog() {
             </div>
           ),
         },
-        {
-          key: "podsvetka",
-          title: "Подсветка",
-          get content() {
-            return (
-              <div className={`dropInputCheck min`}>
-                {filtersChecks[this.key].map((item, i) => (
-                  <div className="checkbox" key={item}>
-                    <input
-                      className="custom-checkbox"
-                      onChange={(e) =>
-                        setFilter({
-                          ...filter,
-                          [this.key]: e.target.checked ? e.target.value : null,
-                        })
-                      }
-                      checked={filter[this.key] == item}
-                      type="checkbox"
-                      id={`color-${item}`}
-                      value={item}
-                    />
-                    <label htmlFor={`color-${item}`}>{item}</label>
-                  </div>
-                ))}
-              </div>
-            );
-          },
-        },
-        {
-          key: "moshnost",
-          title: "Мощность двигателя (Ватт)",
-          get content() {
-            return (
-              <div className={`dropInputCheck max`}>
-                {filtersChecks[this.key]
-                  .sort((a, b) => a - b)
-                  .map((item, i) => (
-                    <div className="checkbox" key={item}>
-                      <input
-                        className="custom-checkbox"
-                        type="checkbox"
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            if (moshnosts === null) {
-                              return setMoshnosts([([i] = e.target.value)]);
+        ...Object.entries(filtersChecks)
+          .map(([key, item]) => {
+            if (item.type === 0) {
+              return {
+                key: key,
+                title: item.title,
+                get content() {
+                  return (
+                    <div className={`dropInputCheck min`}>
+                      {item.values.map((item, i) => (
+                        <div className="checkbox" key={item}>
+                          <input
+                            className="custom-checkbox"
+                            onChange={(e) =>
+                              setFilter({
+                                ...filter,
+                                [key]: e.target.checked ? e.target.value : null,
+                              })
                             }
-                            setMoshnosts([
-                              ...moshnosts,
-                              ([i] = e.target.value),
-                            ]);
-                          } else {
-                            setMoshnosts(
-                              moshnosts.filter((items) => moshnosts[i] != items)
-                            );
-                          }
-                        }}
-                        id={`color-${item}`}
-                        value={item}
-                      />
-                      <label htmlFor={`color-${item}`}>{item}</label>
+                            checked={filter[key] == item}
+                            type="checkbox"
+                            id={`color-${item}`}
+                            value={item}
+                          />
+                          <label htmlFor={`color-${item}`}>{item}</label>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-              </div>
-            );
-          },
-        },
-        {
-          key: "maksSpeed",
-          title: "Максимальная скорость (км/ч)",
-          get content() {
-            return (
-              <div className={`dropInputCheck min`}>
-                {filtersChecks[this.key]
-                  .sort((a, b) => a - b)
-                  .map((item, i) => (
-                    <div className="checkbox" key={item}>
-                      <input
-                        className="custom-checkbox"
-                        type="checkbox"
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            if (maxSpeeds === null) {
-                              return setMaxSpeeds([([i] = e.target.value)]);
-                            }
-                            setMaxSpeeds([
-                              ...maxSpeeds,
-                              ([i] = e.target.value),
-                            ]);
-                          } else {
-                            setMaxSpeeds(
-                              maxSpeeds.filter((items) => maxSpeeds[i] != items)
-                            );
-                          }
-                        }}
-                        id={`color-${item}`}
-                        value={item}
-                      />
-                      <label htmlFor={`color-${item}`}>{item}</label>
+                  );
+                },
+              };
+            } else if (item.type === 1) {
+              return {
+                key: key,
+                title: item.title,
+                get content() {
+                  return (
+                    <div className={`dropInputCheck max`}>
+                      {item.values
+                        .sort((a, b) => a - b)
+                        .map((item, i) => (
+                          <div className="checkbox" key={item}>
+                            <input
+                              className="custom-checkbox"
+                              type="checkbox"
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  if (filter[key] === null) {
+                                    return setFilter({
+                                      ...filter,
+                                      [key]: [([i] = e.target.value)],
+                                    });
+                                  }
+                                  setFilter({
+                                    ...filter,
+                                    [key]: [
+                                      ...filter[key], [i] = e.target.value
+                                    ]
+                                  })
+                                } else {
+                                  setFilter({
+                                    ...filter,
+                                    [key]: filter[key].filter(
+                                      (items) => item != items
+                                    ),
+                                  });
+                                }
+                              }}
+                              id={`color-${item}`}
+                              checked={filter[key] && filter[key].includes(String(item))}
+                              value={item}
+                            />
+                            <label htmlFor={`color-${item}`}>{item}</label>
+                          </div>
+                        ))}
                     </div>
-                  ))}
-              </div>
-            );
-          },
-        },
+                  );
+                },
+              };
+            }
+          })
+          .filter((item) => item),
       ];
+
+  console.log(filter);
 
   return (
     <div className="catalog">

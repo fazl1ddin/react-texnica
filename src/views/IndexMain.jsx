@@ -46,9 +46,9 @@ function IndexMain() {
             <div className="xityProdaj" key={item._id}>
               <div className="window">
                 <h1>{item.title}</h1>
-                <a href="" className="a">
+                <Link to={'/catalog'} className="a">
                   {item.href}
-                </a>
+                </Link>
                 <div className="xityProdajContent">
                   {item.every
                     .map((item, index) => ({
