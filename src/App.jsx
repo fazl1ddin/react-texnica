@@ -160,6 +160,7 @@ function App(){
                         }
                     })
                     .catch(error => {
+                        setLoadingState(false)
                         if(error){
                             console.log(error);
                         }
