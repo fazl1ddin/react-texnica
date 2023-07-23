@@ -172,9 +172,12 @@ function Catalog() {
                 },
               };
             }
+            return undefined
           })
           .filter((item) => item),
-      ];
+    ];
+  
+  console.log(filter);
 
   return (
     <div className="catalog">
@@ -205,62 +208,45 @@ function Catalog() {
           </div>
           <div>
             <div className="filters">
-              {filter.cruise !== null && filter.cruise !== "" ? (
-                <p>
-                  Подсветка: {filter.cruise}
-                  <img
-                    src={img.x}
-                    className="deleteBut"
-                    onClick={() => setFilter({ ...filter, cruise: null })}
-                  />
-                </p>
-              ) : null}
-              {filter.power !== null && filter.power.length != 0 ? (
-                filter.power.length != 1 ? (
-                  <p>
-                    Мощность двигателя (Ватт) от{" "}
-                    {filter.power.sort((a, b) => a - b)[0]} до{" "}
-                    {filter.power.sort((a, b) => b - a)[0]}
-                    <img
-                      src={img.x}
-                      className="deleteBut"
-                      onClick={() => setFilter({ ...filter, power: null })}
-                    />
-                  </p>
-                ) : (
-                  <p>
-                    Мощность двигателя (Ватт): {filter.power[0]}
-                    <img
-                      src={img.x}
-                      className="deleteBut"
-                      onClick={() => setFilter({ ...filter, power: null })}
-                    />
-                  </p>
-                )
-              ) : null}
-              {filter.speed !== null && filter.speed.length != 0 ? (
-                filter.speed.length > 1 ? (
-                  <p>
-                    Максимальная скорость (км/ч) от{" "}
-                    {filter.speed.sort((a, b) => a - b)[0]} до{" "}
-                    {filter.speed.sort((a, b) => b - a)[0]}
-                    <img
-                      src={img.x}
-                      className="deleteBut"
-                      onClick={() => setFilter({ ...filter, speed: null })}
-                    />
-                  </p>
-                ) : (
-                  <p>
-                    Максимальная скорость (км/ч): {filter.speed[0]}
-                    <img
-                      src={img.x}
-                      className="deleteBut"
-                      onClick={() => setFilter({ ...filter, speed: null })}
-                    />
-                  </p>
-                )
-              ) : null}
+              {
+                loadingF || Object.entries(filtersChecks).map(([key, value], index) => {
+                  if (value.type === 0) {
+                    return filter[key] && <p>
+                      {value.title}: {filter[key]}
+                      <img
+                        src={img.x}
+                        className="deleteBut"
+                        onClick={() => setFilter({ ...filter, [key]: null })}
+                      />
+                    </p>
+                  } else if (value.type === 1) {
+                    console.log(filter[key]);
+                    return filter[key] ?
+                      filter[key].length != 1 ? 
+                      <p>
+                        {value.title} от 
+                        {filter[key].sort((a, b) => a - b)[0]} до 
+                        {filter[key].sort((a, b) => b - a)[0]}
+                        <img
+                          src={img.x}
+                          className="deleteBut"
+                          onClick={() => setFilter({ ...filter, [key]: null })}
+                        />
+                      </p>
+                      : 
+                      <p>
+                        {value.title}: {filter[key][0]}
+                        <img
+                          src={img.x}
+                          className="deleteBut"
+                          onClick={() => setFilter({ ...filter, [key]: null })}
+                        />
+                        </p>
+                      : null
+                  }
+                  return undefined
+                }).filter(item => item)
+              }
               {filter.prices.min && filter.prices.max ? (
                 <p>
                   Цена: от {filter.prices.min} ₽ до {filter.prices.max} ₽
