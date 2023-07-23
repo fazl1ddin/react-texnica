@@ -18,10 +18,6 @@ import useGetFCh from "../hooks/getFCh";
 function Catalog() {
   const [params, setParams] = useSearchParams();
 
-  const hCheckbox = useRef()
-
-  const [hCh, setHCh] = useState(0)
-
   const [page, setPage] = useState(
     Number(params.has("index") ? params.get("index") : 1)
   );
