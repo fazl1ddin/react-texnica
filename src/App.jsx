@@ -30,6 +30,7 @@ import { storeProducts, storeResultCheck, storeUser } from "./store";
 import RouterDots from "./components/RouterDots/RouterDots";
 import moment from "moment";
 import "moment/locale/ru"
+import PageNotFound from "./views/PageNotFound";
 
 
 const DropDownElem = styled.ul`
@@ -541,7 +542,8 @@ function App(){
         <Route path="/news" element={<News/>}></Route>,
         <Route path="/promo/:id" element={<Promo/>}></Route>,
         <Route path="/promos" element={<Promos/>}></Route>,
-        <Route path="/catalog" element={<Catalog/>}></Route>,
+        <Route path="/catalog" element={<Catalog />}></Route>,
+        <Route path="*" element={<PageNotFound/>}></Route>    
     </Routes>
     <div className="footer">
         <div className="window">
