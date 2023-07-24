@@ -1,37 +1,43 @@
 import React from 'react';
 import { useLocation } from 'react-router';
 import { contentById } from '../store';
+import useGetContents from '../hooks/getContents';
 
 function Promo(){
     const pathname = useLocation().pathname.split('/')
 
-    const currentId = Number(pathname[pathname.length - 1])
+    const currentId = pathname[pathname.length - 1]
 
-    const content = contentById('promos', currentId)
+    const [data, loading] = useGetContents([currentId], '/promo')
 
-    return <>
-        <div className="promo">
-            <div className="window">
-                <h1>{ content.title }</h1>
-                <div className="newContent">
-                    <div className="newText">
-                        <p>{ content.content }</p>
-                        <h4>Условия Акции:</h4>
-                        <ol>
-                            {
-                                content.terms.map((item) => (
-                                    <li key={item}>{ item }</li>
-                                ))
-                            }
-                        </ol>
+    return <div className="promo">
+        <div className="window">
+            {
+                loading ? <>safasasgas</> :
+                <>
+                    <h1>{ data[0].title }</h1>
+                    <div className="newContent">
+                        <div className="newText">
+                            <p>{ data[0].content }</p>
+                            <h4>Условия Акции:</h4>
+                            <ol>
+                                {
+                                    data[0].terms.map((item) => (
+                                        <li key={item}>{ item }</li>
+                                    ))
+                                }
+                            </ol>
+                        </div>
+                        <div className="newImg">
+                            <img src={data[0].src}/>
+                        </div>
                     </div>
-                    <div className="newImg">
-                        <img src={content.src}/>
-                    </div>
-                </div>
-            </div>
+                </>
+            }
+            
         </div>
-    </>
+    </div>
+    
 }
 
 export default Promo

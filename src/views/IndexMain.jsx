@@ -215,12 +215,12 @@ function IndexMain() {
         </div>
       </div>
       {products(4, 5)}
-      <div className="news">
+      <div className="newes">
         <div className="window">
           <h1>Новости</h1>
-          <a href="" className="a">
+          <Link to={'/news'}>
             Читать все
-          </a>
+          </Link>
           <div className="newsContent">
             <div className="newsBox">
               <h1>Открытие нового магазина</h1>

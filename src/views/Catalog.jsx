@@ -32,10 +32,7 @@ function Catalog() {
     prices: {
       min: null,
       max: null,
-    },
-    cruise: null,
-    power: null,
-    speed: null,
+    }
   });
 
   const [filtersChecks, loadingF] = useGetFCh();
@@ -89,7 +86,7 @@ function Catalog() {
                 get content() {
                   return (
                     <div className={`dropInputCheck`} style={{
-                      maxHeight: 28 * item.values.length
+                      height: 28 * item.values.length
                     }}>
                       {item.values.map((item, i) => (
                         <div className="checkbox" key={item}>
@@ -120,7 +117,7 @@ function Catalog() {
                 get content() {
                   return (
                     <div className={`dropInputCheck`} style={{
-                      maxHeight: 28 * item.values.length
+                      height: 28 * item.values.length
                     }}>
                       {item.values
                         .sort((a, b) => a - b)
@@ -172,8 +169,6 @@ function Catalog() {
           })
           .filter((item) => item),
     ];
-  
-  console.log(filter);
 
   return (
     <div className="catalog">

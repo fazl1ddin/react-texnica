@@ -349,16 +349,16 @@ import cartButton from ""; */
 .pb-40 {
     padding-bottom: 40px;
 }
-.news {
+.newes {
     padding: 40px 0;
 }
-.news h1 {
+.newes h1 {
     font-family: "Exo 2";
     font-size: 36px;
     font-weight: 700;
     display: inline;
 }
-.news a {
+.newes a {
     text-decoration: none;
     color: #2A5275;
     font-family: "Exo 2";
@@ -366,7 +366,7 @@ import cartButton from ""; */
     font-weight: 500;
     padding-left: 30px;
 }
-.news a::after {
+.newes a::after {
     content: "\23F5";
 }
 .newsContent {
@@ -476,7 +476,7 @@ import cartButton from ""; */
     .banner {
         padding-bottom: 10px;
     }
-    .news {
+    .newes {
         padding-top: 30px;
         padding-bottom: 10px;
     }
@@ -588,15 +588,15 @@ import cartButton from ""; */
     .w-330 {
         width: 188px;
     }
-    .news {
+    .newes {
         padding: 25px 20px;
     }
-    .news h1 {
+    .newes h1 {
         font-family: "Exo 2";
         font-size: 24px;
         font-weight: 700;
     }
-    .news .a {
+    .newes .a {
         font-family: "Exo 2";
         font-size: 16px;
         font-weight: 500;
