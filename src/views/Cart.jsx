@@ -1,8 +1,7 @@
-import React, { useLayoutEffect } from "react";
+import React from "react";
 import "../css/Cart.css";
 import { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { store, storeProducts, updateOne, useFindById } from "../store/index";
+import { storeProducts, updateOne } from "../store/index";
 import { changeCount } from "../store/products";
 import * as img from "../img/index";
 import { useState } from "react";

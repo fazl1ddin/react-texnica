@@ -360,8 +360,13 @@
 .forModal .centerWrap .modalBody {
     padding: 0px 30px 30px 30px;
 }
+.forModal .centerWrap .modalBody .modalWrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
 .forModal .centerWrap .modalBody label {
-    margin-top: 20px;
     font-family: 'Exo 2';
     display: block;
     font-size: 16px;
@@ -377,6 +382,26 @@
     border-radius: 5px;
     margin-top: 5px;
     border: #EAEAF0 1px solid;
+    padding: 20px;
+    font-size: 16px;
+    font-weight: 400;
+}
+.forModal .centerWrap .modalBody input::placeholder {
+    font-size: 16px;
+    font-weight: 400;
+}
+.forModal .centerWrap .modalBody .modalWrapper[data-valid="1"] input {
+    outline: #22A44E auto;
+}
+.forModal .centerWrap .modalBody .modalWrapper[data-valid="2"] input {
+    outline: #F15152 auto;
+}
+.forModal .centerWrap .modalBody .modalWrapper svg {
+    position: absolute;
+    top: 33px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
 }
 .forModal .centerWrap.singUp .modalBody p {
     margin-top: 10px;

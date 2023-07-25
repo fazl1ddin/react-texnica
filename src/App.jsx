@@ -91,7 +91,7 @@ function App(){
 
     const [dropDown, setDropDown] = useState(false)
 
-    const [modal, setModal] = useState(' ')
+    const [modal, setModal] = useState('singUp')
 
     const [login, setLogin] = useState([
         {
@@ -116,28 +116,32 @@ function App(){
             name: 'name',
             value: '',
             pattern: /[0-9\\.,:]/,
-            valid: false
+            valid: 0,
+            placeholder: "Имя"
         },
         {
             title: 'Эл. почта',
             name: 'mail',
             value: '',
             pattern: /[0-9\\.,:]/,
-            valid: false
+            valid: 0,
+            placeholder: "Эл. почта"
         },
         {
             title: 'Номер телефона',
             name: 'phone',
             value: '',
             pattern: /[0-9\\.,:]/,
-            valid: false
+            valid: 0,
+            placeholder: "Номер телефона"
         },
         {
             title: 'Пароль',
             name: 'password',
             value: '',
             pattern: /[0-9\\.,:]/,
-            valid: false
+            valid: 0,
+            placeholder: "Пароль"
         }
     ])
 
@@ -208,6 +212,8 @@ function App(){
         }
     }, [forProfileDrop.current])
 
+    console.log(singUp);
+
     return (<>
     {modal != ' ' ? modal == 'login' ? <div className="forModal">
         <div className="centerWrap singIn">
@@ -220,9 +226,9 @@ function App(){
             <div className="modalBody">
                 <form>
                     {
-                        login.map((item, index) => <React.Fragment key={item.name}>
+                        login.map((item, index) => <div className="modalWrapper" key={item.name}>
                             <label htmlFor={item.name}>{item.title}</label>
-                            <input type="text" value={item.value} name="text" id={item.name} onChange={e => {
+                            <input  type="text" value={item.value} name="text" id={item.name} onChange={e => {
                                 setLogin(login.map((item, i) => {
                                     if(index == i) return {
                                         ...item,
@@ -231,8 +237,8 @@ function App(){
                                     }
                                     return item
                                 }))
-                            }}/>
-                        </React.Fragment>)
+                            }} />
+                        </div>)
                     }
                     <a href="">Забыли пароль?</a>
                     <div>
@@ -278,19 +284,50 @@ function App(){
             <div className="modalBody">
                 <form>
                     {
-                        singUp.map((item, index) => <React.Fragment key={item.name}>
+                        singUp.map((item, index) => <div data-valid={item.valid} className="modalWrapper" key={item.name}>
                             <label htmlFor={item.name}>{item.title}</label>
-                            <input type="text" value={item.value} id={item.name} onChange={e => {
+                            <input type="text" placeholder={item.placeholder} value={item.value} id={item.name} onChange={e => {
                                 setSingUp(singUp.map((item, i) => {
                                     if(index == i) return {
                                         ...item,
                                         value: e.target.value,
-                                        valid: item.pattern.test(item.value),
+                                        valid: e.target.value === '' ? 0 : item.pattern.test(item.value) ? 1 : 2,
                                     }
                                     return item
                                 }))
                             }}/>
-                        </React.Fragment>)
+                            {
+                                item.valid === 0 ? null : item.valid === 1 ?
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <g id="icon-right" clipPath="url(#clip0_179_8163)">
+                                <g id="Group">
+                                <circle id="Oval" cx="11.9998" cy="12.0001" r="9.00375" stroke="#22A44E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path id="Path" d="M8.44531 12.3392L10.6132 14.5071L10.5992 14.4931L15.4902 9.60205" stroke="#22A44E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                </g>
+                                </g>
+                                <defs>
+                                <clipPath id="clip0_179_8163">
+                                <rect width="24" height="24" fill="white"/>
+                                </clipPath>
+                                </defs>
+                                </svg>
+                                : 
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <g id="icon-right" clipPath="url(#clip0_158_9516)">
+                                <g id="Group">
+                                <circle id="Oval" cx="11.9989" cy="12" r="9.00375" stroke="#F15152" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path id="Path" d="M14.0009 9.99915L9.99927 14.0008" stroke="#F15152" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path id="Path_2" d="M14.0009 14.0008L9.99927 9.99915" stroke="#F15152" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </g>
+                                </g>
+                                <defs>
+                                <clipPath id="clip0_158_9516">
+                                <rect width="24" height="24" fill="white"/>
+                                </clipPath>
+                                </defs>
+                                </svg>
+                            }
+                        </div>)
                     }
                     <p>Регистрируясь, вы соглашаетесь с&nbsp;<a href="">пользовательским соглашением</a></p>
                     <button type="button" onClick={() => {}}>Зарегистрироваться</button>
