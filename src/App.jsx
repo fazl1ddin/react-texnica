@@ -117,7 +117,8 @@ function App(){
             value: '',
             pattern: /[0-9\\.,:]/,
             valid: 0,
-            placeholder: "Имя"
+            placeholder: "Имя",
+            type: 'text'
         },
         {
             title: 'Эл. почта',
@@ -125,7 +126,8 @@ function App(){
             value: '',
             pattern: /[0-9\\.,:]/,
             valid: 0,
-            placeholder: "Эл. почта"
+            placeholder: "Эл. почта",
+            type: 'email'
         },
         {
             title: 'Номер телефона',
@@ -133,7 +135,8 @@ function App(){
             value: '',
             pattern: /[0-9\\.,:]/,
             valid: 0,
-            placeholder: "Номер телефона"
+            placeholder: "Номер телефона",
+            type: 'number'
         },
         {
             title: 'Пароль',
@@ -141,7 +144,8 @@ function App(){
             value: '',
             pattern: /[0-9\\.,:]/,
             valid: 0,
-            placeholder: "Пароль"
+            placeholder: "Пароль",
+            type: 'password'
         }
     ])
 
@@ -212,8 +216,6 @@ function App(){
         }
     }, [forProfileDrop.current])
 
-    console.log(singUp);
-
     return (<>
     {modal != ' ' ? modal == 'login' ? <div className="forModal">
         <div className="centerWrap singIn">
@@ -228,7 +230,7 @@ function App(){
                     {
                         login.map((item, index) => <div className="modalWrapper" key={item.name}>
                             <label htmlFor={item.name}>{item.title}</label>
-                            <input  type="text" value={item.value} name="text" id={item.name} onChange={e => {
+                            <input  type={item.type} value={item.value} name="text" id={item.name} onChange={e => {
                                 setLogin(login.map((item, i) => {
                                     if(index == i) return {
                                         ...item,
@@ -286,7 +288,7 @@ function App(){
                     {
                         singUp.map((item, index) => <div data-valid={item.valid} className="modalWrapper" key={item.name}>
                             <label htmlFor={item.name}>{item.title}</label>
-                            <input type="text" placeholder={item.placeholder} value={item.value} id={item.name} onChange={e => {
+                            <input type={item.type} placeholder={item.placeholder} value={item.value} id={item.name} onChange={e => {
                                 setSingUp(singUp.map((item, i) => {
                                     if(index == i) return {
                                         ...item,
