@@ -177,7 +177,7 @@ function IndexMain() {
               </>
             ) : (
               promos.slice(0, 2).map((item, index) => (
-                <div className="bannerBox">
+                <div className="bannerBox" key={index}>
                   <h1
                     className={item.with.reduce((p, c) => (p += c + " "), "")}
                   >
@@ -201,7 +201,7 @@ function IndexMain() {
               </>
             ) : (
               promos.slice(2, 4).map((item, index) => (
-                <div className="bannerBox">
+                <div className="bannerBox" key={index}>
                   <h1
                     className={item.with.reduce((p, c) => (p += c + " "), "")}
                   >
