@@ -162,7 +162,7 @@ function App(){
                 let _ = e.target.value.indexOf('_')
                 setTimeout(() => e.target.setSelectionRange(_, _), 1)
                 setSingUp(singUp.map((item, i) => {
-                    let ok = item.value.split('')
+                    let ok = this.value.split('')
                     ok[_] = e.key
                     if(item.name == this.name) return {
                         ...item,
