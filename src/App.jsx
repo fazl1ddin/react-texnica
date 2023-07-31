@@ -160,30 +160,53 @@ function App(){
             type: 'phone',
             change: function (e) {
                 let _ = e.target.value.indexOf('_')
-                setTimeout(() => e.target.setSelectionRange(_, _), 1)
-                setSingUp(singUp.map((item, i) => {
-                    let ok = this.value.split('')
-                    ok[_] = e.key
-                    if(item.name == this.name) return {
-                        ...item,
-                        value: ok.join('')
-                    }
-                    return item
-                }))
+                if (isNaN(Number(e.key)) === false) {
+                    setTimeout(() => e.target.setSelectionRange(_ + 1, _ + 1), 1)
+                    setSingUp(singUp.map((item, i) => {
+                        let ok = this.value.split('')
+                        ok[_] = e.key
+                        if(item.name == this.name) return {
+                            ...item,
+                            value: ok.join('')
+                        }
+                        return item
+                    }))
+                } else if (e.key === 'Backspace') {
+                    setSingUp(singUp.map((item, i) => {
+                        let ok = this.value.split('')
+                        if (_ === -1) {
+                            ok[ok.length - 1] = '_'
+                        } else {
+                            let idx = _ - 1
+                            if (ok[idx] === ' ') {
+                                idx--
+                            }
+                            if (isNaN(Number(ok[idx]))) {
+                                idx--
+                            }
+                            ok[idx] = '_'
+                        }
+                        if(item.name == this.name) return {
+                            ...item,
+                            value: ok.join('')
+                        }
+                        return item
+                    }))
+                } else {
+                    setTimeout(() => e.target.setSelectionRange(_, _), 1)
+                }
             },
             blur: function (e) {
-                console.log(singUp);
                 setSingUp(singUp.map((item, i) => {
                     if(item.name == this.name) return {
                         ...item,
-                        value: '+7 (_11__) ___ __ __'
+                        value: ''
                     }
                     return item
                 }))
-                console.log(singUp);
             },
             focus: function (e) {
-                let _ = e.target.value.indexOf('_')
+                let _ = '+7 (___) ___ __ __'.indexOf('_')
                 setSingUp(singUp.map((item, i) => {
                     if(item.name == this.name) return {
                         ...item,
@@ -191,7 +214,7 @@ function App(){
                     }
                     return item
                 }))
-                setTimeout(() => e.target.setSelectionRange(_, _), 1)
+                setTimeout(() => e.target.setSelectionRange(_, _), 10)
                 
             },
         },
@@ -205,8 +228,6 @@ function App(){
         //     type: 'password'
         // }
     ])
-
-    console.log(singUp);
 
     useEffect(() => {
         if(localStorage.getItem('token')){
