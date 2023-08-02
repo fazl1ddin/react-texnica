@@ -154,44 +154,52 @@ function App(){
             title: 'Номер телефона',
             name: 'phone',
             value: '',
-            pattern: /[0-9\\.,:]/,
+            pattern: /\+7 \(\d{3}\) \d{3} \d{2} \d{2}/,
             valid: 0,
             placeholder: "+7 (___) ___ __ __",
             type: 'phone',
             change: function (e) {
                 let _ = e.target.value.indexOf('_')
                 if (isNaN(Number(e.key)) === false) {
-                    setTimeout(() => e.target.setSelectionRange(_ + 1, _ + 1), 1)
                     setSingUp(singUp.map((item, i) => {
                         let ok = this.value.split('')
                         ok[_] = e.key
+                        console.log(e.target.value, this.value, item.value);
                         if(item.name == this.name) return {
                             ...item,
-                            value: ok.join('')
+                            value: ok.join(''),
+                            valid: e.target.value === '' ? 0 : this.pattern.test(e.target.value) ? 1 : 2
                         }
                         return item
                     }))
+                    setTimeout(() => e.target.setSelectionRange(_ + 1, _ + 1), 10)
                 } else if (e.key === 'Backspace') {
-                    setSingUp(singUp.map((item, i) => {
-                        let ok = this.value.split('')
-                        if (_ === -1) {
-                            ok[ok.length - 1] = '_'
-                        } else {
-                            let idx = _ - 1
-                            if (ok[idx] === ' ') {
-                                idx--
+                    if (this.value !== '+7 (___) ___ __ __') {
+                        setSingUp(singUp.map((item, i) => {
+                            let ok = this.value.split('')
+                            if (_ === -1) {
+                                ok[ok.length - 1] = '_'
+                            } else {
+                                let idx = _ - 1
+                                if (ok[idx] === ' ') {
+                                    idx--
+                                }
+                                if (isNaN(Number(ok[idx]))) {
+                                    idx--
+                                }
+                                ok[idx] = '_'
                             }
-                            if (isNaN(Number(ok[idx]))) {
-                                idx--
+                            if(item.name == this.name) return {
+                                ...item,
+                                value: ok.join(''),
+                                valid: e.target.value === '' ? 0 : this.pattern.test(e.target.value) ? 1 : 2
                             }
-                            ok[idx] = '_'
-                        }
-                        if(item.name == this.name) return {
-                            ...item,
-                            value: ok.join('')
-                        }
-                        return item
-                    }))
+                            return item
+                        }))
+                        setTimeout(() => e.target.setSelectionRange(_ - 1, _ - 1), 10)
+                    } else {
+                        setTimeout(() => e.target.setSelectionRange(_, _), 10)
+                    }
                 } else {
                     setTimeout(() => e.target.setSelectionRange(_, _), 1)
                 }
@@ -200,7 +208,7 @@ function App(){
                 setSingUp(singUp.map((item, i) => {
                     if(item.name == this.name) return {
                         ...item,
-                        value: ''
+                        value: this.value !== '+7 (___) ___ __ __' ? this.value : ''
                     }
                     return item
                 }))

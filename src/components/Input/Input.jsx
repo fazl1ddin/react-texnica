@@ -39,7 +39,7 @@ function Input(props) {
         case 'phone':
             result = <div data-valid={props.valid} className="modalWrapper" key={props.name}>
                 <label htmlFor={props.name}>{props.title}</label>
-                <input type={props.type} placeholder={props.placeholder} value={props.value} id={props.name} onKeyDown={(e) => props.change.call(props, e)} onChange={(e) => {}} onFocus={(e) => props.focus.call(props, e)}/>
+                <input type={props.type} placeholder={props.placeholder} value={props.value} id={props.name} onKeyDown={(e) => props.change.call(props, e)} onChange={(e) => {}} onFocus={(e) => props.focus.call(props, e)} onBlur={(e) => props.blur.call(props, e)}/>
                 {
                     props.valid === 0 ? null : props.valid === 1 ?
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
