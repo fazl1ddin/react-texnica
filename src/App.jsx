@@ -158,25 +158,24 @@ function App(){
             valid: 0,
             placeholder: "+7 (___) ___ __ __",
             type: 'phone',
-            change: function (e) {
+            keyDown: function (props, e) {
                 let _ = e.target.value.indexOf('_')
                 if (isNaN(Number(e.key)) === false) {
-                    setSingUp(singUp.map((item, i) => {
-                        let ok = this.value.split('')
+                    setSingUp(prevState => prevState.map((item, i) => {
+                        let ok = props.value.split('')
                         ok[_] = e.key
-                        console.log(e.target.value, this.value, item.value);
-                        if(item.name == this.name) return {
+                        if(item.name == props.name) return {
                             ...item,
-                            value: ok.join(''),
-                            valid: e.target.value === '' ? 0 : this.pattern.test(e.target.value) ? 1 : 2
+                            value: ok.join('')
                         }
                         return item
                     }))
                     setTimeout(() => e.target.setSelectionRange(_ + 1, _ + 1), 10)
                 } else if (e.key === 'Backspace') {
-                    if (this.value !== '+7 (___) ___ __ __') {
-                        setSingUp(singUp.map((item, i) => {
-                            let ok = this.value.split('')
+                    if (props.value !== '+7 (___) ___ __ __') {
+                        setSingUp(prevState => prevState.map((item, i) => {
+                            console.log(item);
+                            let ok = props.value.split('')
                             if (_ === -1) {
                                 ok[ok.length - 1] = '_'
                             } else {
@@ -189,10 +188,9 @@ function App(){
                                 }
                                 ok[idx] = '_'
                             }
-                            if(item.name == this.name) return {
+                            if(item.name == props.name) return {
                                 ...item,
-                                value: ok.join(''),
-                                valid: e.target.value === '' ? 0 : this.pattern.test(e.target.value) ? 1 : 2
+                                value: ok.join('')
                             }
                             return item
                         }))
@@ -204,19 +202,19 @@ function App(){
                     setTimeout(() => e.target.setSelectionRange(_, _), 1)
                 }
             },
-            blur: function (e) {
+            blur: function (props, e) {
                 setSingUp(singUp.map((item, i) => {
-                    if(item.name == this.name) return {
+                    if(item.name == props.name) return {
                         ...item,
-                        value: this.value !== '+7 (___) ___ __ __' ? this.value : ''
+                        value: props.value !== '+7 (___) ___ __ __' ? props.value : ''
                     }
                     return item
                 }))
             },
-            focus: function (e) {
+            focus: function (props, e) {
                 let _ = '+7 (___) ___ __ __'.indexOf('_')
                 setSingUp(singUp.map((item, i) => {
-                    if(item.name == this.name) return {
+                    if(item.name == props.name) return {
                         ...item,
                         value: '+7 (___) ___ __ __'
                     }
@@ -225,16 +223,16 @@ function App(){
                 setTimeout(() => e.target.setSelectionRange(_, _), 10)
                 
             },
-        },
-        // {
-        //     title: 'Пароль',
-        //     name: 'password',
-        //     value: '',
-        //     pattern: /[0-9\\.,:]/,
-        //     valid: 0,
-        //     placeholder: "Пароль",
-        //     type: 'password'
-        // }
+            change: function (props, e) {
+                setSingUp(prevState => prevState.map((item) => {
+                    if (item.name == props.name) return {
+                        ...item,
+                        valid: e.target.value === '' ? 0 : props.pattern.test(e.target.value) ? 1 : 2
+                    }
+                    return item
+                }))
+            }
+        }
     ])
 
     useEffect(() => {
