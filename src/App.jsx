@@ -120,12 +120,12 @@ function App(){
             valid: 0,
             placeholder: "Имя",
             type: 'text',
-            change: function (e) {
-                setSingUp(singUp.map((item, i) => {
-                    if(item.name == this.name) return {
+            change: function (props, e) {
+                setSingUp(prevState => prevState.map((item, i) => {
+                    if(item.name == props.name) return {
                         ...item,
                         value: e.target.value,
-                        valid: e.target.value === '' ? 0 : this.pattern.test(e.target.value) ? 1 : 2
+                        valid: e.target.value === '' ? 0 : props.pattern.test(e.target.value) ? 1 : 2
                     }
                     return item
                 }))
@@ -139,12 +139,12 @@ function App(){
             valid: 0,
             placeholder: "Эл. почта",
             type: 'email',
-            change: function (e) {
-                setSingUp(singUp.map((item, i) => {
-                    if(item.name == this.name) return {
+            change: function (props, e) {
+                setSingUp(prevState => prevState.map((item, i) => {
+                    if(item.name == props.name) return {
                         ...item,
                         value: e.target.value,
-                        valid: e.target.value === '' ? 0 : this.pattern.test(e.target.value) ? 1 : 2
+                        valid: e.target.value === '' ? 0 : props.pattern.test(e.target.value) ? 1 : 2
                     }
                     return item
                 }))
@@ -174,7 +174,6 @@ function App(){
                 } else if (e.key === 'Backspace') {
                     if (props.value !== '+7 (___) ___ __ __') {
                         setSingUp(prevState => prevState.map((item, i) => {
-                            console.log(item);
                             let ok = props.value.split('')
                             if (_ === -1) {
                                 ok[ok.length - 1] = '_'
@@ -203,7 +202,7 @@ function App(){
                 }
             },
             blur: function (props, e) {
-                setSingUp(singUp.map((item, i) => {
+                setSingUp(prevState => prevState.map((item, i) => {
                     if(item.name == props.name) return {
                         ...item,
                         value: props.value !== '+7 (___) ___ __ __' ? props.value : ''
@@ -213,10 +212,10 @@ function App(){
             },
             focus: function (props, e) {
                 let _ = '+7 (___) ___ __ __'.indexOf('_')
-                setSingUp(singUp.map((item, i) => {
+                setSingUp(prevState => prevState.map((item, i) => {
                     if(item.name == props.name) return {
                         ...item,
-                        value: '+7 (___) ___ __ __'
+                        value: props.value !== '' ? props.value : '+7 (___) ___ __ __'
                     }
                     return item
                 }))
@@ -228,6 +227,34 @@ function App(){
                     if (item.name == props.name) return {
                         ...item,
                         valid: e.target.value === '' ? 0 : props.pattern.test(e.target.value) ? 1 : 2
+                    }
+                    return item
+                }))
+            }
+        },
+        {
+            title: 'Пароль',
+            name: 'password',
+            value: '',
+            pattern: /^.{8}$/,
+            valid: 0,
+            placeholder: "Пароль",
+            type: 'password',
+            change: function (props, e) {
+                setSingUp(prevState => prevState.map((item, i) => {
+                    if(item.name == props.name) return {
+                        ...item,
+                        value: e.target.value,
+                        valid: e.target.value === '' ? 0 : props.pattern.test(e.target.value) ? 1 : 2
+                    }
+                    return item
+                }))
+            },
+            setType: function (props) {
+                setSingUp(prevState => prevState.map((item, i) => {
+                    if(item.name == props.name) return {
+                        ...item,
+                        type: props.type === 'password' ? 'text' : 'password'
                     }
                     return item
                 }))
