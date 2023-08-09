@@ -67,6 +67,67 @@ const droProfile = [
     },
 ]
 
+const initialSingUp = [
+    {
+        title: 'Имя',
+        name: 'name',
+        value: '',
+        pattern: /[0-9\\.,:]/,
+        valid: 0,
+        placeholder: "Имя",
+        type: 'text'
+    },
+    {
+        title: 'Эл. почта',
+        name: 'mail',
+        value: '',
+        pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+        valid: 0,
+        placeholder: "Эл. почта",
+        type: 'email'
+    },
+    {
+        title: 'Номер телефона',
+        name: 'phone',
+        value: '',
+        pattern: /\+7 \(\d{3}\) \d{3} \d{2} \d{2}/,
+        valid: 0,
+        placeholder: "+7 (___) ___ __ __",
+        type: 'phone',
+    },
+    {
+        title: 'Пароль',
+        name: 'password',
+        value: '',
+        pattern: /^.{8}$/,
+        valid: 0,
+        placeholder: "Пароль",
+        type: 'password',
+        visible: false,
+    }
+]
+
+const initialLogin = [
+    {
+        title: 'Эл. почта или телефон',
+        name: 'iden',
+        value: '',
+        pattern: /[0-9\\.,:]/,
+        valid: 0,
+        placeholder: 'Эл. почта или телефон',
+        type: 'text'
+    },
+    {
+        title: 'Пароль',
+        placeholder: 'Пароль',
+        name: 'password',
+        value: '',
+        pattern: /[0-9\\.,:]/,
+        valid: 0,
+        type: 'password'
+    }
+]
+
 function App(){
     moment().locale('ru')
 
@@ -92,175 +153,11 @@ function App(){
 
     const [dropDown, setDropDown] = useState(false)
 
-    const [modal, setModal] = useState('singUp')
+    const [modal, setModal] = useState(' ')
 
-    const [login, setLogin] = useState([
-        {
-            title: 'Эл. почта или телефон',
-            name: 'iden',
-            value: '',
-            pattern: /[0-9\\.,:]/,
-            valid: false
-        },
-        {
-            title: 'Пароль',
-            name: 'password',
-            value: '',
-            pattern: /[0-9\\.,:]/,
-            valid: false
-        }
-    ])
+    const [login, setLogin] = useState([...initialLogin])
 
-    const [singUp, setSingUp] = useState([
-        {
-            title: 'Имя',
-            name: 'name',
-            value: '',
-            pattern: /[0-9\\.,:]/,
-            valid: 0,
-            placeholder: "Имя",
-            type: 'text',
-            change: function (props, e) {
-                setSingUp(prevState => prevState.map((item, i) => {
-                    if(item.name == props.name) return {
-                        ...item,
-                        value: e.target.value,
-                        valid: e.target.value === '' ? 0 : props.pattern.test(e.target.value) ? 1 : 2
-                    }
-                    return item
-                }))
-            }
-        },
-        {
-            title: 'Эл. почта',
-            name: 'mail',
-            value: '',
-            pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-            valid: 0,
-            placeholder: "Эл. почта",
-            type: 'email',
-            change: function (props, e) {
-                setSingUp(prevState => prevState.map((item, i) => {
-                    if(item.name == props.name) return {
-                        ...item,
-                        value: e.target.value,
-                        valid: e.target.value === '' ? 0 : props.pattern.test(e.target.value) ? 1 : 2
-                    }
-                    return item
-                }))
-            }
-        },
-        {
-            title: 'Номер телефона',
-            name: 'phone',
-            value: '',
-            pattern: /\+7 \(\d{3}\) \d{3} \d{2} \d{2}/,
-            valid: 0,
-            placeholder: "+7 (___) ___ __ __",
-            type: 'phone',
-            keyDown: function (props, e) {
-                let _ = e.target.value.indexOf('_')
-                if (isNaN(Number(e.key)) === false) {
-                    setSingUp(prevState => prevState.map((item, i) => {
-                        let ok = props.value.split('')
-                        ok[_] = e.key
-                        if(item.name == props.name) return {
-                            ...item,
-                            value: ok.join('')
-                        }
-                        return item
-                    }))
-                    setTimeout(() => e.target.setSelectionRange(_ + 1, _ + 1), 10)
-                } else if (e.key === 'Backspace') {
-                    if (props.value !== '+7 (___) ___ __ __') {
-                        setSingUp(prevState => prevState.map((item, i) => {
-                            let ok = props.value.split('')
-                            if (_ === -1) {
-                                ok[ok.length - 1] = '_'
-                            } else {
-                                let idx = _ - 1
-                                if (ok[idx] === ' ') {
-                                    idx--
-                                }
-                                if (isNaN(Number(ok[idx]))) {
-                                    idx--
-                                }
-                                ok[idx] = '_'
-                            }
-                            if(item.name == props.name) return {
-                                ...item,
-                                value: ok.join('')
-                            }
-                            return item
-                        }))
-                        setTimeout(() => e.target.setSelectionRange(_ - 1, _ - 1), 10)
-                    } else {
-                        setTimeout(() => e.target.setSelectionRange(_, _), 10)
-                    }
-                } else {
-                    setTimeout(() => e.target.setSelectionRange(_, _), 1)
-                }
-            },
-            blur: function (props, e) {
-                setSingUp(prevState => prevState.map((item, i) => {
-                    if(item.name == props.name) return {
-                        ...item,
-                        value: props.value !== '+7 (___) ___ __ __' ? props.value : ''
-                    }
-                    return item
-                }))
-            },
-            focus: function (props, e) {
-                let _ = '+7 (___) ___ __ __'.indexOf('_')
-                setSingUp(prevState => prevState.map((item, i) => {
-                    if(item.name == props.name) return {
-                        ...item,
-                        value: props.value !== '' ? props.value : '+7 (___) ___ __ __'
-                    }
-                    return item
-                }))
-                setTimeout(() => e.target.setSelectionRange(_, _), 10)
-                
-            },
-            change: function (props, e) {
-                setSingUp(prevState => prevState.map((item) => {
-                    if (item.name == props.name) return {
-                        ...item,
-                        valid: e.target.value === '' ? 0 : props.pattern.test(e.target.value) ? 1 : 2
-                    }
-                    return item
-                }))
-            }
-        },
-        {
-            title: 'Пароль',
-            name: 'password',
-            value: '',
-            pattern: /^.{8}$/,
-            valid: 0,
-            placeholder: "Пароль",
-            type: 'password',
-            change: function (props, e) {
-                setSingUp(prevState => prevState.map((item, i) => {
-                    if(item.name == props.name) return {
-                        ...item,
-                        value: e.target.value,
-                        valid: e.target.value === '' ? 0 : props.pattern.test(e.target.value) ? 1 : 2
-                    }
-                    return item
-                }))
-            },
-            setType: function (props) {
-                setSingUp(prevState => prevState.map((item, i) => {
-                    if(item.name == props.name) return {
-                        ...item,
-                        type: props.type === 'password' ? 'text' : 'password'
-                    }
-                    return item
-                }))
-            }
-        }
-    ])
+    const [singUp, setSingUp] = useState([...initialSingUp])
 
     useEffect(() => {
         if(localStorage.getItem('token')){
@@ -341,19 +238,7 @@ function App(){
             <div className="modalBody">
                 <form>
                     {
-                        login.map((item, index) => <div className="modalWrapper" key={item.name}>
-                            <label htmlFor={item.name}>{item.title}</label>
-                            <input  type={item.type} value={item.value} name="text" id={item.name} onChange={e => {
-                                setLogin(login.map((item, i) => {
-                                    if(index == i) return {
-                                        ...item,
-                                        value: e.target.value,
-                                        valid: item.pattern.test(item.value),
-                                    }
-                                    return item
-                                }))
-                            }} />
-                        </div>)
+                        login.map((item) => <Input key={item.name} {...item} setState={setLogin} />)
                     }
                     <a href="">Забыли пароль?</a>
                     <div>
@@ -369,7 +254,8 @@ function App(){
                         await fetch(config.baseUrl + '/login', {method: 'POST', body: JSON.stringify({logType: 'pass', obj})})
                         .then(result => result.json())
                         .then(result => {
-                            if(result.user){
+                            if (result.user) {
+                                setLogin(initialLogin)
                                 storeUser.dispatch(setUser(result))
                                 storeProducts.dispatch(setModule({data: result.user}))
                                 localStorage.setItem('token', result.token)
@@ -399,7 +285,7 @@ function App(){
             <div className="modalBody">
                 <form>
                     {
-                        singUp.map((item, index) => <Input key={item.name} {...item} />)
+                        singUp.map((item) => <Input key={item.name} {...item} setState={setSingUp} />)
                     }
                     <p>Регистрируясь, вы соглашаетесь с&nbsp;<a href="">пользовательским соглашением</a></p>
                     <button type="button" onClick={() => {}}>Зарегистрироваться</button>
@@ -441,7 +327,7 @@ function App(){
                                             storeUser.dispatch(clearUser())
                                             setDroProfile(false)
                                             if(localStorage.getItem('products')){
-                                                dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
+                                                storeProducts.dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
                                             } else {
                                                 localStorage.setItem('products', JSON.stringify({
                                                     cart: Suzer.cart,
