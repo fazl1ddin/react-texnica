@@ -99,7 +99,7 @@ const initialSingUp = [
         title: 'Пароль',
         name: 'password',
         value: '',
-        pattern: /^.{8}$/,
+        pattern: /^.{8,}$/,
         valid: 0,
         placeholder: "Пароль",
         type: 'password',
@@ -288,7 +288,31 @@ function App(){
                         singUp.map((item) => <Input key={item.name} {...item} setState={setSingUp} />)
                     }
                     <p>Регистрируясь, вы соглашаетесь с&nbsp;<a href="">пользовательским соглашением</a></p>
-                    <button type="button" onClick={() => {}}>Зарегистрироваться</button>
+                        <button type="button" onClick={async () => {
+                                let obj = {};
+                                singUp.forEach((item, index) => {
+                                    obj[item.name] = item.value
+                                })
+                                // dispatch(Auth({logType: 'pass', obj}))
+                                await fetch(config.baseUrl + '/sing-up', {method: 'POST', body: JSON.stringify(obj)})
+                                .then(result => result.json())
+                                .then(result => {
+                                    if (result.user) {
+                                        setSingUp(initialSingUp)
+                                        storeUser.dispatch(setUser(result))
+                                        storeProducts.dispatch(setModule({data: result.user}))
+                                        localStorage.setItem('token', result.token)
+                                    }
+                                })
+                                .catch(e => {
+                                    if(localStorage.getItem('products')){
+                                        dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
+                                    } else {
+                                        localStorage.setItem('products', JSON.stringify({}))
+                                    }
+                                })
+                                setModal(' ')
+                    }}>Зарегистрироваться</button>
                     <a onClick={() => setModal('login')}>Войти</a>
                 </form>
             </div>
