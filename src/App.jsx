@@ -32,6 +32,7 @@ import moment from "moment";
 import "moment/locale/ru"
 import PageNotFound from "./views/PageNotFound";
 import Input from "./components/Input/Input";
+import Profile from "./views/Profile";
 
 
 const DropDownElem = styled.ul`
@@ -562,7 +563,8 @@ function App(){
         <Route path="/promo/:id" element={<Promo/>}></Route>,
         <Route path="/promos" element={<Promos/>}></Route>,
         <Route path="/catalog" element={<Catalog />}></Route>,
-        <Route path="*" element={<PageNotFound/>}></Route>    
+        {Suzer && <Route path="/profile" element={<Profile user={Suzer} />}></Route>}
+        <Route path="*" element={<PageNotFound />}></Route>
     </Routes>
     <div className="footer">
         <div className="window">

@@ -1,0 +1,34 @@
+.profile .profileTabs {
+    margin-top: 30px;
+    margin-bottom: 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+}
+.profile .profileTabs .profileTabContent {
+    width: 975px;
+}
+.profile .profileTabs .profileTabContent .profileAvatar {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.profile .profileTabs .profileTabButtons {
+    border-radius: 8px;
+    overflow: hidden;
+    width: 305px;
+}
+.profile .profileTabs .profileTabButtons div {
+    height: 54px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-decoration: none;
+    color: #070C11;
+}
+.profile .profileTabs .profileTabButtons div.active {
+    background-color: #EDF2F6;
+}
