@@ -1,6 +1,6 @@
 function Input(props) {
   let result = (
-    <div data-valid={props.valid} className="modalWrapper" key={props.name}>
+    <div data-valid={props.valid} className="univerI" key={props.name}>
       <label htmlFor={props.name}>{props.title}</label>
       <input
         type={props.type}
@@ -113,7 +113,7 @@ function Input(props) {
   switch (props.type) {
     case "phone":
       result = (
-        <div data-valid={props.valid} className="modalWrapper" key={props.name}>
+        <div data-valid={props.valid} className="univerI" key={props.name}>
           <label htmlFor={props.name}>{props.title}</label>
           <input
             type={props.type}
@@ -293,7 +293,7 @@ function Input(props) {
       break;
     case "password":
       result = (
-        <div data-valid={props.valid} className="modalWrapper" key={props.name}>
+        <div data-valid={props.valid} className="univerI" key={props.name}>
           <label htmlFor={props.name}>{props.title}</label>
           <input
             type={props.visible ? "text" : "password"}
