@@ -21,12 +21,13 @@
 .profile .profileTabs .profileTabContent .personData > div {
     width: 48.5%;
 }
-/* .profile .profileTabs .profileTabContent .personData > div:nth-child(1) {
-    margin-right: 10px;
+.profile .profileTabs .profileTabContent .personData svg {
+    display: none;
 }
-.profile .profileTabs .profileTabContent .personData > div:nth-child(2) {
-    margin-left: 10px;
-} */
+.profile .profileTabs .profileTabContent .personData .zakazat {
+    width: 48.5%;
+    margin-top: 40px;
+}
 .profile .profileTabs .profileTabContent .profileADO {
     display: flex;
     justify-content: start;
@@ -90,6 +91,7 @@
     letter-spacing: 0em;
     text-align: left;
     display: block;
+    width: 100%;
 }
 .univerI input {
     display: block;

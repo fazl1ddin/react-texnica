@@ -456,6 +456,27 @@ function Input(props) {
         </div>
       );
       break;
+    case "file":
+      result = (
+        <div data-valid={props.valid} className="univerI" key={props.name}>
+          <label htmlFor={props.name}>{props.title}</label>
+          <input
+            type={props.type}
+            placeholder={props.placeholder}
+            id={props.name}
+            onChange={(e) => {
+              props.setState(prevState => prevState.map((item, i) => {
+                  if(item.name == props.name) return {
+                      ...item,
+                      value: ,
+                  }
+                  return item
+              }))
+          }}
+          />
+        </div>
+      )
+      break;
     default:
       break;
   }
