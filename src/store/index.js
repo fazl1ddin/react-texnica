@@ -47,8 +47,8 @@ export function some(module, id){
 export function contentById(module, id){
     return undefined 
 }
-
 export function useFindById(module){
+console.log(1+1);
 
     const state = useSelector(state => state.products[module])
     const user = useSelector(state => state.user)
@@ -95,7 +95,7 @@ export function updateOne(method, module, id, count){
             const userId = storeUser.getState().user.user._id
             let res;
             await fetch(config.baseUrl + '/update-user', { 
-                method: 'PUT',
+                method: 'POST',
                 body: JSON.stringify(
                     count ?
                     {

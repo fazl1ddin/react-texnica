@@ -1,7 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../css/Profile.css";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import Input from "../components/Input/Input";
+import useGetData from "../hooks/getData";
+import config from "../api/config";
+import useGetDWP from "../hooks/getDWP";
+import Pagination from "../components/Pagination/Pagination";
+import moment from "moment";
 
 const tabs = [
   {
@@ -61,6 +66,7 @@ const initialInputs = [
     type: "select",
     name: "typePay",
     value: "",
+    options: [],
   },
   {
     title: "Телефон",
@@ -76,6 +82,7 @@ const initialInputs = [
     type: "select",
     name: "typeDeliv",
     value: "",
+    options: [{ title: "asfafaf", value: "afasfa" }],
   },
   {
     title: "Город",
@@ -101,16 +108,43 @@ const initialInputs = [
 ];
 
 function Profile({ user }) {
-  const [active, setActive] = useState("personData");
+  const [params] = useSearchParams();
+  const [active, setActive] = useState("historyShop");
   const [inputs, setInputs] = useState([
-      ...initialInputs.map((item) => {
-          if (user[item.name]) {
-            item.value = user[item.name]
-          }
-          return item
+    ...initialInputs.map((item) => {
+      if (user[item.name]) {
+        item.value = user[item.name];
+      }
+      return item;
     }),
   ]);
-  const orders = 0;
+  const [typePays, tLoading] = useGetData("/type-pays", []);
+  const [page, setPage] = useState(
+    Number(params.has("index") ? params.get("index") : 1)
+  );
+
+  useEffect(() => {
+    if (tLoading === false) {
+      setInputs((prevstate) =>
+        prevstate.map((item, index) => {
+          if (item.name === "typePay") {
+            return {
+              ...item,
+              options: typePays,
+            };
+          }
+          return item;
+        })
+      );
+    }
+  }, [tLoading]);
+
+  const [{ data: orders, allength, productsL }, loading] = useGetDWP(
+    "/user-orders",
+    page,
+    6,
+    { userId: user._id }
+  );
   let tab = (
     <div className="allData">
       <h2>{user.name}</h2>
@@ -149,19 +183,64 @@ function Profile({ user }) {
       tab = (
         <div className="personData">
           {inputs.map((item, index) => (
-            <Input key={index} {...item} setState={setInputs} />
+            <Input
+              key={index}
+              {...item}
+              validator={false}
+              setState={setInputs}
+            />
           ))}
-              <button className="zakazat ready" onClick={async () => {
-                  fetch('asfaf.com', {method: "POST", body: JSON.stringify(inputs)})
-              }}>Сохранить</button>
+          <button
+            className="zakazat ready"
+            onClick={async () => {
+              const form = new FormData();
+              inputs.forEach((item, index) => {
+                form.append(item.name, item.value);
+              });
+              await fetch(config.baseUrl + "/update-profile", {
+                method: "POST",
+                body: form,
+                headers: {
+                  // 'Content-Type': 'multipart/form-data'
+                },
+              });
+            }}
+          >
+            Сохранить
+          </button>
+        </div>
+      );
+      break;
+    case "historyShop":
+      tab = (
+        <div className="historyShop">
+          <h1>История покупок</h1>
+          {loading ? (
+            <>asfasag</>
+          ) : (
+            orders.map((item, index) => (
+              <div key={index}>
+                <p>
+                  Заказ #{Math.abs((productsL * -1) + index + (6*(page - 1)))} от 
+                  {new Intl.DateTimeFormat("ru", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "2-digit",
+                  }).format(item.date)}
+                </p>
+                <p>
+                  {item.products.length}
+                </p>
+              </div>
+            ))
+          )}
+          <Pagination length={allength} setPage={setPage} />
         </div>
       );
       break;
     default:
       break;
   }
-  
-    console.log(inputs);
 
   return (
     <div className="profile">

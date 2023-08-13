@@ -21,9 +21,6 @@
 .profile .profileTabs .profileTabContent .personData > div {
     width: 48.5%;
 }
-.profile .profileTabs .profileTabContent .personData svg {
-    display: none;
-}
 .profile .profileTabs .profileTabContent .personData .zakazat {
     width: 48.5%;
     margin-top: 40px;
@@ -101,6 +98,18 @@
     margin-top: 5px;
     border: #EAEAF0 1px solid;
     padding: 20px;
+    font-size: 16px;
+    font-weight: 400;
+    margin-right: 5px;
+}
+.univerI select {
+    display: block;
+    width: 100%;
+    height: 48px;
+    border-radius: 5px;
+    margin-top: 5px;
+    border: #EAEAF0 1px solid;
+    padding-left: 20px;
     font-size: 16px;
     font-weight: 400;
     margin-right: 5px;

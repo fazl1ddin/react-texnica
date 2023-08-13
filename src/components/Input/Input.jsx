@@ -15,98 +15,100 @@ function Input(props) {
                   ...item,
                   value: e.target.value,
                   valid:
-                    e.target.value === ""
+                    props.validator &&
+                    (e.target.value === ""
                       ? 0
                       : props.pattern.test(e.target.value)
                       ? 1
-                      : 2,
+                      : 2),
                 };
               return item;
             })
           )
         }
       />
-      {props.valid === 0 ? null : props.valid === 1 ? (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-        >
-          <g id="icon-right" clipPath="url(#clip0_179_8163)">
-            <g id="Group">
-              <circle
-                id="Oval"
-                cx="11.9998"
-                cy="12.0001"
-                r="9.00375"
-                stroke="#22A44E"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                id="Path"
-                d="M8.44531 12.3392L10.6132 14.5071L10.5992 14.4931L15.4902 9.60205"
-                stroke="#22A44E"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+      {props.validator &&
+        (props.valid === 0 ? null : props.valid === 1 ? (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+          >
+            <g id="icon-right" clipPath="url(#clip0_179_8163)">
+              <g id="Group">
+                <circle
+                  id="Oval"
+                  cx="11.9998"
+                  cy="12.0001"
+                  r="9.00375"
+                  stroke="#22A44E"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  id="Path"
+                  d="M8.44531 12.3392L10.6132 14.5071L10.5992 14.4931L15.4902 9.60205"
+                  stroke="#22A44E"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </g>
             </g>
-          </g>
-          <defs>
-            <clipPath id="clip0_179_8163">
-              <rect width="24" height="24" fill="white" />
-            </clipPath>
-          </defs>
-        </svg>
-      ) : (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-        >
-          <g id="icon-right" clipPath="url(#clip0_158_9516)">
-            <g id="Group">
-              <circle
-                id="Oval"
-                cx="11.9989"
-                cy="12"
-                r="9.00375"
-                stroke="#F15152"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                id="Path"
-                d="M14.0009 9.99915L9.99927 14.0008"
-                stroke="#F15152"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                id="Path_2"
-                d="M14.0009 14.0008L9.99927 9.99915"
-                stroke="#F15152"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+            <defs>
+              <clipPath id="clip0_179_8163">
+                <rect width="24" height="24" fill="white" />
+              </clipPath>
+            </defs>
+          </svg>
+        ) : (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+          >
+            <g id="icon-right" clipPath="url(#clip0_158_9516)">
+              <g id="Group">
+                <circle
+                  id="Oval"
+                  cx="11.9989"
+                  cy="12"
+                  r="9.00375"
+                  stroke="#F15152"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  id="Path"
+                  d="M14.0009 9.99915L9.99927 14.0008"
+                  stroke="#F15152"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  id="Path_2"
+                  d="M14.0009 14.0008L9.99927 9.99915"
+                  stroke="#F15152"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </g>
             </g>
-          </g>
-          <defs>
-            <clipPath id="clip0_158_9516">
-              <rect width="24" height="24" fill="white" />
-            </clipPath>
-          </defs>
-        </svg>
-      )}
+            <defs>
+              <clipPath id="clip0_158_9516">
+                <rect width="24" height="24" fill="white" />
+              </clipPath>
+            </defs>
+          </svg>
+        ))}
     </div>
   );
 
@@ -121,12 +123,38 @@ function Input(props) {
             value={props.value}
             id={props.name}
             onKeyDown={(e) => {
-                let _ = e.target.value.indexOf("_");
-                if (isNaN(Number(e.key)) === false) {
+              let _ = e.target.value.indexOf("_");
+              if (isNaN(Number(e.key)) === false) {
+                props.setState((prevState) =>
+                  prevState.map((item, i) => {
+                    let ok = props.value.split("");
+                    ok[_] = e.key;
+                    if (item.name == props.name)
+                      return {
+                        ...item,
+                        value: ok.join(""),
+                      };
+                    return item;
+                  })
+                );
+                setTimeout(() => e.target.setSelectionRange(_ + 1, _ + 1), 10);
+              } else if (e.key === "Backspace") {
+                if (props.value !== "+7 (___) ___ __ __") {
                   props.setState((prevState) =>
                     prevState.map((item, i) => {
                       let ok = props.value.split("");
-                      ok[_] = e.key;
+                      if (_ === -1) {
+                        ok[ok.length - 1] = "_";
+                      } else {
+                        let idx = _ - 1;
+                        if (ok[idx] === " ") {
+                          idx--;
+                        }
+                        if (isNaN(Number(ok[idx]))) {
+                          idx--;
+                        }
+                        ok[idx] = "_";
+                      }
                       if (item.name == props.name)
                         return {
                           ...item,
@@ -136,158 +164,145 @@ function Input(props) {
                     })
                   );
                   setTimeout(
-                    () => e.target.setSelectionRange(_ + 1, _ + 1),
+                    () => e.target.setSelectionRange(_ - 1, _ - 1),
                     10
                   );
-                } else if (e.key === "Backspace") {
-                  if (props.value !== "+7 (___) ___ __ __") {
-                    props.setState((prevState) =>
-                      prevState.map((item, i) => {
-                        let ok = props.value.split("");
-                        if (_ === -1) {
-                          ok[ok.length - 1] = "_";
-                        } else {
-                          let idx = _ - 1;
-                          if (ok[idx] === " ") {
-                            idx--;
-                          }
-                          if (isNaN(Number(ok[idx]))) {
-                            idx--;
-                          }
-                          ok[idx] = "_";
-                        }
-                        if (item.name == props.name)
-                          return {
-                            ...item,
-                            value: ok.join(""),
-                          };
-                        return item;
-                      })
-                    );
-                    setTimeout(
-                      () => e.target.setSelectionRange(_ - 1, _ - 1),
-                      10
-                    );
-                  } else {
-                    setTimeout(() => e.target.setSelectionRange(_, _), 10);
-                  }
                 } else {
-                  setTimeout(() => e.target.setSelectionRange(_, _), 1);
+                  setTimeout(() => e.target.setSelectionRange(_, _), 10);
                 }
+              } else {
+                setTimeout(() => e.target.setSelectionRange(_, _), 1);
               }
-            }
+            }}
             onChange={(e) => {
-              props.setState(prevState => prevState.map((item) => {
-                  if (item.name == props.name) return {
+              props.setState((prevState) =>
+                prevState.map((item) => {
+                  if (item.name == props.name)
+                    return {
                       ...item,
-                      valid: e.target.value === '' ? 0 : props.pattern.test(e.target.value) ? 1 : 2
-                  }
-                  return item
-              }))
-          }}
+                      valid:
+                        props.validator &&
+                        (e.target.value === ""
+                          ? 0
+                          : props.pattern.test(e.target.value)
+                          ? 1
+                          : 2),
+                    };
+                  return item;
+                })
+              );
+            }}
             onFocus={(e) => {
-              let _ = '+7 (___) ___ __ __'.indexOf('_')
-              props.setState(prevState => prevState.map((item, i) => {
-                  if(item.name == props.name) return {
+              let _ = "+7 (___) ___ __ __".indexOf("_");
+              props.setState((prevState) =>
+                prevState.map((item, i) => {
+                  if (item.name == props.name)
+                    return {
                       ...item,
-                      value: props.value !== '' ? props.value : '+7 (___) ___ __ __'
-                  }
-                  return item
-              }))
-              setTimeout(() => e.target.setSelectionRange(_, _), 10)
-              
-          }}
+                      value:
+                        props.value !== "" ? props.value : "+7 (___) ___ __ __",
+                    };
+                  return item;
+                })
+              );
+              setTimeout(() => e.target.setSelectionRange(_, _), 10);
+            }}
             onBlur={(e) => {
-              props.setState(prevState => prevState.map((item, i) => {
-                  if(item.name == props.name) return {
+              props.setState((prevState) =>
+                prevState.map((item, i) => {
+                  if (item.name == props.name)
+                    return {
                       ...item,
-                      value: props.value !== '+7 (___) ___ __ __' ? props.value : ''
-                  }
-                  return item
-              }))
-          }}
+                      value:
+                        props.value !== "+7 (___) ___ __ __" ? props.value : "",
+                    };
+                  return item;
+                })
+              );
+            }}
           />
-          {props.valid === 0 ? null : props.valid === 1 ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-            >
-              <g id="icon-right" clipPath="url(#clip0_179_8163)">
-                <g id="Group">
-                  <circle
-                    id="Oval"
-                    cx="11.9998"
-                    cy="12.0001"
-                    r="9.00375"
-                    stroke="#22A44E"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    id="Path"
-                    d="M8.44531 12.3392L10.6132 14.5071L10.5992 14.4931L15.4902 9.60205"
-                    stroke="#22A44E"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
+          {props.validator &&
+            (props.valid === 0 ? null : props.valid === 1 ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <g id="icon-right" clipPath="url(#clip0_179_8163)">
+                  <g id="Group">
+                    <circle
+                      id="Oval"
+                      cx="11.9998"
+                      cy="12.0001"
+                      r="9.00375"
+                      stroke="#22A44E"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      id="Path"
+                      d="M8.44531 12.3392L10.6132 14.5071L10.5992 14.4931L15.4902 9.60205"
+                      stroke="#22A44E"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </g>
                 </g>
-              </g>
-              <defs>
-                <clipPath id="clip0_179_8163">
-                  <rect width="24" height="24" fill="white" />
-                </clipPath>
-              </defs>
-            </svg>
-          ) : (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-            >
-              <g id="icon-right" clipPath="url(#clip0_158_9516)">
-                <g id="Group">
-                  <circle
-                    id="Oval"
-                    cx="11.9989"
-                    cy="12"
-                    r="9.00375"
-                    stroke="#F15152"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    id="Path"
-                    d="M14.0009 9.99915L9.99927 14.0008"
-                    stroke="#F15152"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    id="Path_2"
-                    d="M14.0009 14.0008L9.99927 9.99915"
-                    stroke="#F15152"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
+                <defs>
+                  <clipPath id="clip0_179_8163">
+                    <rect width="24" height="24" fill="white" />
+                  </clipPath>
+                </defs>
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <g id="icon-right" clipPath="url(#clip0_158_9516)">
+                  <g id="Group">
+                    <circle
+                      id="Oval"
+                      cx="11.9989"
+                      cy="12"
+                      r="9.00375"
+                      stroke="#F15152"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      id="Path"
+                      d="M14.0009 9.99915L9.99927 14.0008"
+                      stroke="#F15152"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      id="Path_2"
+                      d="M14.0009 14.0008L9.99927 9.99915"
+                      stroke="#F15152"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </g>
                 </g>
-              </g>
-              <defs>
-                <clipPath id="clip0_158_9516">
-                  <rect width="24" height="24" fill="white" />
-                </clipPath>
-              </defs>
-            </svg>
-          )}
+                <defs>
+                  <clipPath id="clip0_158_9516">
+                    <rect width="24" height="24" fill="white" />
+                  </clipPath>
+                </defs>
+              </svg>
+            ))}
         </div>
       );
       break;
@@ -301,109 +316,122 @@ function Input(props) {
             value={props.value}
             id={props.name}
             onChange={(e) => {
-              props.setState(prevState => prevState.map((item, i) => {
-                  if(item.name == props.name) return {
+              props.setState((prevState) =>
+                prevState.map((item, i) => {
+                  if (item.name == props.name)
+                    return {
                       ...item,
                       value: e.target.value,
-                      valid: e.target.value === '' ? 0 : props.pattern.test(e.target.value) ? 1 : 2
-                  }
-                  return item
-              }))
-          }}
+                      valid:
+                        props.validator &&
+                        (e.target.value === ""
+                          ? 0
+                          : props.pattern.test(e.target.value)
+                          ? 1
+                          : 2),
+                    };
+                  return item;
+                })
+              );
+            }}
           />
-          {props.valid === 0 ? null : props.valid === 1 ? (
-            <svg
-              style={{ right: "-27px" }}
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-            >
-              <g id="icon-right" clipPath="url(#clip0_179_8163)">
-                <g id="Group">
-                  <circle
-                    id="Oval"
-                    cx="11.9998"
-                    cy="12.0001"
-                    r="9.00375"
-                    stroke="#22A44E"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    id="Path"
-                    d="M8.44531 12.3392L10.6132 14.5071L10.5992 14.4931L15.4902 9.60205"
-                    stroke="#22A44E"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
+          {props.validator &&
+            (props.valid === 0 ? null : props.valid === 1 ? (
+              <svg
+                style={{ right: "-27px" }}
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <g id="icon-right" clipPath="url(#clip0_179_8163)">
+                  <g id="Group">
+                    <circle
+                      id="Oval"
+                      cx="11.9998"
+                      cy="12.0001"
+                      r="9.00375"
+                      stroke="#22A44E"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      id="Path"
+                      d="M8.44531 12.3392L10.6132 14.5071L10.5992 14.4931L15.4902 9.60205"
+                      stroke="#22A44E"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </g>
                 </g>
-              </g>
-              <defs>
-                <clipPath id="clip0_179_8163">
-                  <rect width="24" height="24" fill="white" />
-                </clipPath>
-              </defs>
-            </svg>
-          ) : (
-            <svg
-              style={{ right: "-27px" }}
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-            >
-              <g id="icon-right" clipPath="url(#clip0_158_9516)">
-                <g id="Group">
-                  <circle
-                    id="Oval"
-                    cx="11.9989"
-                    cy="12"
-                    r="9.00375"
-                    stroke="#F15152"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    id="Path"
-                    d="M14.0009 9.99915L9.99927 14.0008"
-                    stroke="#F15152"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    id="Path_2"
-                    d="M14.0009 14.0008L9.99927 9.99915"
-                    stroke="#F15152"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
+                <defs>
+                  <clipPath id="clip0_179_8163">
+                    <rect width="24" height="24" fill="white" />
+                  </clipPath>
+                </defs>
+              </svg>
+            ) : (
+              <svg
+                style={{ right: "-27px" }}
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <g id="icon-right" clipPath="url(#clip0_158_9516)">
+                  <g id="Group">
+                    <circle
+                      id="Oval"
+                      cx="11.9989"
+                      cy="12"
+                      r="9.00375"
+                      stroke="#F15152"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      id="Path"
+                      d="M14.0009 9.99915L9.99927 14.0008"
+                      stroke="#F15152"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      id="Path_2"
+                      d="M14.0009 14.0008L9.99927 9.99915"
+                      stroke="#F15152"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </g>
                 </g>
-              </g>
-              <defs>
-                <clipPath id="clip0_158_9516">
-                  <rect width="24" height="24" fill="white" />
-                </clipPath>
-              </defs>
-            </svg>
-          )}
+                <defs>
+                  <clipPath id="clip0_158_9516">
+                    <rect width="24" height="24" fill="white" />
+                  </clipPath>
+                </defs>
+              </svg>
+            ))}
           <svg
             onClick={() => {
-              props.setState(prevState => prevState.map((item, i) => {
-                  if(item.name == props.name) return {
+              props.setState((prevState) =>
+                prevState.map((item, i) => {
+                  if (item.name == props.name)
+                    return {
                       ...item,
-                      visible: !item.visible
-                  }
-                  return item
-              }))
-          }}
+                      visible: !item.visible,
+                    };
+                  return item;
+                })
+              );
+            }}
             xmlns="http://www.w3.org/2000/svg"
             width="24"
             height="24"
@@ -465,17 +493,56 @@ function Input(props) {
             placeholder={props.placeholder}
             id={props.name}
             onChange={(e) => {
-              props.setState(prevState => prevState.map((item, i) => {
-                  if(item.name == props.name) return {
+              props.setState((prevState) =>
+                prevState.map((item, i) => {
+                  if (item.name == props.name)
+                    return {
                       ...item,
-                      value: ,
-                  }
-                  return item
-              }))
-          }}
+                      value: e.target.files[0],
+                    };
+                  return item;
+                })
+              );
+            }}
           />
         </div>
-      )
+      );
+      break;
+    case "select":
+      result = (
+        <div data-valid={props.valid} className="univerI" key={props.name}>
+          <label htmlFor={props.name}>{props.title}</label>
+          <select
+            placeholder={props.placeholder}
+            id={props.name}
+            onChange={(e) => {
+              props.setState((prevState) =>
+                prevState.map((item, i) => {
+                  if (item.name == props.name)
+                    return {
+                      ...item,
+                      value: e.target.value,
+                      valid:
+                        props.validator &&
+                        (e.target.value === ""
+                          ? 0
+                          : props.pattern.test(e.target.value)
+                          ? 1
+                          : 2),
+                    };
+                  return item;
+                })
+              );
+            }}
+          >
+            {props.options.map((item, index) => (
+              <option value={item.typ} key={index}>
+                {item.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      );
       break;
     default:
       break;

@@ -2,7 +2,7 @@ import React from "react";
 import "../css/Cart.css";
 import { useCallback } from "react";
 import { storeProducts, updateOne } from "../store/index";
-import { changeCount } from "../store/products";
+import { changeCount, setModule } from "../store/products";
 import * as img from "../img/index";
 import { useState } from "react";
 import { useEffect } from "react";
@@ -166,12 +166,12 @@ function Cart({ user, setModal }) {
 
   const submit = async (e) => {
     if(user){
-      const response = await fetch(config.baseUrl + "/order", {
+      const response = await fetch(config.baseUrl + `/order-${settings.one}`, {
         method: "POST",
         body: JSON.stringify(
           settings.one === "deliv"
             ? {
-                date: settings.three,
+                dateDeliv: settings.three,
                 time: settings.four,
                 ...address,
                 typePay,
@@ -180,7 +180,9 @@ function Cart({ user, setModal }) {
                     return [[item.key], item.value];
                   })
                 ),
-                city: settings.two
+                userId: user._id,
+                city: settings.two,
+                products: data.map(item => item._id)
               }
             : {
               address: {
@@ -188,7 +190,6 @@ function Cart({ user, setModal }) {
                 shop: addresses[checked],
               },
               status: 0,
-              orderDate: moment(),
               userId: user._id,
               getter: Object.fromEntries(
                 man.map((item) => {
@@ -202,6 +203,7 @@ function Cart({ user, setModal }) {
         ),
       }).then(res => res.json());
       if (response) {
+        storeProducts.dispatch(setModule({data: {...storeProducts.getState().products, cart: []}}))
         message('Ordered')
         navigate('/profile')
       }
