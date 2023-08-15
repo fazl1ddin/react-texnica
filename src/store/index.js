@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import products, { actions, setModule } from './products';
 import contents from './contents';
-import user, { setUser } from './user';
+import user, { clearUser, setUser } from './user';
 import { AiFillStar } from 'react-icons/ai'
 import { useEffect, useState } from "react";
 import config from "../api/config";
@@ -36,6 +36,22 @@ export const storeProducts = configureStore({
         products: products.reducer
     }
 })
+
+export function logout() {
+    const user = storeUser.getState().user.user
+    localStorage.removeItem('token')
+    storeUser.dispatch(clearUser())
+    if(localStorage.getItem('products')){
+        storeProducts.dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
+    } else {
+        localStorage.setItem('products', JSON.stringify({
+            cart: user.cart,
+            favorites: user.favorites,
+            viewed: user.viewed,
+            compare: user.compare
+        }))
+    }
+}
 
 export function useSome(module ,id){
 }

@@ -26,7 +26,7 @@ import Auth from "./store/auth";
 import { useRef } from "react";
 import { setModule } from "./store/products";
 import config from "./api/config";
-import { storeProducts, storeResultCheck, storeUser } from "./store";
+import { logout, storeProducts, storeResultCheck, storeUser } from "./store";
 import RouterDots from "./components/RouterDots/RouterDots";
 import moment from "moment";
 import "moment/locale/ru"
@@ -144,8 +144,6 @@ function App(){
 
     const [profileHeight, setProfileHeight] = useState(0)
 
-    const [loadingState, setLoadingState] = useState(true)
-
     const [Suzer, setSuzer] = useState(undefined)
 
     const [loading, setLoading] = useState(true)
@@ -172,15 +170,15 @@ function App(){
                     .then(result => {
                         if(result.message){
                             localStorage.removeItem('token')
-                            setLoadingState(false)
+                            setLoading(false)
                         } else {
                             storeUser.dispatch(setUser(result))
                             storeProducts.dispatch(setModule({data: result.user}))
-                            setLoadingState(false)
+                            setLoading(false)
                         }
                     })
                     .catch(error => {
-                        setLoadingState(false)
+                        setLoading(false)
                         if(error){
                             console.log(error);
                         }
@@ -201,7 +199,6 @@ function App(){
                 data: localStorage.getItem('products') && JSON.parse(localStorage.getItem('products'))
             }))
             setLoading(false)
-            setLoadingState(false)
         }
     }, [])
 
@@ -347,21 +344,7 @@ function App(){
                                         ))
                                     }
                                     <li ref={forProfileDrop}>
-                                        <a onClick={() => {
-                                            localStorage.removeItem('token')
-                                            storeUser.dispatch(clearUser())
-                                            setDroProfile(false)
-                                            if(localStorage.getItem('products')){
-                                                storeProducts.dispatch(setModule({data: JSON.parse(localStorage.getItem('products'))}))
-                                            } else {
-                                                localStorage.setItem('products', JSON.stringify({
-                                                    cart: Suzer.cart,
-                                                    favorites: Suzer.favorites,
-                                                    viewed: Suzer.viewed,
-                                                    compare: Suzer.compare
-                                                }))
-                                            }
-                                        }}>
+                                        <a onClick={logout}>
                                             Выйти
                                         </a>
                                     </li>
@@ -373,10 +356,8 @@ function App(){
                         <img src={img.searchIcon}/>
                         Поиск
                     </button>
-                    <RouterDots loading={loadingState} routers={modules}/>
-                    {loading ? <LoginButton></LoginButton> : Suzer ? <div onClick={() => {
-                        setDroProfile(!droProfileB)
-                    }}>
+                    <RouterDots loading={loading} routers={modules}/>
+                    {loading ? <LoginButton></LoginButton> : Suzer ? <div onClick={() => setDroProfile(prev => !prev)}>
                         <div style={{width: 100,  display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                             <img src={img.profile} alt="" />
                         </div>

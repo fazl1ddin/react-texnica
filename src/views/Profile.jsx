@@ -6,7 +6,9 @@ import useGetData from "../hooks/getData";
 import config from "../api/config";
 import useGetDWP from "../hooks/getDWP";
 import Pagination from "../components/Pagination/Pagination";
-import moment from "moment";
+import { logout, storeProducts, storeUser } from "../store";
+import { clearUser } from "../store/user";
+import { setModule } from "../store/products";
 
 const tabs = [
   {
@@ -107,6 +109,39 @@ const initialInputs = [
   },
 ];
 
+const passputs = [
+  {
+    title: "Введите старый пароль",
+    name: "oldPassword",
+    value: "",
+    pattern: /^.{8,}$/,
+    valid: 0,
+    placeholder: "Введите старый пароль",
+    type: "password",
+    visible: false,
+  },
+  {
+    title: "Введите новый пароль",
+    name: "newPassword",
+    value: "",
+    pattern: /^.{8,}$/,
+    valid: 0,
+    placeholder: "Введите новый пароль",
+    type: "password",
+    visible: false,
+  },
+  {
+    title: "Повторите новый пароль",
+    name: "rePassword",
+    value: "",
+    pattern: /^.{8,}$/,
+    valid: 0,
+    placeholder: "Повторите новый пароль",
+    type: "password",
+    visible: false,
+  },
+];
+
 function Profile({ user }) {
   const [params] = useSearchParams();
   const [active, setActive] = useState("historyShop");
@@ -118,6 +153,7 @@ function Profile({ user }) {
       return item;
     }),
   ]);
+  const [passinputs, setPassinputs] = useState([...passputs]);
   const [typePays, tLoading] = useGetData("/type-pays", []);
   const [page, setPage] = useState(
     Number(params.has("index") ? params.get("index") : 1)
@@ -166,7 +202,7 @@ function Profile({ user }) {
         </div>
         <div className="profileDO">
           <p>Дата регистрации: {user.dateReg}</p>
-          <p>Заказов: {orders}</p>
+          <p>Заказов: {orders.length}</p>
         </div>
       </div>
       <div className="profileText">
@@ -200,9 +236,6 @@ function Profile({ user }) {
               await fetch(config.baseUrl + "/update-profile", {
                 method: "POST",
                 body: form,
-                headers: {
-                  // 'Content-Type': 'multipart/form-data'
-                },
               });
             }}
           >
@@ -221,7 +254,7 @@ function Profile({ user }) {
             orders.map((item, index) => (
               <div key={index}>
                 <p>
-                  Заказ #{Math.abs((productsL * -1) + index + (6*(page - 1)))} от 
+                  Заказ #{Math.abs(productsL * -1 + index + 6 * (page - 1))} от 
                   {new Intl.DateTimeFormat("ru", {
                     day: "2-digit",
                     month: "2-digit",
@@ -229,12 +262,48 @@ function Profile({ user }) {
                   }).format(item.date)}
                 </p>
                 <p>
-                  {item.products.length}
+                  {item.products.length} товара на сумму {item.price} ₽
+                </p>
+                <p data-status={item.status}>
+                  {item.status === 0
+                    ? "Заказан"
+                    : item.status === 1
+                    ? "В процессе"
+                    : "Выполнен"}
                 </p>
               </div>
             ))
           )}
           <Pagination length={allength} setPage={setPage} />
+        </div>
+      );
+      break;
+    case "changePass":
+      tab = (
+        <div className="changePass">
+          {passinputs.map((item, index) => (
+            <Input
+              key={index}
+              {...item}
+              validator={true}
+              setState={setPassinputs}
+            />
+          ))}
+          <button
+            className="zakazat ready mt-20"
+            onClick={async () => {
+              const form = new FormData();
+              inputs.forEach((item, index) => {
+                form.append(item.name, item.value);
+              });
+              await fetch(config.baseUrl + "/update-profile", {
+                method: "POST",
+                body: form,
+              });
+            }}
+          >
+            Сохранить изменения
+          </button>
         </div>
       );
       break;
@@ -265,6 +334,7 @@ function Profile({ user }) {
                 </Link>
               )
             )}
+            <a onClick={logout}>Выйти</a>
           </div>
           <div className="profileTabContent">{tab}</div>
         </div>

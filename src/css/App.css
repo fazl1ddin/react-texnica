@@ -5,6 +5,9 @@
     box-sizing: border-box;
     font-family: "Exo 2";
 }
+.mt-20 {
+    margin-top: 20px;
+}
 .window {
     max-width: 1300px;
     margin: 0 auto;

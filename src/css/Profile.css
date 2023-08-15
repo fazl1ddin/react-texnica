@@ -8,7 +8,10 @@
 .profile .profileTabs .profileTabContent {
     width: 975px;
 }
-.profile .profileTabs .profileTabContent .allData {
+.profile .profileTabs .profileTabContent .changePass {
+    width: 340px;
+}
+.profile .profileTabs .profileTabContent > div:not(.historyShop) {
     margin-left: 115px;
 }
 .profile .profileTabs .profileTabContent .personData {
@@ -16,7 +19,6 @@
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: stretch;
-    margin-left: 115px;
 }
 .profile .profileTabs .profileTabContent .personData > div {
     width: 48.5%;
@@ -55,6 +57,30 @@
     justify-content: center;
     align-items: center;
 }
+.profile .profileTabs .profileTabContent .historyShop h1 {
+    margin-bottom: 20px;
+    margin-top: 50px;
+}
+.profile .profileTabs .profileTabContent .historyShop > div {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-bottom: #C8CACB 1px solid;
+    box-sizing: border-box;
+}
+.profile .profileTabs .profileTabContent .historyShop > div p[data-status="0"] {
+    color: #F15152;
+}
+.profile .profileTabs .profileTabContent .historyShop > div p[data-status="1"] {
+    color: #FBB13C;
+}
+.profile .profileTabs .profileTabContent .historyShop > div p[data-status="2"] {
+    color: #22A44E;
+}
+.profile .profileTabs .profileTabContent .historyShop > div:first-of-type {
+    border-top: #C8CACB 1px solid;
+}
 .profile .profileTabs .profileTabButtons {
     border-radius: 8px;
     overflow: hidden;
@@ -71,6 +97,20 @@
 }
 .profile .profileTabs .profileTabButtons div.active {
     background-color: #EDF2F6;
+}
+.profile .profileTabs .profileTabButtons a {
+    text-decoration: none;
+    height: 54px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-decoration: none;
+    color: #070C11;
+}
+.profile .profileTabs .profileTabButtons a:last-of-type {
+    color: #F15152;
+    cursor: pointer;
 }
 .univerI {
     position: relative;
@@ -101,6 +141,12 @@
     font-size: 16px;
     font-weight: 400;
     margin-right: 5px;
+}
+.univerI[data-valid="1"] input {
+    outline: #22A44E auto;
+}
+.univerI[data-valid="2"] input {
+    outline: #F15152 auto;
 }
 .univerI select {
     display: block;

@@ -181,6 +181,7 @@ function Cart({ user, setModal }) {
                   })
                 ),
                 userId: user._id,
+                price: total(),
                 city: settings.two,
                 products: data.map(item => item._id)
               }
