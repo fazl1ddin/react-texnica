@@ -6,7 +6,7 @@ import IndexMain from './views/IndexMain';
 import { useState } from "react";
 import DropDown from './contexts/dropDown'
 import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import Product from "./views/Product";
 import Viewed from './views/Viewed';
 import Favorites from './views/Favorites';
@@ -19,14 +19,13 @@ import News from "./views/News";
 import Promo from "./views/Promo";
 import Promos from "./views/Promos";
 import Catalog from "./views/Catalog";
-import { clearUser, setLoading, setUser } from "./store/user";
+import { setUser } from "./store/user";
 import { useEffect } from "react";
 import LoginButton from "./components/Loaders/LoginButton";
-import Auth from "./store/auth";
 import { useRef } from "react";
 import { setModule } from "./store/products";
 import config from "./api/config";
-import { logout, storeProducts, storeResultCheck, storeUser } from "./store";
+import { logout, storeProducts, storeUser } from "./store";
 import RouterDots from "./components/RouterDots/RouterDots";
 import moment from "moment";
 import "moment/locale/ru"

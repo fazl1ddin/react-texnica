@@ -3,7 +3,7 @@
     margin-bottom: 80px;
     display: flex;
     justify-content: space-between;
-    align-items: start;
+    align-items: flex-start;
 }
 .profile .profileTabs .profileTabContent {
     width: 975px;
@@ -29,8 +29,8 @@
 }
 .profile .profileTabs .profileTabContent .profileADO {
     display: flex;
-    justify-content: start;
-    align-items: start;
+    justify-content: flex-start;
+    align-items: flex-start;
     margin-top: 30px;
 }
 .profile .profileTabs .profileTabContent .profileADO .profileAvatar {

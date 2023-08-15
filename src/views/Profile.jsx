@@ -164,7 +164,7 @@ function Profile({ user }) {
 
   useEffect(() => {
     setActive(params.get("active"))
-  }, [params.get("active")])
+  }, [params])
 
   useEffect(() => {
     if (tLoading === false) {
