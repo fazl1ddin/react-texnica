@@ -6,23 +6,18 @@ import useGetData from "../hooks/getData";
 import config from "../api/config";
 import useGetDWP from "../hooks/getDWP";
 import Pagination from "../components/Pagination/Pagination";
-import { logout, storeProducts, storeUser } from "../store";
-import { clearUser } from "../store/user";
-import { setModule } from "../store/products";
+import { logout } from "../store";
 
 const tabs = [
   {
-    path: "/profile",
     stateTab: "allData",
     title: "Общие сведения",
   },
   {
-    path: "/profile",
     stateTab: "personData",
     title: "Личные данные",
   },
   {
-    path: "/profile",
     stateTab: "historyShop",
     title: "История покупок",
   },
@@ -31,7 +26,6 @@ const tabs = [
     title: "Избранное",
   },
   {
-    path: "/profile",
     stateTab: "changePass",
     title: "Сменить пароль",
   },
@@ -143,8 +137,10 @@ const passputs = [
 ];
 
 function Profile({ user }) {
-  const [params] = useSearchParams();
-  const [active, setActive] = useState("historyShop");
+  const [params, setParams] = useSearchParams();
+  const [active, setActive] = useState(
+    params.has("active") ? params.get("active") : "allData"
+  );
   const [inputs, setInputs] = useState([
     ...initialInputs.map((item) => {
       if (user[item.name]) {
@@ -154,11 +150,21 @@ function Profile({ user }) {
     }),
   ]);
   const [passinputs, setPassinputs] = useState([...passputs]);
-  const [dis, setDis] = useState(true)
+  const [dis, setDis] = useState(true);
   const [typePays, tLoading] = useGetData("/type-pays", []);
   const [page, setPage] = useState(
     Number(params.has("index") ? params.get("index") : 1)
   );
+
+  useEffect(() => {
+    const newSearchParams = new URLSearchParams(window.location.search);
+    newSearchParams.set("active", active || 'allData')
+    setParams(newSearchParams);
+  }, [active]);
+
+  useEffect(() => {
+    setActive(params.get("active"))
+  }, [params.get("active")])
 
   useEffect(() => {
     if (tLoading === false) {
@@ -177,8 +183,10 @@ function Profile({ user }) {
   }, [tLoading]);
 
   useEffect(() => {
-    setDis(passinputs[1].value === passinputs[2].value)
-  }, [passinputs])
+    if (passinputs[1].value !== "" && passinputs[2].value !== "") {
+      setDis(!(passinputs[1].value === passinputs[2].value));
+    }
+  }, [passinputs]);
 
   const [{ data: orders, allength, productsL }, loading] = useGetDWP(
     "/user-orders",
@@ -295,14 +303,14 @@ function Profile({ user }) {
             />
           ))}
           <button
-            className="zakazat ready mt-20"
+            className={`zakazat ${dis ? "" : "ready"} mt-20`}
             disabled={dis}
             onClick={async () => {
-              let form = {}
+              let form = {};
               passinputs.forEach((item) => {
-                form[item.name] = item.value
+                form[item.name] = item.value;
               });
-              form.userId = user._id
+              form.userId = user._id;
               await fetch(config.baseUrl + "/change-password", {
                 method: "POST",
                 body: JSON.stringify(form),
@@ -325,7 +333,7 @@ function Profile({ user }) {
         <div className="profileTabs">
           <div className="profileTabButtons">
             {tabs.map((item, index) =>
-              item.path === "/profile" ? (
+              item.path === undefined ? (
                 <div
                   key={index}
                   onClick={() => {

@@ -335,7 +335,7 @@ function App(){
                                     {
                                         droProfile.map(item => (
                                             <li key={item.title}>
-                                                <Link to={item.path} state={item.stateTab}>
+                                                <Link to={item.path !== '/favorites' ? item.path+`?active=${item.stateTab}` : item.path} state={item.stateTab}>
                                                     {
                                                         item.title
                                                     }
