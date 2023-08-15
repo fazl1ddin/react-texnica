@@ -154,6 +154,7 @@ function Profile({ user }) {
     }),
   ]);
   const [passinputs, setPassinputs] = useState([...passputs]);
+  const [dis, setDis] = useState(true)
   const [typePays, tLoading] = useGetData("/type-pays", []);
   const [page, setPage] = useState(
     Number(params.has("index") ? params.get("index") : 1)
@@ -174,6 +175,10 @@ function Profile({ user }) {
       );
     }
   }, [tLoading]);
+
+  useEffect(() => {
+    setDis(passinputs[1].value === passinputs[2].value)
+  }, [passinputs])
 
   const [{ data: orders, allength, productsL }, loading] = useGetDWP(
     "/user-orders",
@@ -291,14 +296,16 @@ function Profile({ user }) {
           ))}
           <button
             className="zakazat ready mt-20"
+            disabled={dis}
             onClick={async () => {
-              const form = new FormData();
-              inputs.forEach((item, index) => {
-                form.append(item.name, item.value);
+              let form = {}
+              passinputs.forEach((item) => {
+                form[item.name] = item.value
               });
-              await fetch(config.baseUrl + "/update-profile", {
+              form.userId = user._id
+              await fetch(config.baseUrl + "/change-password", {
                 method: "POST",
-                body: form,
+                body: JSON.stringify(form),
               });
             }}
           >
