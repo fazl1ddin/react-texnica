@@ -17,7 +17,7 @@ function CompareUpdate({id}){
     
 
     return <>
-        <div className={`comparebutton arbuttons ${some ? 'remove' : 'add'}`} onClick={() => updateOne(some ? 'remove' : 'add', 'compare', id, 1 )}>
+        <div className={`comparebutton arbuttons ${some ? 'remove' : 'add'}`} onClick={() => updateOne(some ? 'remove' : 'add', 'compare', id, 0)}>
         </div>
     </>
 }

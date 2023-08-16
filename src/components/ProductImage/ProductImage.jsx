@@ -20,7 +20,7 @@ function ProductImage({id, srcs}){
     return <>
         <Link to={`/product/${id}`}>
             <div className="sigveiWrap">
-                <img onClick={() => !some && updateOne('add', 'viewed', id)} src={`${srcs[0]}`} className='sigvei' />
+                <img alt='' onClick={() => updateOne(some ? '' : 'add', 'viewed', id, 0)} src={`${srcs[0]}`} className='sigvei' />
             </div>
         </Link>
     </>

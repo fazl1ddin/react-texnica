@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import products, { actions, setModule } from './products';
+import products, { setModule } from './products';
 import contents from './contents';
 import user, { clearUser, setUser } from './user';
 import { AiFillStar } from 'react-icons/ai'
@@ -123,6 +123,7 @@ export function updateOne(method, module, id, count){
                     :
                     {
                         id: userId,
+                        data: {id},
                         module,
                         method
                     }

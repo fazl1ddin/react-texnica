@@ -2,19 +2,18 @@ import { useEffect, useState } from "react";
 import { storeProducts } from "../store";
 import config from "../api/config";
 
-function useGetPAF() {
+function useGetPAV() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [products, setProducts] = useState(storeProducts.getState().products.favorites);
+  const [products, setProducts] = useState(storeProducts.getState().products.viewed);
 
   storeProducts.subscribe(() => {
-    setProducts(storeProducts.getState().products.favorites);
+    setProducts(storeProducts.getState().products.viewed);
   });
 
   useEffect(() => {
     if (products.length) {
       (async () => {
-        setLoading(true)
         await fetch(config.baseUrl + "/product", {
           method: "POST",
           body: JSON.stringify({
@@ -37,8 +36,8 @@ function useGetPAF() {
                 return item;
               })
             );
+            setLoading(false);
           });
-        setLoading(false);
       })();
     }
   }, [products]);
@@ -50,4 +49,4 @@ function useGetPAF() {
   };
 }
 
-export default useGetPAF;
+export default useGetPAV;

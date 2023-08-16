@@ -17,7 +17,7 @@ function FavoritesUpdate({id}){
     
 
     return <>
-        <div className={`likebutton arbuttons ${some ? 'remove' : 'add'}`} onClick={() => updateOne(some ? 'remove' : 'add', 'favorites', id, 1 )}>
+        <div className={`likebutton arbuttons ${some ? 'remove' : 'add'}`} onClick={() => updateOne(some ? 'remove' : 'add', 'favorites', id, 0)}>
         </div>
     </>
 }
