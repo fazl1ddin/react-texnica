@@ -303,7 +303,7 @@ select[id='cityr'] {
     color: #fff;
 }
 .ready {
-    background-color: #4878A6;
+    background-color: #4878A6!important;
 }
 .itogo form {
     margin: 20px 35px 0px 25px;

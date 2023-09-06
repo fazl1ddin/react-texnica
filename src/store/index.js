@@ -17,6 +17,16 @@ export function getRealPrice(context){
     return new Intl.NumberFormat('ru').format(context.price - (context.price * context.sale / 100))
 }
 
+export function zero(number) {
+    return (
+      `
+        ${number >= 10 ? number : "0" + number}
+        :00 - ${number >= 10 ? number : "0" + number}
+        :00 
+      `
+    );
+  }
+
 export const store = configureStore({
     reducer: {
         products: products.reducer,

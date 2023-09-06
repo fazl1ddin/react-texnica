@@ -1,7 +1,7 @@
 import React from "react";
 import "../css/Cart.css";
 import { useCallback } from "react";
-import { storeProducts, updateOne } from "../store/index";
+import { storeProducts, updateOne, zero } from "../store/index";
 import { changeCount, setModule } from "../store/products";
 import * as img from "../img/index";
 import { useState } from "react";
@@ -20,8 +20,8 @@ import { useNavigate } from "react-router";
 const weekdays = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"];
 
 function Cart({ user, setModal }) {
-  const navigate = useNavigate()
-  
+  const navigate = useNavigate();
+
   const { dispatch } = storeProducts;
 
   const { data, loading } = useGetPAC();
@@ -165,8 +165,8 @@ function Cart({ user, setModal }) {
   }, [checker, man, read]);
 
   const submit = async (e) => {
-    if(user){
-      const response = await fetch(config.baseUrl + `/order-${settings.one}`, {
+    if (user) {
+      const response = await fetch(config.baseUrl + `/orders`, {
         method: "POST",
         body: JSON.stringify(
           settings.one === "deliv"
@@ -183,35 +183,43 @@ function Cart({ user, setModal }) {
                 userId: user._id,
                 price: total(),
                 city: settings.two,
-                products: data.map(item => item._id)
+                products: data.map((item) => item._id),
+                type: 0,
               }
             : {
-              address: {
-                city: settings.two,
-                shop: addresses[checked],
-              },
-              status: 0,
-              userId: user._id,
-              getter: Object.fromEntries(
-                man.map((item) => {
-                  return [[item.key], item.value];
-                })
-              ),
-              products: data.map(item => item._id),
-              price: total(),
-              typePay: typePay,
-            }
+                address: {
+                  city: settings.two,
+                  shop: addresses[checked],
+                },
+                status: 0,
+                userId: user._id,
+                getter: Object.fromEntries(
+                  man.map((item) => {
+                    return [[item.key], item.value];
+                  })
+                ),
+                products: data.map((item) => item._id),
+                price: total(),
+                typePay: typePay,
+                type: 1,
+              }
         ),
-      }).then(res => res.json());
+      }).then((res) => res.json());
       if (response) {
-        storeProducts.dispatch(setModule({data: {...storeProducts.getState().products, cart: []}}))
-        message('Ordered')
-        navigate('/profile')
+        storeProducts.dispatch(
+          setModule({
+            data: { ...storeProducts.getState().products, cart: [] },
+          })
+        );
+        message("Ordered");
+        navigate("/profile");
       }
     } else {
-      setModal('singUp')
+      setModal("singUp");
     }
   };
+  
+  console.log(loading);
 
   return (
     <div className="oformleniye">
@@ -370,64 +378,30 @@ function Cart({ user, setModal }) {
                                       (item) => item._id === settings.three
                                     ).date * 1000
                                   ).format("Do, MMMM, dddd")
-                            }, ${
+                            }, ${zero(
                               date
                                 .find((item) => item._id === settings.three)
                                 .times.find(
                                   (item) => item._id === settings.four
-                                ).time[0] >= 10
-                                ? date
-                                    .find((item) => item._id === settings.three)
-                                    .times.find(
-                                      (item) => item._id === settings.four
-                                    ).time[0]
-                                : "0" +
-                                  date
-                                    .find((item) => item._id === settings.three)
-                                    .times.find(
-                                      (item) => item._id === settings.four
-                                    ).time[0]
-                            }
-                                    :00 -
-                                    ${
+                                ).time[0]
+                            )}
+                                    ${zero(
                                       date
                                         .find(
                                           (item) => item._id === settings.three
                                         )
                                         .times.find(
                                           (item) => item._id === settings.four
-                                        ).time[1] >= 10
-                                        ? date
-                                            .find(
-                                              (item) =>
-                                                item._id === settings.three
-                                            )
-                                            .times.find(
-                                              (item) =>
-                                                item._id === settings.four
-                                            ).time[1]
-                                        : "0" +
-                                          date
-                                            .find(
-                                              (item) =>
-                                                item._id === settings.three
-                                            )
-                                            .times.find(
-                                              (item) =>
-                                                item._id === settings.four
-                                            ).time[1]
-                                    }
-                                    :00 ${
-                                      date
-                                        .find(
-                                          (item) => item._id === settings.three
-                                        )
-                                        .times.find(
-                                          (item) => item._id === settings.four
-                                        ).isFree
-                                        ? "(бесплатно)"
-                                        : ""
-                                    }`}</span>
+                                        ).time[1]
+                                    )}${
+                              date
+                                .find((item) => item._id === settings.three)
+                                .times.find(
+                                  (item) => item._id === settings.four
+                                ).isFree
+                                ? "(бесплатно)"
+                                : ""
+                            }`}</span>
                           </div>
                         )
                       ) : aLoading || cLoading ? (

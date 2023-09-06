@@ -75,7 +75,8 @@ const initialSingUp = [
         pattern: /[0-9\\.,:]/,
         valid: 0,
         placeholder: "Имя",
-        type: 'text'
+        type: 'text',
+        validator: true
     },
     {
         title: 'Эл. почта',
@@ -84,7 +85,8 @@ const initialSingUp = [
         pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
         valid: 0,
         placeholder: "Эл. почта",
-        type: 'email'
+        type: 'email',
+        validator: true
     },
     {
         title: 'Номер телефона',
@@ -94,6 +96,7 @@ const initialSingUp = [
         valid: 0,
         placeholder: "+7 (___) ___ __ __",
         type: 'phone',
+        validator: true
     },
     {
         title: 'Пароль',
@@ -104,6 +107,7 @@ const initialSingUp = [
         placeholder: "Пароль",
         type: 'password',
         visible: false,
+        validator: true
     }
 ]
 
@@ -242,7 +246,7 @@ function App(){
                         <input type="checkbox" name="save" id="save" />
                         <label htmlFor="save">Запомнить меня</label>
                     </div>
-                    <button type="button" onClick={async () => {
+                    <button type="button" className={`${login.every(item => Boolean(item.value)) ? "ready": ""}`} onClick={async () => {
                         let obj = {};
                         login.forEach((item, index) => {
                             obj[item.name] = item.value
@@ -285,7 +289,7 @@ function App(){
                         singUp.map((item) => <Input key={item.name} {...item} setState={setSingUp} />)
                     }
                     <p>Регистрируясь, вы соглашаетесь с&nbsp;<a href="">пользовательским соглашением</a></p>
-                        <button type="button" onClick={async () => {
+                        <button className={`${singUp.every(item => item.valid === 1) ? "ready" : ""}`} disabled={!singUp.every(item => item.valid === 1)} type="button" onClick={async () => {
                                 let obj = {};
                                 singUp.forEach((item, index) => {
                                     obj[item.name] = item.value

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { getRealPrice, getSpace, storeProducts } from "../store"
 import config from "../api/config"
 
-function useGetPAC(){
+function useGetPAC() {
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(true)
     const [products, setProducts] = useState(storeProducts.getState().products.cart)
@@ -12,31 +12,34 @@ function useGetPAC(){
     })
 
     useEffect(() => {
-        if(products.length){
-           (
+        if (products.length) {
+            (
                 async () => {
                     await fetch(config.baseUrl + '/product', {
                         method: 'POST', body: JSON.stringify({
                             arr: products.map(item => ({ _id: item.id }))
                         })
                     })
-                    .then(result => result.json())
-                    .then(result => {
-                        setData(result.map((item, index) => {
-                            if(products[index].id === item._id){
-                                return {
-                                    ...item,
-                                    count: products[index].count,
-                                    realPrice: getRealPrice(item),
-                                    space: getSpace(item)
+                        .then(result => result.json())
+                        .then(result => {
+                            setData(result.map((item, index) => {
+                                if (products[index].id === item._id) {
+                                    return {
+                                        ...item,
+                                        count: products[index].count,
+                                        realPrice: getRealPrice(item),
+                                        space: getSpace(item)
+                                    }
                                 }
-                            }
-                            return item
-                        }))
-                        setLoading(false)
-                    })
+                                return item
+                            }))
+                        }).finally(() => {
+                            setLoading(false)
+                        })
                 }
-            )() 
+            )()
+        } else {
+            setLoading(false)
         }
     }, [products])
 
