@@ -96,7 +96,7 @@ function Cart({ user, setModal }) {
 
   const [typePays, tLoading] = useGetData("/type-pays", []);
 
-  const [addresses, aLoading] = useGetAddress(settings.two);
+  const [addresses, aLoading] = useGetAddress("/address-shops", settings.two);
 
   const [checked, setChecked] = useState(0);
 

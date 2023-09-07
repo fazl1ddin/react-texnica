@@ -15,6 +15,8 @@ import CardUpdateLong from '../components/ButtonsForUpdate/CardUpdateLong';
 import ProductImage from '../components/ProductImage/ProductImage';
 import CardUpdate from '../components/ButtonsForUpdate/CardUpdate';
 import useGetRecs from '../hooks/getRecs';
+import useGetAddress from '../hooks/getAddress';
+import useGetComments from '../hooks/getComments';
 
 function Product({user, setLoginModal}){
     const [modal, setModal] = useState(false)
@@ -60,6 +62,7 @@ function Product({user, setLoginModal}){
     const currentId = pathname[pathname.length - 1]
     
     const [products, loading, setData] = useGetProduct(currentId)
+    const [comments, cLoading, refetch] = useGetComments("/comments", products._id)
 
     const pagination = () => {
         if(!loading){
@@ -111,7 +114,7 @@ function Product({user, setLoginModal}){
                                     }}/>
                                 </React.Fragment>)
                             }
-                            <button type="button" onClick={async () => {
+                            <button className='ready' type="button" onClick={async () => {
                                 let obj = {};
                                 fields.forEach((item, index) => {
                                     obj[item.name] = item.value
@@ -124,11 +127,12 @@ function Product({user, setLoginModal}){
                                 })})
                                 .then(result => result.json())
                                 .then(result => {
-                                    setData(result)
+                                    // setData(result)
                                 })
                                 .catch(e => {
                                     console.log(e);
                                 })
+                                await refetch()
                                 setModal(false)
                             }}>Добавить</button>
                         </form>
@@ -139,7 +143,7 @@ function Product({user, setLoginModal}){
         <div className='product'>
             <div className='window'>
                 <div className="productContent">
-                    <h1 className="title">{products.productName.value}</h1>
+                    <h1 className="title">{products.productName}</h1>
                     <div className="productGallery">
                         <div className="central">
                             {
@@ -169,7 +173,7 @@ function Product({user, setLoginModal}){
                         </div>
                     </div>
                     <div className="productText">
-                        <h1>{products.productName.value}</h1>
+                        <h1>{products.productName}</h1>
                         <div className="productPrices">
                             <div className="productPricesBox">
                                 <div className="rateStar">
@@ -180,7 +184,7 @@ function Product({user, setLoginModal}){
                                     </div>
                                     <div className="comments">
                                         <img src={img.messageSquare} />
-                                        <h5>({products.comments.length})</h5>
+                                        <h5>({comments.length})</h5>
                                     </div>
                                 </div>
                                 <div className="statslike">
@@ -226,7 +230,7 @@ function Product({user, setLoginModal}){
                         <ul>
                             {
                                 descriptions.map((item, i) => (
-                                    <li key={item} className={currentDes === i ? 'active' : ''} onClick={() => setCurrentDes(i)}>{item == 'Отзывы' ? `${item} (${products.comments.length})` : item}</li>
+                                    <li key={item} className={currentDes === i ? 'active' : ''} onClick={() => setCurrentDes(i)}>{item == 'Отзывы' ? `${item} (${comments.length})` : item}</li>
                                 ))
                             }
                         </ul>
@@ -256,8 +260,8 @@ function Product({user, setLoginModal}){
                                                 }                                                
                                             </div>
                                             <div className="xityProdajTexti">
-                                                <h5>{item.specification.productName.value}</h5>
-                                                <h3>{item.productName.value}</h3>
+                                                <h5>{item.specification.productName}</h5>
+                                                <h3>{item.productName}</h3>
                                             </div>
                                             <div className="rateStar">
                                                 <div className='ratesStars'>
@@ -306,7 +310,7 @@ function Product({user, setLoginModal}){
                             <div className="rates">
                                 <div className="ratesContent">
                                     {
-                                        products.comments.map((item, index) => (
+                                        comments.map((item, index) => (
                                             <div className="ratesAcc" key={index}>
                                                 <div className="aboutRate">
                                                     <img src={img.avatar}/>

@@ -18,7 +18,7 @@ function useGetRecs() {
         })()
     }, [])
 
-    return [data.map((item, index) => ({
+    return [data.filter(item => item).map((item, index) => ({
         ...item,
         space: getSpace(item),
         realPrice: getRealPrice(item)

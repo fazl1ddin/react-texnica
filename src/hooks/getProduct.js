@@ -18,30 +18,6 @@ function useGetProduct(id){
         })()
     }, [])
 
-    useEffect(() => {
-        if(!loading){
-            (async () => {
-                let newComments = []
-                for (let index = 0; index < data?.comments?.length; index++) {
-                    newComments[index] = data?.comments?.[index]?.userId;
-                }
-                await fetch(config.baseUrl + '/get-user-data', { method: 'POST', body: JSON.stringify({userId: newComments, keys: ['name']}) })
-                .then(result => result.json())
-                .then(result => {
-                    setData({
-                        ...data,
-                        comments: data.comments.map((item, index) => ({
-                            ...item,
-                            ...result[index]
-                        }))
-                    })
-                    setLoading(false)
-                })
-            })()
-        }
-        
-    }, [loading])
-
     return [{
         ...data,
         space: getSpace(data),
