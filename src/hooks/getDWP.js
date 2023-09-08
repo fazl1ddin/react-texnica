@@ -22,7 +22,7 @@ function useGetDWP(path, page, perPage, body) {
         .then((result) => {
           setLoading(false);
           setData(result.data);
-          setAllength(result.allength);
+          setAllength(result.apl);
           setProductsL(result.productsL)
         })
         .catch((e) => console.log(e));

@@ -43,11 +43,11 @@
     width: 535px;
     margin-top: 20px;
 }
-.profile .profileTabs .profileTabContent .profileText a {
+.profile .profileTabs .profileTabContent .profileText span {
     color: #2A5275;
     cursor: pointer;
 }
-.profile .profileTabs .profileTabContent .profileText a:hover {
+.profile .profileTabs .profileTabContent .profileText span:hover {
     text-decoration: underline;
 }
 .profile .profileTabs .profileTabContent .profileAvatar {
@@ -98,7 +98,7 @@
 .profile .profileTabs .profileTabButtons div.active {
     background-color: #EDF2F6;
 }
-.profile .profileTabs .profileTabButtons a {
+.profile .profileTabs .profileTabButtons > * {
     text-decoration: none;
     height: 54px;
     padding: 0 20px;
@@ -108,7 +108,7 @@
     text-decoration: none;
     color: #070C11;
 }
-.profile .profileTabs .profileTabButtons a:last-of-type {
+.profile .profileTabs .profileTabButtons > *:last-child {
     color: #F15152;
     cursor: pointer;
 }

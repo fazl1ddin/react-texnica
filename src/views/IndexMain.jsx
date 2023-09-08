@@ -2,18 +2,14 @@ import React from "react";
 import "./../css/Index main.css";
 import { Link } from "react-router-dom";
 import * as img from "./../img/index";
-import { useContext, useState } from "react";
+import { useContext,} from "react";
 import DropDown from "../contexts/dropDown";
-import { useSelector, useDispatch } from "react-redux";
 import {
   getRealPrice,
   getSpace,
-  some,
   stars,
-  updateOne,
 } from "./../store/index";
 import useGetData from "../hooks/getData";
-import Loader from "../components/Loaders/Loader";
 import Products4Loader from "../components/Loaders/Products4Loader";
 import config from "../api/config";
 import CardUpdate from "../components/ButtonsForUpdate/CardUpdate";
@@ -23,7 +19,7 @@ import ProductImage from "../components/ProductImage/ProductImage";
 import useGetIndexPromos from "../hooks/getIndexPromos";
 import LoaderIndexPromos from "../components/Loaders/LoaderIndexPromos";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
+import { Autoplay, Pagination } from 'swiper/modules';
 import "swiper/css";
 import "swiper/css/pagination";
 
@@ -152,8 +148,13 @@ function IndexMain() {
           <div className="headerContent">
             <Swiper
               pagination={pagination}
-              modules={[Pagination]}
+              modules={[Autoplay, Pagination]}
               slidesPerView={1}
+              loop={true}
+              autoplay={{
+                delay: 1500,
+                disableOnInteraction: false,
+              }}
               className={`slider ${dropDown ? "w-970" : "w-100vw"}`}
             >
               {slider.map((item, index) => {

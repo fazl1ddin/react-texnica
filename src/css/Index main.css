@@ -11,6 +11,8 @@ import cartButton from ""; */
     position: relative;
     border-radius: 8px;
     transition: all .5s;
+    margin-right: unset!important;
+    margin-left: unset!important;
 }
 .w-970 {
     width: 970px;

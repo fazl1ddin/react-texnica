@@ -1,6 +1,5 @@
 import React from 'react';
 import { useLocation } from 'react-router';
-import { contentById } from '../store';
 import useGetContents from '../hooks/getContents';
 
 function Promo(){
@@ -29,7 +28,7 @@ function Promo(){
                             </ol>
                         </div>
                         <div className="newImg">
-                            <img src={data[0].src}/>
+                            <img src={data[0].src} alt=''/>
                         </div>
                     </div>
                 </>
