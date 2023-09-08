@@ -22,11 +22,13 @@ import CompareUpdate from "../components/ButtonsForUpdate/CompareUpdate";
 import ProductImage from "../components/ProductImage/ProductImage";
 import useGetIndexPromos from "../hooks/getIndexPromos";
 import LoaderIndexPromos from "../components/Loaders/LoaderIndexPromos";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
 
 function IndexMain() {
   const dropDown = useContext(DropDown);
-
-  const [pagination, setPagination] = useState(0);
 
   const [promos, pLoading] = useGetIndexPromos();
 
@@ -46,7 +48,7 @@ function IndexMain() {
             <div className="xityProdaj" key={item._id}>
               <div className="window">
                 <h1>{item.title}</h1>
-                <Link to={'/catalog'} className="a">
+                <Link to={"/catalog"} className="a">
                   {item.href}
                 </Link>
                 <div className="xityProdajContent">
@@ -134,35 +136,58 @@ function IndexMain() {
     },
   ];
 
+  const pagination = {
+    clickable: true,
+    renderBullet: function (index, className) {
+      return `<div
+      class="pagination-items ${className}"
+    ></div>`;
+    },
+  };
+
   return (
     <>
       <div className="header">
         <div className="window">
           <div className="headerContent">
-            <div className={`slider ${dropDown ? "w-970" : "w-100vw"}`}>
-              {slider.map((item, i) => (
-                <div
-                  className={`slider-item ${pagination == i ? "active" : ""}`}
-                  key={item.id}
-                >
-                  <img src={item.photo} />
-                  <h3>
-                    {item.name} {item.id}
-                  </h3>
-                </div>
-              ))}
-              <div className="pagination">
-                {slider.map((_item, i) => (
+            <Swiper
+              pagination={pagination}
+              modules={[Pagination]}
+              slidesPerView={1}
+              className={`slider ${dropDown ? "w-970" : "w-100vw"}`}
+            >
+              {slider.map((item, index) => {
+                return (
+                  <SwiperSlide key={index}>
+                    <img src={item.photo} alt="" />
+                    <h3>
+                      {item.name} {item.id}
+                    </h3>
+                  </SwiperSlide>
+                );
+              })}
+            </Swiper>
+            {/* {slider.map((item, i) => {
+                return (
                   <div
-                    key={i}
-                    className={`pagination-items ${
-                      pagination == i ? "pagination-active" : ""
+                    className={`slider-item ${
+                      pagination == i
+                        ? pagination > i
+                        ? "active right"
+                        : "active left"
+                        : pagination > i
+                        ? "right"
+                        : "left"
                     }`}
-                    onClick={() => setPagination(i)}
-                  ></div>
-                ))}
-              </div>
-            </div>
+                    key={item.id}
+                  >
+                    <img src={item.photo} />
+                    <h3>
+                      {item.name} {item.id}
+                    </h3>
+                  </div>
+                );
+              })} */}
           </div>
         </div>
       </div>
@@ -218,9 +243,7 @@ function IndexMain() {
       <div className="newes">
         <div className="window">
           <h1>Новости</h1>
-          <Link to={'/news'}>
-            Читать все
-          </Link>
+          <Link to={"/news"}>Читать все</Link>
           <div className="newsContent">
             <div className="newsBox">
               <h1>Открытие нового магазина</h1>
