@@ -1,6 +1,6 @@
 import './css.css'
 
-function LoginButton(){
+function LoginButtonLoader(){
     return (
         <div style={{
             width: 100,
@@ -19,4 +19,4 @@ function LoginButton(){
     )
 }
 
-export default LoginButton
+export default LoginButtonLoader

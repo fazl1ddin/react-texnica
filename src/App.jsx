@@ -1,11 +1,10 @@
 import React from "react";
 import "./css/App.css";
 import * as img from "./img/index";
-import { Link, Route, Routes } from "react-router-dom";
+import { Link, Route, Routes, useSearchParams } from "react-router-dom";
 import IndexMain from "./views/IndexMain";
 import { useState } from "react";
 import DropDown from "./contexts/dropDown";
-import { useDispatch } from "react-redux";
 import Product from "./views/Product";
 import Viewed from "./views/Viewed";
 import Favorites from "./views/Favorites";
@@ -20,7 +19,6 @@ import Promos from "./views/Promos";
 import Catalog from "./views/Catalog";
 import { setUser } from "./store/user";
 import { useEffect } from "react";
-import LoginButton from "./components/Loaders/LoginButton";
 import { useRef } from "react";
 import { setModule } from "./store/products";
 import config from "./api/config";
@@ -32,6 +30,7 @@ import PageNotFound from "./views/PageNotFound";
 import Input from "./components/Input/Input";
 import Profile from "./views/Profile";
 import LoginOrRegister from "./components/LoginOrRegister";
+import LoginButtonLoader from "./components/Loaders/LoginButton";
 
 const droProfile = [
   {
@@ -65,9 +64,17 @@ function App() {
 
   const forNavDrop = useRef();
 
-  const [navHeight, setNavHeight] = useState(0);
+  const [params, setParams] = useSearchParams();
 
-  const forProfileDrop = useRef();
+  const [active, setActive] = useState(
+    params.has("active") ? params.get("active") : "allData"
+  );
+
+  useEffect(() => {
+    setActive(params.get("active"));
+  }, [params]);
+
+  const [navHeight, setNavHeight] = useState(0);
 
   const [modules, setModules] = useState({});
 
@@ -83,6 +90,29 @@ function App() {
 
   const [modal, setModal] = useState(" ");
 
+  function dsnttoken() {
+    if (!localStorage.getItem("products")) {
+      localStorage.setItem(
+        "products",
+        JSON.stringify({
+          allProducts: [],
+          cart: [],
+          favorites: [],
+          compare: [],
+          viewed: [],
+        })
+      );
+    }
+    storeProducts.dispatch(
+      setModule({
+        data:
+          localStorage.getItem("products") &&
+          JSON.parse(localStorage.getItem("products")),
+      })
+    );
+    setLoading(false);
+  }
+
   useEffect(() => {
     if (localStorage.getItem("token")) {
       (async () => {
@@ -97,7 +127,7 @@ function App() {
           .then((result) => {
             if (result.message) {
               localStorage.removeItem("token");
-              setLoading(false);
+              dsnttoken()
             } else {
               storeUser.dispatch(setUser(result));
               storeProducts.dispatch(setModule({ data: result.user }));
@@ -112,26 +142,7 @@ function App() {
           });
       })();
     } else {
-      if (!localStorage.getItem("products")) {
-        localStorage.setItem(
-          "products",
-          JSON.stringify({
-            allProducts: [],
-            cart: [],
-            favorites: [],
-            compare: [],
-            viewed: [],
-          })
-        );
-      }
-      storeProducts.dispatch(
-        setModule({
-          data:
-            localStorage.getItem("products") &&
-            JSON.parse(localStorage.getItem("products")),
-        })
-      );
-      setLoading(false);
+      dsnttoken()
     }
   }, []);
 
@@ -151,12 +162,6 @@ function App() {
     }
   }, [forNavDrop.current]);
 
-  useEffect(() => {
-    if (forProfileDrop.current) {
-      setProfileHeight(Number(forProfileDrop.current.offsetHeight));
-    }
-  }, [forProfileDrop.current]);
-
   return (
     <>
       <LoginOrRegister state={[modal, setModal]} />
@@ -172,42 +177,18 @@ function App() {
               <p className="c-838">Пн-вс: с 10:00 до 21:00</p>
             </div>
             <div className="headerNavSearch">
-              {Suzer !== undefined ? (
-                <div
-                  style={{ height: droProfileB ? 6 * profileHeight : 0 }}
-                  className={`profileDrop`}
-                >
-                  <ul>
-                    {droProfile.map((item) => (
-                      <li key={item.title}>
-                        <Link
-                          to={
-                            item.path !== "/favorites"
-                              ? item.path + `?active=${item.stateTab}`
-                              : item.path
-                          }
-                          state={item.stateTab}
-                        >
-                          {item.title}
-                        </Link>
-                      </li>
-                    ))}
-                    <li ref={forProfileDrop}>
-                      <a onClick={logout}>Выйти</a>
-                    </li>
-                  </ul>
-                </div>
-              ) : null}
               <button className="sbutton">
                 <img src={img.searchIcon} />
                 Поиск
               </button>
               <RouterDots loading={loading} routers={modules} />
               {loading ? (
-                <LoginButton></LoginButton>
+                <LoginButtonLoader></LoginButtonLoader>
               ) : Suzer ? (
                 <div
                   onClick={(e) => {
+                    const heigthLi = e.currentTarget.querySelector("li");
+                    setProfileHeight(heigthLi.offsetHeight);
                     setDroProfile((prev) => !prev);
                   }}
                 >
@@ -221,6 +202,32 @@ function App() {
                   >
                     <img src={img.profile} alt="" />
                   </div>
+                  <div
+                    style={{ height: droProfileB ? 6 * profileHeight : 0 }}
+                    className={`profileDrop`}
+                  >
+                    <ul id="dropP">
+                      {droProfile.map((item) => (
+                        <li key={item.title}>
+                          <Link
+                            className={active === item.stateTab ? "activeDropP" : undefined}
+                            to={
+                              item.path !== "/favorites"
+                                ? item.path + `?active=${item.stateTab}`
+                                : item.path
+                            }
+                            state={item.stateTab}
+                          >
+                            {item.title}
+                          </Link>
+                        </li>
+                      ))}
+                      <li>
+                        <a onClick={logout}>Выйти</a>
+                      </li>
+                    </ul>
+                  </div>
+                  <div className={`blocker ${droProfileB ? "open" : ""}`}></div>
                 </div>
               ) : (
                 <button
@@ -449,7 +456,7 @@ function App() {
         <Route path="/promos" element={<Promos />}></Route>,
         <Route path="/catalog" element={<Catalog />}></Route>,
         {Suzer && (
-          <Route path="/profile" element={<Profile user={Suzer} />}></Route>
+          <Route path="/profile" element={<Profile active={active} tabs={droProfile} user={Suzer} />}></Route>
         )}
         <Route path="*" element={<PageNotFound />}></Route>
       </Routes>

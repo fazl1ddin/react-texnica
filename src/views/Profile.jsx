@@ -7,30 +7,6 @@ import config from "../api/config";
 import useGetDWP from "../hooks/getDWP";
 import Pagination from "../components/Pagination/Pagination";
 import { logout } from "../store";
-
-const tabs = [
-  {
-    stateTab: "allData",
-    title: "Общие сведения",
-  },
-  {
-    stateTab: "personData",
-    title: "Личные данные",
-  },
-  {
-    stateTab: "historyShop",
-    title: "История покупок",
-  },
-  {
-    path: "/favorites",
-    title: "Избранное",
-  },
-  {
-    stateTab: "changePass",
-    title: "Сменить пароль",
-  },
-];
-
 const initialInputs = [
   {
     title: "Имя",
@@ -136,11 +112,8 @@ const passputs = [
   },
 ];
 
-function Profile({ user }) {
+function Profile({ user, tabs, active }) {
   const [params, setParams] = useSearchParams();
-  const [active, setActive] = useState(
-    params.has("active") ? params.get("active") : "allData"
-  );
   const [inputs, setInputs] = useState([
     ...initialInputs.map((item) => {
       if (user[item.name]) {
@@ -158,13 +131,9 @@ function Profile({ user }) {
 
   useEffect(() => {
     const newSearchParams = new URLSearchParams(window.location.search);
-    newSearchParams.set("active", active || 'allData')
+    newSearchParams.set("active", active || "allData");
     setParams(newSearchParams);
   }, [active]);
-
-  useEffect(() => {
-    setActive(params.get("active"))
-  }, [params])
 
   useEffect(() => {
     if (tLoading === false) {
@@ -220,9 +189,10 @@ function Profile({ user }) {
       </div>
       <div className="profileText">
         Добро пожаловать в панель управления. Здесь вы можете{" "}
-        <span>изменить свои регистрационные данные</span> и <span>cменить пароль</span>.
-        Зарегистрированные пользователи имеют доступ к <span>истории заказов</span>{" "}
-        и возможность <span>добавлять в избранное товары для будущих покупок</span>.
+        <span>изменить свои регистрационные данные</span> и 
+        <span>cменить пароль</span>. Зарегистрированные пользователи имеют
+        доступ к <span>истории заказов</span> и возможность{" "}
+        <span>добавлять в избранное товары для будущих покупок</span>.
       </div>
     </div>
   );
@@ -265,7 +235,7 @@ function Profile({ user }) {
             <>asfasag</>
           ) : (
             orders.map((item, index) => (
-              <div key={index}>
+              <div className="orders" key={index}>
                 <p>
                   Заказ #{Math.abs(productsL * -1 + index + 6 * (page - 1))} от 
                   {new Intl.DateTimeFormat("ru", {
@@ -329,20 +299,18 @@ function Profile({ user }) {
   return (
     <div className="profile">
       <div className="window">
-        <h1>Общие сведения</h1>
+        <h1>{tabs.find(item => item.stateTab === active).title}</h1>
         <div className="profileTabs">
           <div className="profileTabButtons">
             {tabs.map((item, index) =>
-              item.path === undefined ? (
-                <div
+              item.stateTab ? (
+                <Link
+                  to={`${item.path}?active=${item.stateTab}`}
                   key={index}
-                  onClick={() => {
-                    setActive(item.stateTab);
-                  }}
-                  className={active === item.stateTab ? "active" : undefined}
+                  className={active === item.stateTab ? "activeDropP" : undefined}
                 >
                   {item.title}
-                </div>
+                </Link>
               ) : (
                 <Link key={index} to={item.path}>
                   {item.title}

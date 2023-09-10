@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { img } from "../img";
+import * as img from "../img/index";
 import { storeProducts, storeUser } from "../store";
 import { setModule } from "../store/products";
 import Input from "./Input/Input";
@@ -97,7 +97,7 @@ function LoginOrRegister({ state }) {
       })
       .catch((e) => {
         if (localStorage.getItem("products")) {
-            storeProducts.dispatch(
+          storeProducts.dispatch(
             setModule({ data: JSON.parse(localStorage.getItem("products")) })
           );
         } else {
@@ -137,75 +137,84 @@ function LoginOrRegister({ state }) {
       });
     setModal(" ");
   }
+
   const [modal, setModal] = state;
   return modal !== " " ? (
-    modal === "login" ? (
-      <div className="forModal">
-        <div className="centerWrap singIn">
-          <div className="modalTitle">
-            <h2>Вход</h2>
-            <div className="x" onClick={() => setModal(" ")}>
-              <img src={img.x} alt="" />
-            </div>
-          </div>
-          <div className="modalBody">
-            <form>
-              {login.map((item) => (
-                <Input key={item.name} {...item} setState={setLogin} />
-              ))}
-              <a href="">Забыли пароль?</a>
-              <div>
-                <input type="checkbox" name="save" id="save" />
-                <label htmlFor="save">Запомнить меня</label>
+    <div
+      className="forModal"
+      onClick={(e) => {
+        setModal(" ");
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className={`centerWrap ${modal === "login" ? "singIn" : "singUp"}`}
+      >
+        {modal === "login" ? (
+          <>
+            <div className="modalTitle">
+              <h2>Вход</h2>
+              <div className="x" onClick={() => setModal(" ")}>
+                <img src={img.x} alt="" />
               </div>
-              <button
-                type="button"
-                className={`${
-                  login.every((item) => Boolean(item.value)) ? "ready" : ""
-                }`}
-                onClick={submitLogin}
-              >
-                Войти
-              </button>
-              <a onClick={() => setModal("singUp")}>Зарегистрироваться</a>
-            </form>
-          </div>
-        </div>
-      </div>
-    ) : (
-      <div className="forModal">
-        <div className="centerWrap singUp">
-          <div className="modalTitle">
-            <h2>Регистрация</h2>
-            <div className="x">
-              <img src={img.x} onClick={() => setModal(" ")} />
             </div>
-          </div>
-          <div className="modalBody">
-            <form>
-              {singUp.map((item) => (
-                <Input key={item.name} {...item} setState={setSingUp} />
-              ))}
-              <p>
-                Регистрируясь, вы соглашаетесь с&nbsp;
-                <a href="">пользовательским соглашением</a>
-              </p>
-              <button
-                className={`${
-                  singUp.every((item) => item.valid === 1) ? "ready" : ""
-                }`}
-                disabled={!singUp.every((item) => item.valid === 1)}
-                type="button"
-                onClick={submitSingUp}
-              >
-                Зарегистрироваться
-              </button>
-              <a onClick={() => setModal("login")}>Войти</a>
-            </form>
-          </div>
-        </div>
+            <div className="modalBody">
+              <form>
+                {login.map((item) => (
+                  <Input key={item.name} {...item} setState={setLogin} />
+                ))}
+                <a href="">Забыли пароль?</a>
+                <div>
+                  <input type="checkbox" name="save" id="save" />
+                  <label htmlFor="save">Запомнить меня</label>
+                </div>
+                <button
+                  type="button"
+                  className={`${
+                    login.every((item) => Boolean(item.value)) ? "ready" : ""
+                  }`}
+                  onClick={submitLogin}
+                >
+                  Войти
+                </button>
+                <a onClick={() => setModal("singUp")}>Зарегистрироваться</a>
+              </form>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="modalTitle">
+              <h2>Регистрация</h2>
+              <div className="x">
+                <img src={img.x} onClick={() => setModal(" ")} />
+              </div>
+            </div>
+            <div className="modalBody">
+              <form>
+                {singUp.map((item) => (
+                  <Input key={item.name} {...item} setState={setSingUp} />
+                ))}
+                <p>
+                  Регистрируясь, вы соглашаетесь с&nbsp;
+                  <a href="">пользовательским соглашением</a>
+                </p>
+                <button
+                  className={`${
+                    singUp.every((item) => item.valid === 1) ? "ready" : ""
+                  }`}
+                  disabled={!singUp.every((item) => item.valid === 1)}
+                  type="button"
+                  onClick={submitSingUp}
+                >
+                  Зарегистрироваться
+                </button>
+                <a onClick={() => setModal("login")}>Войти</a>
+              </form>
+            </div>
+          </>
+        )}
       </div>
-    )
+    </div>
   ) : null;
 }
 

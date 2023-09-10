@@ -152,7 +152,7 @@ function IndexMain() {
               slidesPerView={1}
               loop={true}
               autoplay={{
-                delay: 1500,
+                delay: 3000,
                 disableOnInteraction: false,
               }}
               className={`slider ${dropDown ? "w-970" : "w-100vw"}`}

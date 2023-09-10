@@ -61,7 +61,7 @@
     margin-bottom: 20px;
     margin-top: 50px;
 }
-.profile .profileTabs .profileTabContent .historyShop > div {
+.profile .profileTabs .profileTabContent .historyShop > div.orders {
     display: flex;
     justify-content: space-between;
     padding-top: 20px;
@@ -78,7 +78,7 @@
 .profile .profileTabs .profileTabContent .historyShop > div p[data-status="2"] {
     color: #22A44E;
 }
-.profile .profileTabs .profileTabContent .historyShop > div:first-of-type {
+.profile .profileTabs .profileTabContent .historyShop > div.orders:first-of-type {
     border-top: #C8CACB 1px solid;
 }
 .profile .profileTabs .profileTabButtons {
@@ -95,7 +95,7 @@
     text-decoration: none;
     color: #070C11;
 }
-.profile .profileTabs .profileTabButtons div.active {
+.activeDropP {
     background-color: #EDF2F6;
 }
 .profile .profileTabs .profileTabButtons > * {
