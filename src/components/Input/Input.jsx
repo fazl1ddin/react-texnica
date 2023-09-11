@@ -1,3 +1,4 @@
+let index = 0
 function Input(props) {
   let result = (
     <div
@@ -10,7 +11,7 @@ function Input(props) {
         type={props.type}
         placeholder={props.placeholder}
         value={props.value}
-        id={props.name}
+        id={props.name+index}
         onChange={(e) =>
           props.setState((prevState) =>
             prevState.map((item, i) => {
@@ -129,7 +130,7 @@ function Input(props) {
             type={props.type}
             placeholder={props.placeholder}
             value={props.value}
-            id={props.name}
+            id={props.name+index}
             onKeyDown={(e) => {
               let _ = e.target.value.indexOf("_");
               if (isNaN(Number(e.key)) === false) {
@@ -326,7 +327,7 @@ function Input(props) {
             type={props.visible ? "text" : "password"}
             placeholder={props.placeholder}
             value={props.value}
-            id={props.name}
+            id={props.name+index}
             onChange={(e) => {
               props.setState((prevState) =>
                 prevState.map((item, i) => {
@@ -507,7 +508,7 @@ function Input(props) {
           <input
             type={props.type}
             placeholder={props.placeholder}
-            id={props.name}
+            id={props.name+index}
             onChange={(e) => {
               props.setState((prevState) =>
                 prevState.map((item, i) => {
@@ -534,7 +535,7 @@ function Input(props) {
           <label htmlFor={props.name}>{props.title}</label>
           <select
             placeholder={props.placeholder}
-            id={props.name}
+            id={props.name+index}
             onChange={(e) => {
               props.setState((prevState) =>
                 prevState.map((item, i) => {
@@ -567,6 +568,7 @@ function Input(props) {
     default:
       break;
   }
+  index++
   return result;
 }
 

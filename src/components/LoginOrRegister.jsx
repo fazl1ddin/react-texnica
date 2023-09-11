@@ -214,7 +214,6 @@ function LoginOrRegister({ state }) {
           <div className="modalBody">
             <form>
               {singUp.map((item) => {
-                item.name += "singUp";
                 return <Input key={item.name} {...item} setState={setSingUp} />;
               })}
               <p>

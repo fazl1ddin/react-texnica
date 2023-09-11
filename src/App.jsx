@@ -31,6 +31,7 @@ import Input from "./components/Input/Input";
 import Profile from "./views/Profile";
 import LoginOrRegister from "./components/LoginOrRegister";
 import LoginButtonLoader from "./components/Loaders/LoginButton";
+import Breadcrumb from "./components/Breadcrumb";
 
 const droProfile = [
   {
@@ -432,6 +433,7 @@ function App() {
           </div>
         </div>
       </div>
+      <Breadcrumb/>
       <Routes>
         <Route
           path="/"

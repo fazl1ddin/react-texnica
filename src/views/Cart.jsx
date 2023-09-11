@@ -218,8 +218,6 @@ function Cart({ user, setModal }) {
       setModal("singUp");
     }
   };
-  
-  console.log(loading);
 
   return (
     <div className="oformleniye">
@@ -801,7 +799,7 @@ function Cart({ user, setModal }) {
                       <input
                         type="text"
                         value={item.value}
-                        id={item}
+                        id={item.name}
                         placeholder="Например, Иван"
                         onChange={(e) => {
                           setMan(
