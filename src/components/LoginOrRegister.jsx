@@ -104,7 +104,7 @@ function LoginOrRegister({ state }) {
           localStorage.setItem("products", JSON.stringify({}));
         }
       });
-    setModal(" ");
+    closeModal("singIn")
   }
 
   async function submitSingUp() {
@@ -112,30 +112,39 @@ function LoginOrRegister({ state }) {
     singUp.forEach((item, index) => {
       obj[item.name] = item.value;
     });
-    // dispatch(Auth({logType: 'pass', obj}))
-    await fetch(config.baseUrl + "/sing-up", {
-      method: "POST",
-      body: JSON.stringify(obj),
-    })
-      .then((result) => result.json())
-      .then((result) => {
-        if (result.user) {
-          setSingUp(initialSingUp);
-          storeUser.dispatch(setUser(result));
-          storeProducts.dispatch(setModule({ data: result.user }));
-          localStorage.setItem("token", result.token);
-        }
+    try {
+      const res = await fetch(config.baseUrl + "/sing-up", {
+        method: "POST",
+        body: JSON.stringify(obj),
       })
-      .catch((e) => {
-        if (localStorage.getItem("products")) {
-          storeProducts.dispatch(
-            setModule({ data: JSON.parse(localStorage.getItem("products")) })
-          );
-        } else {
-          localStorage.setItem("products", JSON.stringify({}));
-        }
-      });
-    setModal(" ");
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+    // dispatch(Auth({logType: 'pass', obj}))
+    // const res = await fetch(config.baseUrl + "/sing-up", {
+    //   method: "POST",
+    //   body: JSON.stringify(obj),
+    // })
+    //   .then((result) => result.json())
+    //   .then((result) => {
+    //     if (result.user) {
+    //       setSingUp(initialSingUp);
+    //       storeUser.dispatch(setUser(result));
+    //       storeProducts.dispatch(setModule({ data: result.user }));
+    //       localStorage.setItem("token", result.token);
+    //     }
+    //   })
+    //   .catch((e) => {
+    //     if (localStorage.getItem("products")) {
+    //       storeProducts.dispatch(
+    //         setModule({ data: JSON.parse(localStorage.getItem("products")) })
+    //       );
+    //     } else {
+    //       localStorage.setItem("products", JSON.stringify({}));
+    //     }
+    //   });
+    closeModal("singUp")
   }
 
   const [modal, setModal] = state;
