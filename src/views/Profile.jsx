@@ -299,7 +299,7 @@ function Profile({ user, tabs, active }) {
   return (
     <div className="profile">
       <div className="window">
-        <h1>{tabs.find(item => item.stateTab === active).title}</h1>
+        <h1>{active ? tabs.find(item => item.stateTab === active).title : "Общие сведения"}</h1>
         <div className="profileTabs">
           <div className="profileTabButtons">
             {tabs.map((item, index) =>

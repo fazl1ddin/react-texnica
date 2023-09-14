@@ -12,8 +12,6 @@ function Breadcrumb() {
     return null;
   }
 
-  console.log(phs);
-
   return (
     <div className="breadcrumb">
       <div className="window">

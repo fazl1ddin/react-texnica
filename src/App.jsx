@@ -27,7 +27,6 @@ import RouterDots from "./components/RouterDots/RouterDots";
 import moment from "moment";
 import "moment/locale/ru";
 import PageNotFound from "./views/PageNotFound";
-import Input from "./components/Input/Input";
 import Profile from "./views/Profile";
 import LoginOrRegister from "./components/LoginOrRegister";
 import LoginButtonLoader from "./components/Loaders/LoginButton";
@@ -65,31 +64,24 @@ function App() {
 
   const forNavDrop = useRef();
 
-  const [params, setParams] = useSearchParams();
+  const [params] = useSearchParams();
 
   const [active, setActive] = useState(
     params.has("active") ? params.get("active") : "allData"
   );
 
+  const [navHeight, setNavHeight] = useState(0);
+  const [modules, setModules] = useState({});
+  const [profileHeight, setProfileHeight] = useState(0);
+  const [Suzer, setSuzer] = useState(undefined);
+  const [loading, setLoading] = useState(true);
+  const [droProfileB, setDroProfile] = useState(false);
+  const [dropDown, setDropDown] = useState(false);
+  const [modal, setModal] = useState(" ");
+
   useEffect(() => {
     setActive(params.get("active"));
   }, [params]);
-
-  const [navHeight, setNavHeight] = useState(0);
-
-  const [modules, setModules] = useState({});
-
-  const [profileHeight, setProfileHeight] = useState(0);
-
-  const [Suzer, setSuzer] = useState(undefined);
-
-  const [loading, setLoading] = useState(true);
-
-  const [droProfileB, setDroProfile] = useState(false);
-
-  const [dropDown, setDropDown] = useState(false);
-
-  const [modal, setModal] = useState(" ");
 
   function dsnttoken() {
     if (!localStorage.getItem("products")) {

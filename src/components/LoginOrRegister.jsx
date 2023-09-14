@@ -5,6 +5,7 @@ import { setModule } from "../store/products";
 import Input from "./Input/Input";
 import config from "../api/config";
 import { setUser } from "../store/user";
+import { message } from "../utils/message";
 
 const initialSingUp = [
   {
@@ -81,30 +82,39 @@ function LoginOrRegister({ state }) {
     login.forEach((item, index) => {
       obj[item.name] = item.value;
     });
-    // dispatch(Auth({logType: 'pass', obj}))
-    await fetch(config.baseUrl + "/login", {
-      method: "POST",
-      body: JSON.stringify({ logType: "pass", obj }),
-    })
-      .then((result) => result.json())
-      .then((result) => {
-        if (result.user) {
-          setLogin(initialLogin);
-          storeUser.dispatch(setUser(result));
-          storeProducts.dispatch(setModule({ data: result.user }));
-          localStorage.setItem("token", result.token);
-        }
-      })
-      .catch((e) => {
-        if (localStorage.getItem("products")) {
-          storeProducts.dispatch(
-            setModule({ data: JSON.parse(localStorage.getItem("products")) })
-          );
-        } else {
-          localStorage.setItem("products", JSON.stringify({}));
-        }
+    try {
+      const res = await fetch(config.baseUrl + "/login", {
+        method: "POST",
+        body: JSON.stringify(obj),
       });
-    closeModal("singIn")
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+    // dispatch(Auth({logType: 'pass', obj}))
+    // await fetch(config.baseUrl + "/login", {
+    //   method: "POST",
+    //   body: JSON.stringify({ logType: "pass", obj }),
+    // })
+    //   .then((result) => result.json())
+    //   .then((result) => {
+    //     if (result.user) {
+    //       setLogin(initialLogin);
+    //       storeUser.dispatch(setUser(result));
+    //       storeProducts.dispatch(setModule({ data: result.user }));
+    //       localStorage.setItem("token", result.token);
+    //     }
+    //   })
+    //   .catch((e) => {
+    //     if (localStorage.getItem("products")) {
+    //       storeProducts.dispatch(
+    //         setModule({ data: JSON.parse(localStorage.getItem("products")) })
+    //       );
+    //     } else {
+    //       localStorage.setItem("products", JSON.stringify({}));
+    //     }
+    //   });
+    // closeModal("singIn");
   }
 
   async function submitSingUp() {
@@ -116,7 +126,7 @@ function LoginOrRegister({ state }) {
       const res = await fetch(config.baseUrl + "/sing-up", {
         method: "POST",
         body: JSON.stringify(obj),
-      })
+      });
       console.log(res);
     } catch (error) {
       console.log(error);
@@ -144,7 +154,7 @@ function LoginOrRegister({ state }) {
     //       localStorage.setItem("products", JSON.stringify({}));
     //     }
     //   });
-    closeModal("singUp")
+    // closeModal("singUp");
   }
 
   const [modal, setModal] = state;
@@ -170,79 +180,81 @@ function LoginOrRegister({ state }) {
   return (
     <div
       className={`forModal ${modal === " " ? "w-0h-0" : ""}`}
-      onClick={() => closeModal(modal === "login" ? "singIn" : "singUp")}
+      onClick={() =>
+        modal !== " " && closeModal(modal === "login" ? "singIn" : "singUp")
+      }
     >
       <div
         onClick={(e) => e.stopPropagation()}
         className={`centerWrap ${modal === "login" ? "singIn" : ""}`}
         id="singIn"
       >
-        <>
-          <div className="modalTitle">
-            <h2>Вход</h2>
-            <div className="x" onClick={() => closeModal("singIn")}>
-              <img src={img.x} alt="" />
+        <div className="modalTitle">
+          <h2>Вход</h2>
+          <div className="x" onClick={() => closeModal("singIn")}>
+            <img src={img.x} alt="" />
+          </div>
+        </div>
+        <div className="modalBody">
+          <form>
+            {login.map((item) => {
+              return <Input key={item.name} {...item} setState={setLogin} />;
+            })}
+            <p className="">Забыли пароль?</p>
+            <div>
+              <input type="checkbox" name="save" id="save" />
+              <label htmlFor="save">Запомнить меня</label>
             </div>
-          </div>
-          <div className="modalBody">
-            <form>
-              {login.map((item) => {
-                return <Input key={item.name} {...item} setState={setLogin} />;
-              })}
-              <a href="">Забыли пароль?</a>
-              <div>
-                <input type="checkbox" name="save" id="save" />
-                <label htmlFor="save">Запомнить меня</label>
-              </div>
-              <button
-                type="button"
-                className={`${
-                  login.every((item) => Boolean(item.value)) ? "ready" : ""
-                }`}
-                onClick={submitLogin}
-              >
-                Войти
-              </button>
-              <a onClick={() => setModal("singUp")}>Зарегистрироваться</a>
-            </form>
-          </div>
-        </>
+            <button
+              type="button"
+              className={`${
+                login.every((item) => Boolean(item.value)) ? "ready" : ""
+              }`}
+              onClick={submitLogin}
+            >
+              Войти
+            </button>
+            <p className="alsoa" onClick={() => setModal("singUp")}>
+              Зарегистрироваться
+            </p>
+          </form>
+        </div>
       </div>
       <div
         onClick={(e) => e.stopPropagation()}
         className={`centerWrap ${modal === "singUp" ? "singUp" : ""}`}
         id="singUp"
       >
-        <>
-          <div className="modalTitle">
-            <h2>Регистрация</h2>
-            <div className="x">
-              <img src={img.x} onClick={() => closeModal("singUp")} />
-            </div>
+        <div className="modalTitle">
+          <h2>Регистрация</h2>
+          <div className="x">
+            <img alt="" src={img.x} onClick={() => closeModal("singUp")} />
           </div>
-          <div className="modalBody">
-            <form>
-              {singUp.map((item) => {
-                return <Input key={item.name} {...item} setState={setSingUp} />;
-              })}
-              <p>
-                Регистрируясь, вы соглашаетесь с&nbsp;
-                <a href="">пользовательским соглашением</a>
-              </p>
-              <button
-                className={`${
-                  singUp.every((item) => item.valid === 1) ? "ready" : ""
-                }`}
-                disabled={!singUp.every((item) => item.valid === 1)}
-                type="button"
-                onClick={submitSingUp}
-              >
-                Зарегистрироваться
-              </button>
-              <a onClick={() => setModal("login")}>Войти</a>
-            </form>
-          </div>
-        </>
+        </div>
+        <div className="modalBody">
+          <form>
+            {singUp.map((item) => {
+              return <Input key={item.name} {...item} setState={setSingUp} />;
+            })}
+            <p>
+              Регистрируясь, вы соглашаетесь с&nbsp;
+              <span className="alsoa">пользовательским соглашением</span>
+            </p>
+            <button
+              className={`${
+                singUp.every((item) => item.valid === 1) ? "ready" : ""
+              }`}
+              disabled={!singUp.every((item) => item.valid === 1)}
+              type="button"
+              onClick={submitSingUp}
+            >
+              Зарегистрироваться
+            </button>
+            <p className="alsoa" onClick={() => setModal("login")}>
+              Войти
+            </p>
+          </form>
+        </div>
       </div>
     </div>
   );

@@ -4,6 +4,18 @@
     height: 0px!important;
     overflow: hidden;
 }
+.message1241 {
+    position: fixed;
+    right: 25px;
+    top: 25px;
+    background-color: #4878A6;
+    color: white;
+    padding: 10px 20px;
+}
+.alsoa {
+    color: #2A5275;
+    cursor: pointer;
+}
 * {
     margin: 0;
     padding: 0;
@@ -423,20 +435,17 @@
 .forModal .centerWrap.singUp .modalBody p {
     margin-top: 10px;
 }
-.forModal .centerWrap.singUp .modalBody a {
-    text-decoration: none;
-}
-.forModal .centerWrap.singUp .modalBody form > a:last-child {
+.forModal .centerWrap.singUp .modalBody form > p {
     display: block;
     margin-top: 10px;
     text-align: center;
 }
-.forModal .centerWrap.singIn .modalBody a {
+.forModal .centerWrap.singIn .modalBody p {
     margin-top: 10px;
     text-decoration: none;
     display: block;
 }
-.forModal .centerWrap.singIn .modalBody form > a:last-child {
+.forModal .centerWrap .modalBody form > p:last-child {
     text-align: center;
 }
 .forModal .centerWrap .modalBody button {

@@ -46,7 +46,7 @@ function Cart({ user, setModal }) {
 
   const onBlur = (id, key) => {
     const parsed = Object.values(value).map((item) => parseInt(item));
-    if (parsed[key] != NaN) {
+    if (!isNaN(parsed[key])) {
       setValue({ ...value, key: Math.min(Math.max(parsed[key], 1), 10) });
       storeProducts.dispatch(
         changeCount({ id, value: Math.min(Math.max(parsed[key], 1), 10) })
@@ -157,8 +157,8 @@ function Cart({ user, setModal }) {
     let boolean = false;
     if (data.length > 0) {
       boolean =
-        Object.values(checker).every((item) => item == "end") == true &&
-        man.every((item) => item.valid == true) == true &&
+        Object.values(checker).every((item) => item === "end") === true &&
+        man.every((item) => item.valid === true) === true &&
         read;
     }
     setCanSend(boolean);
@@ -228,9 +228,9 @@ function Cart({ user, setModal }) {
             <div className="obert">
               <div
                 className={`vashZakaz ${
-                  checker.tovari == "start"
+                  checker.tovari === "start"
                     ? "empty"
-                    : checker.tovari == "end"
+                    : checker.tovari === "end"
                     ? "end"
                     : ""
                 }`}
@@ -247,11 +247,11 @@ function Cart({ user, setModal }) {
                           key={product._id ? product._id : i}
                         >
                           <div className="imgt">
-                            <img className="img" src={product.product[0]} />
+                            <img className="img" src={product.product[0]} alt=""/>
                             {product.protection ? (
                               <img
                                 src={config.baseUrl + "/images/aqua.png"}
-                                className="aqua"
+                                className="aqua" alt=""
                               />
                             ) : null}
                           </div>
@@ -302,7 +302,7 @@ function Cart({ user, setModal }) {
                               <h2>{product.realPrice} ₽</h2>
                             </div>
                             <button className="delete">
-                              <img
+                              <img alt=""
                                 src={img.deleteB}
                                 onClick={() =>
                                   dispatch(
@@ -327,7 +327,7 @@ function Cart({ user, setModal }) {
                 )}
               </div>
               <button
-                className={`dalee ${checker.tovari == "middle" ? "" : "none"}`}
+                className={`dalee ${checker.tovari === "middle" ? "" : "none"}`}
                 onClick={() => {
                   setChecker({ ...checker, tovari: "end", delivery: "middle" });
                 }}
@@ -338,9 +338,9 @@ function Cart({ user, setModal }) {
             <div className="obert">
               <div
                 className={`vashZakaz ${
-                  checker.delivery == "start"
+                  checker.delivery === "start"
                     ? "empty"
-                    : checker.delivery == "end"
+                    : checker.delivery === "end"
                     ? "end"
                     : ""
                 }`}
@@ -350,9 +350,9 @@ function Cart({ user, setModal }) {
                   <form className="delivery">
                     <div className="to">
                       <h5 className="type">
-                        {settings.one == "deliv" ? "Доставка " : "Самовывоз из"}
+                        {settings.one === "deliv" ? "Доставка " : "Самовывоз из"}
                       </h5>
-                      {settings.one == "deliv" ? (
+                      {settings.one === "deliv" ? (
                         settings.two &&
                         settings.three &&
                         settings.four && (
@@ -484,13 +484,13 @@ function Cart({ user, setModal }) {
                       </div>
                       <div className="pickup">
                         <div
-                          className={settings.one == "deliv" ? "active" : ""}
+                          className={settings.one === "deliv" ? "active" : ""}
                           onClick={() =>
                             setSettings({ ...settings, one: "deliv" })
                           }
                         >
                           <input
-                            defaultChecked={settings.one == "deliv"}
+                            defaultChecked={settings.one === "deliv"}
                             type="radio"
                             name="club"
                             id="deliv"
@@ -499,13 +499,13 @@ function Cart({ user, setModal }) {
                           <label htmlFor="deliv">Доставка</label>
                         </div>
                         <div
-                          className={settings.one == "pick" ? "active" : ""}
+                          className={settings.one === "pick" ? "active" : ""}
                           onClick={() =>
                             setSettings({ ...settings, one: "pick" })
                           }
                         >
                           <input
-                            defaultChecked={settings.one == "pick"}
+                            defaultChecked={settings.one === "pick"}
                             type="radio"
                             name="club"
                             id="pick"
@@ -517,7 +517,7 @@ function Cart({ user, setModal }) {
                     </div>
                     <div
                       className={`address ${
-                        settings.one == "deliv" ? "" : "none"
+                        settings.one === "deliv" ? "" : "none"
                       }`}
                     >
                       <div>
@@ -625,7 +625,7 @@ function Cart({ user, setModal }) {
                       </div>
                     </div>
                     <div
-                      className={`pick ${settings.one == "pick" ? "" : "none"}`}
+                      className={`pick ${settings.one === "pick" ? "" : "none"}`}
                     >
                       {aLoading || cLoading ? (
                         <P430x330 />
@@ -697,16 +697,16 @@ function Cart({ user, setModal }) {
                               </div>
                             ))}
                           </div>
-                          <button
+                          {/* <button
                             type="button"
                             className="yewe"
                             click="nine == eight.length ? nine = 4  nine += eleven"
                           >
                             {" "}
-                            {"nine" == "eight.length"
+                            {"nine" === "eight.length"
                               ? "Скрыть"
-                              : "Показать еще " + "eleven"}
-                          </button>
+                              : "Показать еще eleven"}
+                          </button> */}
                         </div>
                       )}
                       <div className="map"></div>
@@ -724,7 +724,7 @@ function Cart({ user, setModal }) {
               </div>
               <button
                 className={`dalee mt-10 ${
-                  checker.delivery == "middle" ? "" : "none"
+                  checker.delivery === "middle" ? "" : "none"
                 }`}
                 onClick={() => {
                   setChecker({ ...checker, delivery: "end", cash: "middle" });
@@ -736,9 +736,9 @@ function Cart({ user, setModal }) {
             <div className="obert">
               <div
                 className={`vashZakaz ${
-                  checker.cash == "start"
+                  checker.cash === "start"
                     ? "empty"
-                    : checker.cash == "end"
+                    : checker.cash === "end"
                     ? "end"
                     : ""
                 }`}
@@ -773,7 +773,7 @@ function Cart({ user, setModal }) {
                 </div>
               </div>
               <button
-                className={`dalee ${checker.cash == "middle" ? "" : "none"}`}
+                className={`dalee ${checker.cash === "middle" ? "" : "none"}`}
                 onClick={() => {
                   setChecker({ ...checker, recipient: "end", cash: "end" });
                 }}
@@ -784,9 +784,9 @@ function Cart({ user, setModal }) {
             <div className="obert mb-20">
               <div
                 className={`vashZakaz ${
-                  checker.recipient == "start"
+                  checker.recipient === "start"
                     ? "empty"
-                    : checker.recipient == "end"
+                    : checker.recipient === "end"
                     ? "end"
                     : ""
                 }`}
@@ -804,7 +804,7 @@ function Cart({ user, setModal }) {
                         onChange={(e) => {
                           setMan(
                             man.map((item, j) => {
-                              if (i == j) {
+                              if (i === j) {
                                 return {
                                   ...item,
                                   valid: item.pattern.test(item.value),
@@ -869,7 +869,7 @@ function Cart({ user, setModal }) {
               />
               <label htmlFor="soglasheniya">
                 Подтверждая заказ, я принимаю условия{" "}
-                <a href="">пользовательского соглашения</a>
+                <p className="alsoa">пользовательского соглашения</p>
               </label>
             </form>
           </div>
