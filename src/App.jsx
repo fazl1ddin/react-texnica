@@ -22,7 +22,7 @@ import { useEffect } from "react";
 import { useRef } from "react";
 import { setModule } from "./store/products";
 import config from "./api/config";
-import { logout, storeProducts, storeUser } from "./store";
+import { logout, storeCartState, storeProducts, storeUser } from "./store";
 import RouterDots from "./components/RouterDots/RouterDots";
 import moment from "moment";
 import "moment/locale/ru";
@@ -70,6 +70,7 @@ function App() {
     params.has("active") ? params.get("active") : "allData"
   );
 
+  const [cartState, setCartState] = useState({})
   const [navHeight, setNavHeight] = useState(0);
   const [modules, setModules] = useState({});
   const [profileHeight, setProfileHeight] = useState(0);
@@ -147,6 +148,10 @@ function App() {
 
   storeProducts.subscribe(() => {
     setModules(storeProducts.getState().products);
+  });
+
+  storeCartState.subscribe(() => {
+    setCartState(storeCartState.getState().cart);
   });
 
   useEffect(() => {
@@ -462,7 +467,7 @@ function App() {
         ,<Route path="/compare" element={<Compare />}></Route>,
         <Route
           path="/cart"
-          element={<Cart user={Suzer} setModal={setModal} />}
+          element={<Cart user={Suzer} setModal={setModal} checker={cartState} />}
         ></Route>
         ,<Route path="/about-us" element={<AboutUs />}></Route>,
         <Route path="/warranty" element={<Warranty />}></Route>,

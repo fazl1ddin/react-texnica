@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as img from "../img/index";
 import { storeProducts, storeUser } from "../store";
 import { setModule } from "../store/products";
@@ -78,18 +78,37 @@ function LoginOrRegister({ state }) {
   const [singUp, setSingUp] = useState([...initialSingUp]);
 
   async function submitLogin() {
-    let obj = {};
-    login.forEach((item, index) => {
-      obj[item.name] = item.value;
-    });
+    const obj = Object.fromEntries(
+      login.map((item) => [item.name, item.value])
+    );
+    // login.forEach((item, index) => {
+    //   obj[item.name] = item.value;
+    // });
     try {
-      const res = await fetch(config.baseUrl + "/login", {
+      const result = await fetch(config.baseUrl + "/login", {
         method: "POST",
-        body: JSON.stringify(obj),
-      });
-      console.log(res);
+        body: JSON.stringify({ logType: "pass", obj }),
+      }).then((res) => res.json());
+      if (result.user) {
+        setLogin(initialLogin);
+        storeUser.dispatch(setUser(result));
+        storeProducts.dispatch(setModule({ data: result.user }));
+        localStorage.setItem("token", result.token);
+        closeModal("singIn");
+      } else if (result.message) {
+        message(result.message);
+      } else {
+        message("Ne predvidennaya oshibka");
+      }
     } catch (error) {
       console.log(error);
+      if (localStorage.getItem("products")) {
+        storeProducts.dispatch(
+          setModule({ data: JSON.parse(localStorage.getItem("products")) })
+        );
+      } else {
+        localStorage.setItem("products", JSON.stringify({}));
+      }
     }
     // dispatch(Auth({logType: 'pass', obj}))
     // await fetch(config.baseUrl + "/login", {
@@ -99,10 +118,10 @@ function LoginOrRegister({ state }) {
     //   .then((result) => result.json())
     //   .then((result) => {
     //     if (result.user) {
-    //       setLogin(initialLogin);
-    //       storeUser.dispatch(setUser(result));
-    //       storeProducts.dispatch(setModule({ data: result.user }));
-    //       localStorage.setItem("token", result.token);
+    // setLogin(initialLogin);
+    // storeUser.dispatch(setUser(result));
+    // storeProducts.dispatch(setModule({ data: result.user }));
+    // localStorage.setItem("token", result.token);
     //     }
     //   })
     //   .catch((e) => {
@@ -118,18 +137,54 @@ function LoginOrRegister({ state }) {
   }
 
   async function submitSingUp() {
-    let obj = {};
-    singUp.forEach((item, index) => {
-      obj[item.name] = item.value;
-    });
+    const obj = Object.fromEntries(
+      singUp.map((item) => [item.name, item.value])
+    );
+    // login.forEach((item, index) => {
+    //   obj[item.name] = item.value;
+    // });
     try {
-      const res = await fetch(config.baseUrl + "/sing-up", {
+      const result = await fetch(config.baseUrl + "/sing-up", {
         method: "POST",
         body: JSON.stringify(obj),
+      }).then(async (res) => {
+        return {
+          data: await res.json(),
+          status: res.status
+        }
       });
-      console.log(res);
+      if (result.data.user) {
+        setSingUp(initialSingUp);
+        storeUser.dispatch(setUser(result.data));
+        storeProducts.dispatch(setModule({ data: result.data.user }));
+        localStorage.setItem("token", result.data.token);
+        closeModal("singIn");
+      } else if (result.status === 422) {
+        message(result.data.message);
+        setSingUp(prev => prev.map((item) => {
+          if (result.data.errors[item.name]) {
+            return {
+              ...item,
+              valid: 2,
+              value: ""
+            }
+          }
+          return item
+        }))
+      } else if (result.data.message) {
+        message(result.data.message);
+      } else {
+        message("Ne predvidennaya oshibka");
+      }
     } catch (error) {
       console.log(error);
+      if (localStorage.getItem("products")) {
+        storeProducts.dispatch(
+          setModule({ data: JSON.parse(localStorage.getItem("products")) })
+        );
+      } else {
+        localStorage.setItem("products", JSON.stringify({}));
+      }
     }
     // dispatch(Auth({logType: 'pass', obj}))
     // const res = await fetch(config.baseUrl + "/sing-up", {
@@ -146,18 +201,26 @@ function LoginOrRegister({ state }) {
     //     }
     //   })
     //   .catch((e) => {
-    //     if (localStorage.getItem("products")) {
-    //       storeProducts.dispatch(
-    //         setModule({ data: JSON.parse(localStorage.getItem("products")) })
-    //       );
-    //     } else {
-    //       localStorage.setItem("products", JSON.stringify({}));
-    //     }
+    // if (localStorage.getItem("products")) {
+    //   storeProducts.dispatch(
+    //     setModule({ data: JSON.parse(localStorage.getItem("products")) })
+    //   );
+    // } else {
+    //   localStorage.setItem("products", JSON.stringify({}));
+    // }
     //   });
     // closeModal("singUp");
   }
 
   const [modal, setModal] = state;
+
+  useEffect(() => {
+    if (modal !== " ") {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+  }, [modal]);
 
   function closeModal(id) {
     const element = document.querySelector("#" + id);

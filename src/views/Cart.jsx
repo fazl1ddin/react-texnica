@@ -1,7 +1,8 @@
 import React from "react";
 import "../css/Cart.css";
 import { useCallback } from "react";
-import { storeProducts, updateOne, zero } from "../store/index";
+import { storeCartState, storeProducts, updateOne } from "../store/index";
+import { zero } from "../utils/zero";
 import { changeCount, setModule } from "../store/products";
 import * as img from "../img/index";
 import { useState } from "react";
@@ -16,13 +17,16 @@ import P390x48 from "../components/Loaders/390x48";
 import P430x330 from "../components/Loaders/430x330";
 import { message } from "../components/Message/message";
 import { useNavigate } from "react-router";
+import { setCartStateKey } from "../store/cart";
 
 const weekdays = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"];
 
-function Cart({ user, setModal }) {
+function Cart({ user, setModal, checker }) {
   const navigate = useNavigate();
 
   const { dispatch } = storeProducts;
+
+  const dispatchCart = storeCartState.dispatch;
 
   const { data, loading } = useGetPAC();
 
@@ -61,13 +65,6 @@ function Cart({ user, setModal }) {
     setValue(productsCount());
   }, [data]);
 
-  const [checker, setChecker] = useState({
-    tovari: "start",
-    delivery: "start",
-    cash: "start",
-    recipient: "start",
-  });
-
   const [read, setRead] = useState(true);
 
   const [typePay, setTypePay] = useState(null);
@@ -75,8 +72,9 @@ function Cart({ user, setModal }) {
   const [canSend, setCanSend] = useState(false);
 
   useEffect(() => {
-    if (data.length > 0) setChecker({ ...checker, tovari: "middle" });
-    else setChecker({ ...checker, tovari: "start" });
+    if (data.length > 0)
+      dispatchCart(setCartStateKey({ key: "tovari", value: "middle" }));
+    else dispatchCart(setCartStateKey({ key: "tovari", value: "start" }));
   }, [data.length]);
 
   const [settings, setSettings] = useState({
@@ -247,11 +245,16 @@ function Cart({ user, setModal }) {
                           key={product._id ? product._id : i}
                         >
                           <div className="imgt">
-                            <img className="img" src={product.product[0]} alt=""/>
+                            <img
+                              className="img"
+                              src={product.product[0]}
+                              alt=""
+                            />
                             {product.protection ? (
                               <img
                                 src={config.baseUrl + "/images/aqua.png"}
-                                className="aqua" alt=""
+                                className="aqua"
+                                alt=""
                               />
                             ) : null}
                           </div>
@@ -302,7 +305,8 @@ function Cart({ user, setModal }) {
                               <h2>{product.realPrice} ₽</h2>
                             </div>
                             <button className="delete">
-                              <img alt=""
+                              <img
+                                alt=""
                                 src={img.deleteB}
                                 onClick={() =>
                                   dispatch(
@@ -318,7 +322,9 @@ function Cart({ user, setModal }) {
                     <button
                       className="change"
                       onClick={() =>
-                        setChecker({ ...checker, tovari: "middle" })
+                        setCartStateKey(
+                          setCartStateKey({ key: "tovari", value: "middle" })
+                        )
                       }
                     >
                       Изменить
@@ -329,7 +335,12 @@ function Cart({ user, setModal }) {
               <button
                 className={`dalee ${checker.tovari === "middle" ? "" : "none"}`}
                 onClick={() => {
-                  setChecker({ ...checker, tovari: "end", delivery: "middle" });
+                  dispatchCart(
+                    setCartStateKey({ key: "tovari", value: "end" })
+                  );
+                  dispatchCart(
+                    setCartStateKey({ key: "delivery", value: "middle" })
+                  );
                 }}
               >
                 Далее
@@ -350,7 +361,9 @@ function Cart({ user, setModal }) {
                   <form className="delivery">
                     <div className="to">
                       <h5 className="type">
-                        {settings.one === "deliv" ? "Доставка " : "Самовывоз из"}
+                        {settings.one === "deliv"
+                          ? "Доставка "
+                          : "Самовывоз из"}
                       </h5>
                       {settings.one === "deliv" ? (
                         settings.two &&
@@ -625,7 +638,9 @@ function Cart({ user, setModal }) {
                       </div>
                     </div>
                     <div
-                      className={`pick ${settings.one === "pick" ? "" : "none"}`}
+                      className={`pick ${
+                        settings.one === "pick" ? "" : "none"
+                      }`}
                     >
                       {aLoading || cLoading ? (
                         <P430x330 />
@@ -714,9 +729,11 @@ function Cart({ user, setModal }) {
                   </form>
                   <button
                     className="change"
-                    onClick={() =>
-                      setChecker({ ...checker, delivery: "middle" })
-                    }
+                    onClick={() => {
+                      dispatchCart(
+                        setCartStateKey({ key: "delivery", value: "middle" })
+                      );
+                    }}
                   >
                     Изменить
                   </button>
@@ -727,7 +744,12 @@ function Cart({ user, setModal }) {
                   checker.delivery === "middle" ? "" : "none"
                 }`}
                 onClick={() => {
-                  setChecker({ ...checker, delivery: "end", cash: "middle" });
+                  dispatchCart(
+                    setCartStateKey({ key: "delivery", value: "end" })
+                  );
+                  dispatchCart(
+                    setCartStateKey({ key: "cash", value: "middle" })
+                  );
                 }}
               >
                 Далее
@@ -765,7 +787,9 @@ function Cart({ user, setModal }) {
                   <button
                     className="change"
                     onClick={() => {
-                      setChecker({ ...checker, cash: "middle" });
+                      dispatchCart(
+                        setCartStateKey({ key: "cash", value: "middle" })
+                      );
                     }}
                   >
                     Изменить
@@ -775,7 +799,10 @@ function Cart({ user, setModal }) {
               <button
                 className={`dalee ${checker.cash === "middle" ? "" : "none"}`}
                 onClick={() => {
-                  setChecker({ ...checker, recipient: "end", cash: "end" });
+                  dispatchCart(
+                    setCartStateKey({ key: "recipient", value: "end" })
+                  );
+                  dispatchCart(setCartStateKey({ key: "cash", value: "end" }));
                 }}
               >
                 Далее

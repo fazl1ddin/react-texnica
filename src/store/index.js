@@ -6,6 +6,7 @@ import { AiFillStar } from 'react-icons/ai'
 import { useEffect, useState } from "react";
 import config from "../api/config";
 import { useSelector } from "react-redux";
+import cart from "./cart";
 
 export function getSpace(context){
     if(context)
@@ -17,22 +18,16 @@ export function getRealPrice(context){
     return new Intl.NumberFormat('ru').format(context.price - (context.price * context.sale / 100))
 }
 
-export function zero(number) {
-    return (
-      `
-        ${number >= 10 ? number : "0" + number}
-        :00 - ${number >= 10 ? number : "0" + number}
-        :00 
-      `
-    );
-  }
 
 export const store = configureStore({
     reducer: {
-        products: products.reducer,
-        contents: contents.reducer,
-        user: user.reducer,
     },
+})
+
+export const storeCartState = configureStore({
+    reducer: {
+        cart: cart.reducer
+    }
 })
 
 export const storeUser = configureStore({

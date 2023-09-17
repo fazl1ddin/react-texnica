@@ -3,11 +3,21 @@ export function message(mes) {
   div.innerHTML = mes;
   div.className = "message1241";
   document.body.append(div);
-  const timeout = setTimeout(() => div.remove(), 3000);
+  const timeout = setTimeout(() => {
+    div.classList.add("deleteMessage")
+    setTimeout(() => {
+      div.remove()
+    }, 1000)
+  }, 3000);
   function clrstTimeout(timeou) {
     div.addEventListener("click", () => {
       clearTimeout(timeou);
-      const timeout = setTimeout(() => div.remove(), 3000);
+      const timeout = setTimeout(() => {
+        div.classList.add("deleteMessage")
+        setTimeout(() => {
+          div.remove()
+        }, 1000)
+      }, 3000);
       clrstTimeout(timeout);
     });
   }
