@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { updateOne, storeProducts } from "../../store"
+import { Link } from "react-router-dom"
 
 function CardUpdateLong({id}){
 
@@ -21,7 +22,7 @@ function CardUpdateLong({id}){
                 <div className={`bought cartbutton arbuttons ${some ? 'remove' : 'add'}`} onClick={() => updateOne(some ? 'remove' : 'add', 'cart', id, 1 )}>
                     <p>В корзину</p>
                 </div>
-            <a href="">Купить в 1 клик</a>
+            <Link to={"/cart"} onClick={() => updateOne(some ? '' : 'add', 'cart', id, 1 )}>Купить в 1 клик</Link>
         </div>
     </>
 }

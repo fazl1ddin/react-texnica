@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { updateOne, storeProducts } from "../../store"
+import { Link } from "react-router-dom"
 
 function CardUpdate({id}){
 
@@ -18,8 +19,8 @@ function CardUpdate({id}){
 
     return <>
         <div className="cart">
-            <a href="">Купить в 1 клик</a>
-            <div className={`cartbutton arbuttons ${some ? 'remove' : 'add'}`} onClick={() => updateOne(some ? 'remove' : 'add', 'cart', id, 1 )}>
+            <Link to={"/cart"} onClick={() => updateOne(some ? 'remove' : 'add', 'cart', id, 1 )}>Купить в 1 клик</Link>
+            <div className={`cartbutton arbuttons ${some ? '' : 'add'}`} onClick={() => updateOne(some ? 'remove' : 'add', 'cart', id, 1 )}>
             </div>
         </div>
     </>
