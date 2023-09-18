@@ -15,7 +15,7 @@ const state = createSlice({
                 state.cart[index].count = value
         },
         setModule(state, payloads){
-            const {data} = payloads.payload
+            const { data } = payloads.payload
             if(data){
                 Object.keys(current(state)).forEach((item) => {
                     if(item !== 'allProducts'){

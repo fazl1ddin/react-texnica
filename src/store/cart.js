@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 const cart = createSlice({
-    name: "cartState",
+    name: "cart",
     initialState: {
         tovari: "start",
         delivery: "start",

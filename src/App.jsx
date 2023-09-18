@@ -70,7 +70,7 @@ function App() {
     params.has("active") ? params.get("active") : "allData"
   );
 
-  const [cartState, setCartState] = useState({})
+  const [cartState, setCartState] = useState(storeCartState.getState().cart)
   const [navHeight, setNavHeight] = useState(0);
   const [modules, setModules] = useState({});
   const [profileHeight, setProfileHeight] = useState(0);
@@ -89,7 +89,6 @@ function App() {
       localStorage.setItem(
         "products",
         JSON.stringify({
-          allProducts: [],
           cart: [],
           favorites: [],
           compare: [],
@@ -153,6 +152,8 @@ function App() {
   storeCartState.subscribe(() => {
     setCartState(storeCartState.getState().cart);
   });
+
+  console.log(cartState);
 
   useEffect(() => {
     if (forNavDrop.current) {

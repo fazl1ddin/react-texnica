@@ -1,6 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
 import products, { setModule } from './products';
-import contents from './contents';
 import user, { clearUser, setUser } from './user';
 import { AiFillStar } from 'react-icons/ai'
 import { useEffect, useState } from "react";
@@ -21,6 +20,7 @@ export function getRealPrice(context){
 
 export const store = configureStore({
     reducer: {
+        cart: cart.reducer
     },
 })
 

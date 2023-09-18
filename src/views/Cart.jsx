@@ -72,9 +72,11 @@ function Cart({ user, setModal, checker }) {
   const [canSend, setCanSend] = useState(false);
 
   useEffect(() => {
-    if (data.length > 0)
-      dispatchCart(setCartStateKey({ key: "tovari", value: "middle" }));
-    else dispatchCart(setCartStateKey({ key: "tovari", value: "start" }));
+    if (checker.tovari === "start") {
+      if (data.length > 0)
+        dispatchCart(setCartStateKey({ key: "tovari", value: "middle" }));
+      else dispatchCart(setCartStateKey({ key: "tovari", value: "start" }));
+    }
   }, [data.length]);
 
   const [settings, setSettings] = useState({
